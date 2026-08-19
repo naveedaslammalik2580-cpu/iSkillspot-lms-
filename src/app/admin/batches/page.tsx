@@ -117,17 +117,17 @@ export default async function AdminBatchesPage({
             <table className="w-full text-sm">
               <thead className="border-b border-border bg-muted/50 text-left text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Batch</th>
-                  <th className="px-4 py-3 font-medium">Course</th>
-                  <th className="px-4 py-3 font-medium">Teacher</th>
-                  <th className="px-4 py-3 font-medium">Dates</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Enrolled</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Batch</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Course</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Teacher</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Dates</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Enrolled</th>
                 </tr>
               </thead>
               <tbody>
                 {result.rows.map((b) => (
-                  <tr key={b.id} className="border-b border-border last:border-0 hover:bg-muted/40">
+                  <tr key={b.id} className="even:bg-muted/30 hover:bg-muted/60">
                     <td className="px-4 py-3">
                       <Link href={`/admin/batches/${b.id}`} className="font-medium text-primary hover:underline">
                         {b.name}

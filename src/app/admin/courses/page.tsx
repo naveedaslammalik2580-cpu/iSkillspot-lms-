@@ -79,23 +79,23 @@ export default async function AdminCoursesPage({
             <table className="w-full text-sm">
               <thead className="border-b border-border bg-muted/50 text-left text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Name</th>
-                  <th className="px-4 py-3 font-medium">Code</th>
-                  <th className="px-4 py-3 font-medium">Level</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Batches</th>
-                  <th className="px-4 py-3 font-medium">Students</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Name</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Code</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Level</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Batches</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Students</th>
                 </tr>
               </thead>
               <tbody>
                 {result.rows.map((c) => (
-                  <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted/40">
+                  <tr key={c.id} className="even:bg-muted/30 hover:bg-muted/60">
                     <td className="px-4 py-3">
                       <Link href={`/admin/courses/${c.id}`} className="font-medium text-primary hover:underline">
                         {c.name}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs">{c.code}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{c.code}</td>
                     <td className="px-4 py-3 text-muted-foreground">{c.level.charAt(0) + c.level.slice(1).toLowerCase()}</td>
                     <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
                     <td className="px-4 py-3">{c.batchCount}</td>

@@ -60,26 +60,26 @@ export default async function StudentsPage({
             <table className="w-full text-sm">
               <thead className="border-b border-border bg-muted/50 text-left text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Student</th>
-                  <th className="px-4 py-3 font-medium">Student ID</th>
-                  <th className="px-4 py-3 font-medium">Course</th>
-                  <th className="px-4 py-3 font-medium">Batch</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Admitted</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Student</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Student ID</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Course</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Batch</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Admitted</th>
                 </tr>
               </thead>
               <tbody>
                 {result.rows.map((s) => {
                   const enr = s.enrollments[0];
                   return (
-                    <tr key={s.id} className="border-b border-border last:border-0 hover:bg-muted/40">
+                    <tr key={s.id} className="even:bg-muted/30 hover:bg-muted/60">
                       <td className="px-4 py-3">
                         <Link href={`/admin/students/${s.id}`} className="font-medium text-primary hover:underline">
                           {s.fullName}
                         </Link>
                         <div className="text-xs text-muted-foreground">{s.email}</div>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs">{s.studentId}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{s.studentId}</td>
                       <td className="px-4 py-3">{enr?.course.title ?? "—"}</td>
                       <td className="px-4 py-3">{enr?.batch.name ?? "—"}</td>
                       <td className="px-4 py-3"><StatusBadge status={s.status} /></td>
