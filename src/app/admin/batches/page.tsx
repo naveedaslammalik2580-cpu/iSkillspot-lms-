@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/status-badge";
+import { FilterForm, FilterSubmitButton } from "@/components/filter-form";
 import { formatDate } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import type { BatchStatus } from "@prisma/client";
@@ -48,7 +49,7 @@ export default async function AdminBatchesPage({
       />
 
       <Card className="mb-4 p-4">
-        <form className="flex flex-wrap items-end gap-3" method="GET">
+        <FilterForm action="/admin/batches" className="flex flex-wrap items-end gap-3">
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="q">Search</label>
             <Input id="q" name="q" defaultValue={sp.q ?? ""} placeholder="Name or code…" className="w-48" />
@@ -96,8 +97,8 @@ export default async function AdminBatchesPage({
               <option value="CANCELLED">Cancelled</option>
             </select>
           </div>
-          <Button type="submit" variant="outline">Filter</Button>
-        </form>
+          <FilterSubmitButton />
+        </FilterForm>
       </Card>
 
       {result.rows.length === 0 ? (
