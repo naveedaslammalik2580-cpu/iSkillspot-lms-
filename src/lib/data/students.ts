@@ -52,26 +52,37 @@ export async function listStudents(filters: StudentFilters) {
 
 /** Full Section-8 360° profile. */
 export async function getStudent360(id: string) {
-  const student = await db.student.findUnique({
-    where: { id },
-    include: {
-      user: { select: { username: true, email: true, status: true, lastLogin: true } },
-      enrollments: { include: { course: true, batch: { include: { teacher: true } } } },
-      attendance: true,
-      submissions: { include: { assignment: true } },
-      quizAttempts: { include: { quiz: true } },
-      grades: true,
-      fees: { include: { payments: true } },
-      certificates: { include: { course: true } },
-    },
-  });
+  // Attendance counts by status, computed by Postgres (one groupBy) instead
+  // of loading every attendance row just to reduce it to a summary below.
+  // Independent of the student fetch, so run together.
+  const [student, attendanceCounts] = await Promise.all([
+    db.student.findUnique({
+      where: { id },
+      include: {
+        user: { select: { username: true, email: true, status: true, lastLogin: true } },
+        enrollments: { include: { course: true, batch: { include: { teacher: true } } } },
+        submissions: { include: { assignment: true } },
+        quizAttempts: { include: { quiz: true } },
+        grades: true,
+        fees: { include: { payments: true } },
+        certificates: { include: { course: true } },
+      },
+    }),
+    db.attendance.groupBy({
+      by: ["status"],
+      where: { studentId: id },
+      _count: { _all: true },
+    }),
+  ]);
   if (!student) return null;
 
   // Attendance summary
-  const attTotal = student.attendance.length;
-  const present = student.attendance.filter((a) => a.status === "PRESENT").length;
-  const absent = student.attendance.filter((a) => a.status === "ABSENT").length;
-  const late = student.attendance.filter((a) => a.status === "LATE").length;
+  const countOf = (status: string) =>
+    attendanceCounts.find((r) => r.status === status)?._count._all ?? 0;
+  const attTotal = attendanceCounts.reduce((sum, r) => sum + r._count._all, 0);
+  const present = countOf("PRESENT");
+  const absent = countOf("ABSENT");
+  const late = countOf("LATE");
   const attendancePct = pct(present + late, attTotal);
 
   // Assignment summary

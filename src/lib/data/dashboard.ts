@@ -88,27 +88,36 @@ export async function getAtRiskStudents() {
             },
           },
         },
-
-        attendance: {
-          select: {
-            status: true,
-          },
-        },
       },
     }),
   ]);
   const attThreshold = Number(attThresholdSetting);
 
+  // Present/total attendance counts per student, computed by Postgres
+  // (one groupBy) instead of loading every attendance row for every active
+  // student and reducing them in JS — same numbers, far less data moved for
+  // students with a long attendance history.
+  const studentIds = students.map((s) => s.id);
+  const attendanceCounts = studentIds.length
+    ? await db.attendance.groupBy({
+        by: ["studentId", "status"],
+        where: { studentId: { in: studentIds } },
+        _count: { _all: true },
+      })
+    : [];
+  const attendanceByStudent = new Map<string, { present: number; total: number }>();
+  for (const row of attendanceCounts) {
+    const entry = attendanceByStudent.get(row.studentId) ?? { present: 0, total: 0 };
+    entry.total += row._count._all;
+    if (row.status === "PRESENT" || row.status === "LATE") entry.present += row._count._all;
+    attendanceByStudent.set(row.studentId, entry);
+  }
+
   const results = [];
 
   for (const student of students) {
-    const totalAttendance = student.attendance.length;
-
-    const presentAttendance = student.attendance.filter(
-      (attendance) =>
-        attendance.status === "PRESENT" ||
-        attendance.status === "LATE"
-    ).length;
+    const { present: presentAttendance, total: totalAttendance } =
+      attendanceByStudent.get(student.id) ?? { present: 0, total: 0 };
 
     const attendancePercentage =
       totalAttendance > 0

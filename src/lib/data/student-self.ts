@@ -2,21 +2,30 @@ import { db } from "@/lib/db";
 import { pct } from "@/lib/utils";
 
 export async function getStudentDashboard(studentId: string) {
-  const student = await db.student.findUnique({
-    where: { id: studentId },
-    include: {
-      enrollments: { include: { course: true, batch: true } },
-      attendance: true,
-      submissions: { where: { status: "PENDING" }, include: { assignment: true } },
-      grades: { orderBy: { createdAt: "desc" }, take: 5, include: { course: true } },
-    },
-  });
+  // Present/total attendance counts computed by Postgres (one groupBy)
+  // instead of loading every attendance row just to reduce it to a
+  // percentage. Independent of the student fetch below, so run together.
+  const [student, attendanceCounts] = await Promise.all([
+    db.student.findUnique({
+      where: { id: studentId },
+      include: {
+        enrollments: { include: { course: true, batch: true } },
+        submissions: { where: { status: "PENDING" }, include: { assignment: true } },
+        grades: { orderBy: { createdAt: "desc" }, take: 5, include: { course: true } },
+      },
+    }),
+    db.attendance.groupBy({
+      by: ["status"],
+      where: { studentId },
+      _count: { _all: true },
+    }),
+  ]);
   if (!student) return null;
 
-  const attTotal = student.attendance.length;
-  const attPresent = student.attendance.filter(
-    (a) => a.status === "PRESENT" || a.status === "LATE"
-  ).length;
+  const attTotal = attendanceCounts.reduce((sum, r) => sum + r._count._all, 0);
+  const attPresent = attendanceCounts
+    .filter((r) => r.status === "PRESENT" || r.status === "LATE")
+    .reduce((sum, r) => sum + r._count._all, 0);
 
   const overallProgress = student.enrollments.length
     ? Math.round(
