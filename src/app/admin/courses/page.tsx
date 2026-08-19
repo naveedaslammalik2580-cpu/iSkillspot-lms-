@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/guards";
-import { getAllCourses } from "@/lib/data/courses";
+import { listCourses } from "@/lib/data/courses";
 import { PageHeader, EmptyState } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,17 +16,19 @@ export default async function AdminCoursesPage({
 }) {
   await requirePermission("course.manage");
   const sp = await searchParams;
+  const page = Number(sp.page ?? "1");
 
-  const courses = await getAllCourses({
+  const result = await listCourses({
     status: sp.status as PublishStatus | undefined,
     search: sp.q,
+    page,
   });
 
   return (
     <>
       <PageHeader
         title="Courses"
-        description={`${courses.length} total`}
+        description={`${result.total} total`}
         action={
           <Button asChild>
             <Link href="/admin/courses/new">
@@ -60,7 +62,7 @@ export default async function AdminCoursesPage({
         </form>
       </Card>
 
-      {courses.length === 0 ? (
+      {result.rows.length === 0 ? (
         <EmptyState
           title="No courses found."
           hint="Try different filters, or create your first course."
@@ -85,7 +87,7 @@ export default async function AdminCoursesPage({
                 </tr>
               </thead>
               <tbody>
-                {courses.map((c) => (
+                {result.rows.map((c) => (
                   <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted/40">
                     <td className="px-4 py-3">
                       <Link href={`/admin/courses/${c.id}`} className="font-medium text-primary hover:underline">
@@ -103,6 +105,20 @@ export default async function AdminCoursesPage({
             </table>
           </div>
         </Card>
+      )}
+
+      {result.pages > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {Array.from({ length: result.pages }, (_, i) => i + 1).map((p) => {
+            const params = new URLSearchParams(sp as Record<string, string>);
+            params.set("page", String(p));
+            return (
+              <Button key={p} asChild variant={p === page ? "default" : "outline"} size="sm">
+                <Link href={`/admin/courses?${params.toString()}`}>{p}</Link>
+              </Button>
+            );
+          })}
+        </div>
       )}
     </>
   );

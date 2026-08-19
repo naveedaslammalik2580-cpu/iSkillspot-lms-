@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import type { BatchStatus } from "@prisma/client";
+import type { BatchStatus, Prisma } from "@prisma/client";
 
 export interface BatchListRow {
   id: string;
@@ -14,35 +14,23 @@ export interface BatchListRow {
   enrolledCount: number;
 }
 
-export async function getAllBatches(filters?: {
+export interface BatchFilters {
   status?: BatchStatus;
   courseId?: string;
   teacherId?: string;
   search?: string;
-}): Promise<BatchListRow[]> {
-  const batches = await db.batch.findMany({
-    where: {
-      status: filters?.status,
-      courseId: filters?.courseId,
-      teacherId: filters?.teacherId,
-      ...(filters?.search
-        ? {
-            OR: [
-              { name: { contains: filters.search, mode: "insensitive" as const } },
-              { code: { contains: filters.search, mode: "insensitive" as const } },
-            ],
-          }
-        : {}),
-    },
-    include: {
-      course: { select: { id: true, title: true } },
-      teacher: { select: { fullName: true } },
-      _count: { select: { enrollments: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+}
 
-  return batches.map((b) => ({
+const batchInclude = {
+  course: { select: { id: true, title: true } },
+  teacher: { select: { fullName: true } },
+  _count: { select: { enrollments: true } },
+} satisfies Prisma.BatchInclude;
+
+type BatchWithRelations = Prisma.BatchGetPayload<{ include: typeof batchInclude }>;
+
+function mapBatchRow(b: BatchWithRelations): BatchListRow {
+  return {
     id: b.id,
     code: b.code,
     name: b.name,
@@ -53,7 +41,77 @@ export async function getAllBatches(filters?: {
     endDate: b.endDate,
     status: b.status,
     enrolledCount: b._count.enrollments,
-  }));
+  };
+}
+
+function buildBatchWhere(filters?: BatchFilters): Prisma.BatchWhereInput {
+  return {
+    status: filters?.status,
+    courseId: filters?.courseId,
+    teacherId: filters?.teacherId,
+    ...(filters?.search
+      ? {
+          OR: [
+            { name: { contains: filters.search, mode: "insensitive" as const } },
+            { code: { contains: filters.search, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+}
+
+/**
+ * Unpaginated — returns every matching batch. Used where the full set is
+ * genuinely needed: the teacher dashboard's internal aggregation
+ * (src/lib/data/dashboard.ts) and the teacher's own "My Batches" page, which
+ * both need the complete list, not a page of it. For the admin batch
+ * listing (which does want pagination), use listBatches below instead.
+ */
+export async function getAllBatches(filters?: BatchFilters): Promise<BatchListRow[]> {
+  const batches = await db.batch.findMany({
+    where: buildBatchWhere(filters),
+    include: batchInclude,
+    orderBy: { createdAt: "desc" },
+  });
+
+  return batches.map(mapBatchRow);
+}
+
+/**
+ * Paginated batch listing, same shape as listStudents/listCourses — page/
+ * pageSize in, { rows, total, page, pageSize, pages } out. At current seed
+ * volume (10 batches) this makes no measurable difference; it's here so the
+ * query doesn't grow unbounded as batches accumulate over time.
+ */
+export async function listBatches(filters?: BatchFilters & { page?: number; pageSize?: number }): Promise<{
+  rows: BatchListRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pages: number;
+}> {
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 20;
+  const where = buildBatchWhere(filters);
+
+  const [batches, total] = await Promise.all([
+    db.batch.findMany({
+      where,
+      include: batchInclude,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    db.batch.count({ where }),
+  ]);
+
+  return {
+    rows: batches.map(mapBatchRow),
+    total,
+    page,
+    pageSize,
+    pages: Math.ceil(total / pageSize),
+  };
 }
 
 export interface BatchStudentRow {

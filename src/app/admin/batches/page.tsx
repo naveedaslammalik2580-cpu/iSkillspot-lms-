@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/guards";
-import { getAllBatches } from "@/lib/data/batches";
+import { listBatches } from "@/lib/data/batches";
 import { getCoursePicker } from "@/lib/data/courses";
 import { getTeacherPicker } from "@/lib/data/teachers";
 import { PageHeader, EmptyState } from "@/components/page-header";
@@ -19,13 +19,15 @@ export default async function AdminBatchesPage({
 }) {
   await requirePermission("batch.manage");
   const sp = await searchParams;
+  const page = Number(sp.page ?? "1");
 
-  const [batches, courses, teachers] = await Promise.all([
-    getAllBatches({
+  const [result, courses, teachers] = await Promise.all([
+    listBatches({
       status: sp.status as BatchStatus | undefined,
       courseId: sp.courseId,
       teacherId: sp.teacherId,
       search: sp.q,
+      page,
     }),
     getCoursePicker(),
     getTeacherPicker(),
@@ -35,7 +37,7 @@ export default async function AdminBatchesPage({
     <>
       <PageHeader
         title="Batches"
-        description={`${batches.length} total`}
+        description={`${result.total} total`}
         action={
           <Button asChild>
             <Link href="/admin/batches/new">
@@ -98,7 +100,7 @@ export default async function AdminBatchesPage({
         </form>
       </Card>
 
-      {batches.length === 0 ? (
+      {result.rows.length === 0 ? (
         <EmptyState
           title="No batches found."
           hint="Try different filters, or create your first batch."
@@ -123,7 +125,7 @@ export default async function AdminBatchesPage({
                 </tr>
               </thead>
               <tbody>
-                {batches.map((b) => (
+                {result.rows.map((b) => (
                   <tr key={b.id} className="border-b border-border last:border-0 hover:bg-muted/40">
                     <td className="px-4 py-3">
                       <Link href={`/admin/batches/${b.id}`} className="font-medium text-primary hover:underline">
@@ -144,6 +146,20 @@ export default async function AdminBatchesPage({
             </table>
           </div>
         </Card>
+      )}
+
+      {result.pages > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {Array.from({ length: result.pages }, (_, i) => i + 1).map((p) => {
+            const params = new URLSearchParams(sp as Record<string, string>);
+            params.set("page", String(p));
+            return (
+              <Button key={p} asChild variant={p === page ? "default" : "outline"} size="sm">
+                <Link href={`/admin/batches?${params.toString()}`}>{p}</Link>
+              </Button>
+            );
+          })}
+        </div>
       )}
     </>
   );

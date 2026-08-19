@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import type { CourseLevel, PublishStatus, BatchStatus } from "@prisma/client";
+import type { CourseLevel, PublishStatus, BatchStatus, Prisma } from "@prisma/client";
 
 export interface CourseListRow {
   id: string;
@@ -12,39 +12,71 @@ export interface CourseListRow {
   studentCount: number;
 }
 
-export async function getAllCourses(filters?: {
+export interface CourseFilters {
   status?: PublishStatus;
   search?: string;
-}): Promise<CourseListRow[]> {
-  const courses = await db.course.findMany({
-    where: {
-      status: filters?.status,
-      ...(filters?.search
-        ? {
-            OR: [
-              { title: { contains: filters.search, mode: "insensitive" as const } },
-              { slug: { contains: filters.search, mode: "insensitive" as const } },
-            ],
-          }
-        : {}),
-    },
-    include: {
-      _count: { select: { batches: true } },
-      batches: { select: { _count: { select: { enrollments: true } } } },
-    },
-    orderBy: { title: "asc" },
-  });
+  page?: number;
+  pageSize?: number;
+}
 
-  return courses.map((c) => ({
-    id: c.id,
-    code: c.slug,
-    name: c.title,
-    duration: c.duration,
-    level: c.level,
-    status: c.status,
-    batchCount: c._count.batches,
-    studentCount: c.batches.reduce((sum, b) => sum + b._count.enrollments, 0),
-  }));
+/**
+ * Paginated course listing, same shape as listStudents (src/lib/data/students.ts)
+ * — page/pageSize in, { rows, total, page, pageSize, pages } out. At current
+ * seed volume (5 courses) this makes no measurable difference; it's here so
+ * the query doesn't grow unbounded as courses accumulate over time.
+ */
+export async function listCourses(filters?: CourseFilters): Promise<{
+  rows: CourseListRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pages: number;
+}> {
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 20;
+
+  const where: Prisma.CourseWhereInput = {
+    status: filters?.status,
+    ...(filters?.search
+      ? {
+          OR: [
+            { title: { contains: filters.search, mode: "insensitive" as const } },
+            { slug: { contains: filters.search, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+
+  const [courses, total] = await Promise.all([
+    db.course.findMany({
+      where,
+      include: {
+        _count: { select: { batches: true } },
+        batches: { select: { _count: { select: { enrollments: true } } } },
+      },
+      orderBy: { title: "asc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    db.course.count({ where }),
+  ]);
+
+  return {
+    rows: courses.map((c) => ({
+      id: c.id,
+      code: c.slug,
+      name: c.title,
+      duration: c.duration,
+      level: c.level,
+      status: c.status,
+      batchCount: c._count.batches,
+      studentCount: c.batches.reduce((sum, b) => sum + b._count.enrollments, 0),
+    })),
+    total,
+    page,
+    pageSize,
+    pages: Math.ceil(total / pageSize),
+  };
 }
 
 export interface CourseBatchRow {
