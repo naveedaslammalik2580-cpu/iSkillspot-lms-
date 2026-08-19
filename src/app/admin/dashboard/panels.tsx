@@ -137,7 +137,12 @@ export async function AtRiskPanel({
 }) {
   const atRisk = await dataPromise;
   return (
-    <Card>
+    // Visually distinct from the other dashboard cards: this is the one
+    // genuinely actionable list here (needs someone to follow up), not just
+    // a glance-metric, so it gets a left accent stripe in the same warning
+    // color already used elsewhere (StatCard's "warning" tone, Badge's
+    // "warning" variant) rather than a new color introduced just for this.
+    <Card className="border-l-4 border-l-amber-400">
       <CardHeader>
         <CardTitle>At-risk students</CardTitle>
       </CardHeader>
@@ -174,7 +179,7 @@ export async function AtRiskPanel({
 
 export function AtRiskPanelSkeleton() {
   return (
-    <Card>
+    <Card className="border-l-4 border-l-amber-400">
       <CardHeader><Skeleton className="h-5 w-32" /></CardHeader>
       <CardContent className="space-y-2">
         {Array.from({ length: 4 }).map((_, i) => (

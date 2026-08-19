@@ -47,17 +47,26 @@ export default async function AdminDashboard() {
     <>
       <PageHeader title="Dashboard" description="Institute overview at a glance" />
 
+      {/* Primary: the 4 stats that matter day-to-day (confirmed with product
+          owner during Phase 2 planning) — current headcount, who needs
+          intervention, who owes money, what's currently running. */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Total Students" value={stats.totalStudents} icon="Users" />
         <StatCard label="Active Students" value={stats.activeStudents} icon="UserCheck" tone="success" />
-        <StatCard label="Completed" value={stats.completedStudents} icon="GraduationCap" />
-        <StatCard label="Teachers" value={stats.totalTeachers} icon="Presentation" />
-        <StatCard label="Active Courses" value={stats.activeCourses} icon="BookOpen" />
-        <StatCard label="Active Batches" value={stats.activeBatches} icon="Layers" />
         <Suspense fallback={<AtRiskCountCardSkeleton />}>
           <AtRiskCountCard dataPromise={atRiskPromise} />
         </Suspense>
         <StatCard label="Outstanding Fees" value={formatCurrency(stats.outstandingFees, currency)} icon="Wallet" tone="danger" />
+        <StatCard label="Active Batches" value={stats.activeBatches} icon="Layers" />
+      </div>
+
+      {/* Secondary: cumulative/contextual totals — same numbers as before,
+          just quieter (StatCard's compact variant) so they don't compete
+          with the primary row above. */}
+      <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard label="Total Students" value={stats.totalStudents} icon="Users" variant="compact" />
+        <StatCard label="Completed" value={stats.completedStudents} icon="GraduationCap" variant="compact" />
+        <StatCard label="Teachers" value={stats.totalTeachers} icon="Presentation" variant="compact" />
+        <StatCard label="Active Courses" value={stats.activeCourses} icon="BookOpen" variant="compact" />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">

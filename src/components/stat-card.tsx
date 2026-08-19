@@ -7,11 +7,15 @@ export function StatCard({
   value,
   icon,
   tone = "default",
+  variant = "default",
 }: {
   label: string;
   value: string | number;
   icon: string;
   tone?: "default" | "success" | "warning" | "danger";
+  /** "compact" renders a smaller, visually quieter card for secondary/contextual
+   *  stats — same data, less weight, so a primary row can stand out above it. */
+  variant?: "default" | "compact";
 }) {
   const Cmp = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[icon];
   const toneClass = {
@@ -20,6 +24,22 @@ export function StatCard({
     warning: "bg-amber-100 text-amber-700",
     danger: "bg-red-100 text-red-700",
   }[tone];
+
+  if (variant === "compact") {
+    return (
+      <Card className="p-4">
+        <div className="flex items-center gap-3">
+          <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", toneClass)}>
+            {Cmp && <Cmp className="h-4 w-4" />}
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-xs text-muted-foreground">{label}</p>
+            <p className="text-lg font-semibold">{value}</p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-5">
