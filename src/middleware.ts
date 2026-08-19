@@ -1,0 +1,64 @@
+import { NextResponse, type NextRequest } from "next/server";
+import { jwtVerify } from "jose";
+
+const COOKIE_NAME = "isp_session";
+
+function secret() {
+  const s = process.env.SESSION_SECRET;
+  if (!s || s.length < 32) {
+    throw new Error(
+      "SESSION_SECRET must be set and at least 32 characters long."
+    );
+  }
+  return new TextEncoder().encode(s);
+}
+
+// Route prefixes and the roles allowed to reach them.
+const RULES: { prefix: string; roles: string[] }[] = [
+  { prefix: "/admin", roles: ["SUPER_ADMIN", "ADMIN"] },
+  { prefix: "/teacher", roles: ["TEACHER"] },
+  { prefix: "/student", roles: ["STUDENT"] },
+];
+
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  const rule = RULES.find((r) => pathname.startsWith(r.prefix));
+  if (!rule) return NextResponse.next();
+
+  const token = req.cookies.get(COOKIE_NAME)?.value;
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, secret());
+    const role = payload.role as string;
+
+    if (!rule.roles.includes(role)) {
+      return NextResponse.redirect(new URL("/forbidden", req.url));
+    }
+
+    // Force password change on first login before anything else.
+    if (
+      payload.mustChangePassword === true &&
+      !pathname.startsWith("/student/change-password") &&
+      !pathname.startsWith("/change-password")
+    ) {
+      const target = role === "STUDENT" ? "/student/change-password" : "/change-password";
+      if (pathname !== target) {
+        return NextResponse.redirect(new URL(target, req.url));
+      }
+    }
+
+    return NextResponse.next();
+  } catch {
+    const res = NextResponse.redirect(new URL("/login", req.url));
+    res.cookies.delete(COOKIE_NAME);
+    return res;
+  }
+}
+
+export const config = {
+  matcher: ["/admin/:path*", "/teacher/:path*", "/student/:path*"],
+};

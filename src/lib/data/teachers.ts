@@ -1,0 +1,122 @@
+import { db } from "@/lib/db";
+import type { AccountStatus, BatchStatus } from "@prisma/client";
+
+export interface TeacherListRow {
+  id: string;
+  fullName: string;
+  email: string | null;
+  phone: string | null;
+  specialization: string | null;
+  status: AccountStatus;
+  batchCount: number;
+  studentCount: number;
+}
+
+export async function getAllTeachers(filters?: {
+  status?: AccountStatus;
+  search?: string;
+}): Promise<TeacherListRow[]> {
+  const teachers = await db.teacher.findMany({
+    where: {
+      status: filters?.status,
+      ...(filters?.search
+        ? {
+            OR: [
+              { fullName: { contains: filters.search, mode: "insensitive" as const } },
+              { email: { contains: filters.search, mode: "insensitive" as const } },
+            ],
+          }
+        : {}),
+    },
+    include: {
+      _count: { select: { batches: true } },
+      batches: { select: { _count: { select: { enrollments: true } } } },
+    },
+    orderBy: { fullName: "asc" },
+  });
+
+  return teachers.map((t) => ({
+    id: t.id,
+    fullName: t.fullName,
+    email: t.email,
+    phone: t.phone,
+    specialization: t.specialization,
+    status: t.status,
+    batchCount: t._count.batches,
+    studentCount: t.batches.reduce((sum, b) => sum + b._count.enrollments, 0),
+  }));
+}
+
+export interface TeacherBatchRow {
+  id: string;
+  code: string;
+  name: string;
+  courseTitle: string;
+  startDate: Date | null;
+  endDate: Date | null;
+  status: BatchStatus;
+}
+
+export interface TeacherDetail {
+  id: string;
+  userId: string;
+  username: string;
+  fullName: string;
+  email: string | null;
+  phone: string | null;
+  specialization: string | null;
+  status: AccountStatus;
+  joiningDate: Date;
+  batches: TeacherBatchRow[];
+}
+
+export async function getTeacherById(id: string): Promise<TeacherDetail | null> {
+  const teacher = await db.teacher.findUnique({
+    where: { id },
+    include: {
+      user: { select: { id: true, username: true } },
+      batches: {
+        include: { course: { select: { title: true } } },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+  if (!teacher) return null;
+
+  return {
+    id: teacher.id,
+    userId: teacher.user.id,
+    username: teacher.user.username,
+    fullName: teacher.fullName,
+    email: teacher.email,
+    phone: teacher.phone,
+    specialization: teacher.specialization,
+    status: teacher.status,
+    joiningDate: teacher.joiningDate,
+    batches: teacher.batches.map((b) => ({
+      id: b.id,
+      code: b.code,
+      name: b.name,
+      courseTitle: b.course.title,
+      startDate: b.startDate,
+      endDate: b.endDate,
+      status: b.status,
+    })),
+  };
+}
+
+export interface TeacherPickerOption {
+  id: string;
+  fullName: string;
+  specialization: string | null;
+}
+
+/** Active teachers, for the Batch create/edit form. */
+export async function getTeacherPicker(): Promise<TeacherPickerOption[]> {
+  const teachers = await db.teacher.findMany({
+    where: { status: "ACTIVE" },
+    select: { id: true, fullName: true, specialization: true },
+    orderBy: { fullName: "asc" },
+  });
+  return teachers;
+}
