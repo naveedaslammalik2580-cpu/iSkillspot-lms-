@@ -1,4 +1,4 @@
-import * as Icons from "lucide-react";
+import { ICONS } from "@/lib/icons";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +17,7 @@ export function StatCard({
    *  stats — same data, less weight, so a primary row can stand out above it. */
   variant?: "default" | "compact";
 }) {
-  const Cmp = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[icon];
+  const Cmp = ICONS[icon];
   const toneClass = {
     default: "bg-primary/10 text-primary",
     success: "bg-green-100 text-green-700",
