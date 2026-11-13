@@ -10,6 +10,7 @@ import {
   generateUsername,
 } from "@/lib/ids";
 import { logAction } from "@/lib/audit";
+import { notifyUser } from "@/lib/notifications";
 import { getSetting } from "@/lib/settings";
 
 const createStudentSchema = z.object({
@@ -135,6 +136,14 @@ export async function createStudentAction(
       entity: "Student",
       entityId: student.id,
       metadata: { studentId, username },
+    });
+
+    await notifyUser(student.userId, {
+      type: "SYSTEM",
+      title: "Welcome to iSkillSpot",
+      message: "Your student account is ready. Open your dashboard to see your courses, batches and announcements.",
+      linkUrl: "/student/dashboard",
+      dedupeKey: `welcome:${student.userId}`,
     });
 
     revalidatePath("/admin/students");
