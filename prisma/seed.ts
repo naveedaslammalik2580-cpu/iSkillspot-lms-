@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
+import { writeFileSync } from "node:fs";
 
 const db = new PrismaClient();
 
@@ -9,12 +11,42 @@ function slugify(s: string) {
 const hash = (p: string) => bcrypt.hash(p, 12);
 const rand = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
+// --- Demo-account credentials -------------------------------------------------
+// Passwords are never hardcoded in this file. For repeatable local setup, set
+// SEED_ADMIN_PASSWORD / SEED_TEACHER_PASSWORD / SEED_STUDENT_PASSWORD in your
+// (gitignored) .env. If they are unset in a non-production environment, strong
+// one-time passwords are generated and written to .seed-credentials.local.json
+// (gitignored, owner-only) -- they are never printed to logs. In production the
+// seed refuses to run without explicit env passwords, even with ALLOW_SEED=1.
+const generatedPasswords: Record<string, string> = {};
+function seedPassword(envName: string, label: string): string {
+  const fromEnv = process.env[envName];
+  if (fromEnv) {
+    if (fromEnv.length < 12) {
+      throw new Error(envName + " must be at least 12 characters long.");
+    }
+    return fromEnv;
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      envName + " must be set when seeding in production. Refusing to generate a password."
+    );
+  }
+  const pw = randomBytes(18).toString("base64url");
+  generatedPasswords[label] = pw;
+  return pw;
+}
+
 async function main() {
   if (process.env.NODE_ENV === "production" && !process.env.ALLOW_SEED) {
     throw new Error(
       "Refusing to seed in production. Set ALLOW_SEED=1 to override."
     );
   }
+
+  const adminPassword = seedPassword("SEED_ADMIN_PASSWORD", "admin");
+  const teacherPassword = seedPassword("SEED_TEACHER_PASSWORD", "teacher1..3");
+  const studentPassword = seedPassword("SEED_STUDENT_PASSWORD", "students");
 
   console.log("Seeding iSkillSpot…");
 
@@ -62,9 +94,10 @@ async function main() {
     data: {
       username: "admin",
       email: "admin@iskillspot.com",
-      passwordHash: await hash("Admin@123"),
+      passwordHash: await hash(adminPassword),
       role: "SUPER_ADMIN",
       status: "ACTIVE",
+      mustChangePassword: true,
     },
   });
 
@@ -81,9 +114,10 @@ async function main() {
       data: {
         username: `teacher${i + 1}`,
         email: `teacher${i + 1}@iskillspot.com`,
-        passwordHash: await hash("Teacher@123"),
+        passwordHash: await hash(teacherPassword),
         role: "TEACHER",
         status: "ACTIVE",
+        mustChangePassword: true,
       },
     });
     const teacher = await db.teacher.create({
@@ -161,10 +195,10 @@ async function main() {
       data: {
         username,
         email: `${username}@student.iskillspot.com`,
-        passwordHash: await hash("Student@123"),
+        passwordHash: await hash(studentPassword),
         role: "STUDENT",
         status: "ACTIVE",
-        mustChangePassword: i % 4 === 0,
+        mustChangePassword: true,
       },
     });
     const batch = batches[i % batches.length];
@@ -246,7 +280,11 @@ async function main() {
   });
 
   console.log("Seed complete.");
-  console.log("Login → admin / Admin@123 · teacher1 / Teacher@123 · <student username> / Student@123");
+  if (Object.keys(generatedPasswords).length > 0) {
+    writeFileSync(".seed-credentials.local.json", JSON.stringify(generatedPasswords, null, 2) + "\n", { mode: 0o600 });
+    console.log("Generated demo passwords were written to .seed-credentials.local.json (gitignored) - read them there, then delete the file.");
+  }
+  console.log("Demo usernames: admin, teacher1-3, and each student's generated username. All seeded accounts must change their password at first login.");
 }
 
 main()
