@@ -1,26 +1,8 @@
-import { SignJWT, jwtVerify } from "jose";
+import { SignJWT } from "jose";
 import { cookies } from "next/headers";
-import type { Role } from "@prisma/client";
-
-const COOKIE_NAME = "isp_session";
-const encoder = new TextEncoder();
-
-function getSecret() {
-  const secret = process.env.SESSION_SECRET;
-  if (!secret || secret.length < 32) {
-    throw new Error(
-      "SESSION_SECRET must be set and at least 32 characters long."
-    );
-  }
-  return encoder.encode(secret);
-}
-
-export interface SessionPayload {
-  userId: string;
-  role: Role;
-  username: string;
-  mustChangePassword: boolean;
-}
+import { db } from "@/lib/db";
+import { COOKIE_NAME, getSecret, verifyToken, type SessionPayload } from "./token";
+export type { SessionPayload };
 
 const DEFAULT_MAX_AGE = 60 * 60 * 8; // 8 hours
 const REMEMBER_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
@@ -50,17 +32,20 @@ export async function getSession(): Promise<SessionPayload | null> {
   const store = await cookies();
   const token = store.get(COOKIE_NAME)?.value;
   if (!token) return null;
-  try {
-    const { payload } = await jwtVerify(token, getSecret());
-    return {
-      userId: payload.userId as string,
-      role: payload.role as Role,
-      username: payload.username as string,
-      mustChangePassword: payload.mustChangePassword as boolean,
-    };
-  } catch {
-    return null;
-  }
+  let claims: SessionPayload;
+  try { claims = await verifyToken(token); } catch { return null; }
+  // Authorize from current DB state on every server read/action. Outages fail closed.
+  const user = await db.user.findUnique({ where: { id: claims.userId }, select: {
+    id: true, username: true, role: true, status: true, sessionVersion: true,
+    mustChangePassword: true, passwordExpiresAt: true,
+    teacher: { select: { status: true } }, student: { select: { status: true } },
+  } });
+  if (!user || user.status !== "ACTIVE" || user.role !== claims.role || user.sessionVersion !== claims.sessionVersion ||
+      (user.role === "TEACHER" && (!user.teacher || user.teacher.status !== "ACTIVE")) ||
+      (user.role === "STUDENT" && (!user.student || ["SUSPENDED", "DROPPED"].includes(user.student.status))) ||
+      (user.mustChangePassword && user.passwordExpiresAt && user.passwordExpiresAt.getTime() <= Date.now())) return null;
+  return { userId: user.id, username: user.username, role: user.role,
+    mustChangePassword: user.mustChangePassword, sessionVersion: user.sessionVersion };
 }
 
 export async function destroySession(): Promise<void> {

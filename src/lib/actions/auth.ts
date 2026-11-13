@@ -3,30 +3,18 @@
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { verifyPassword, hashPassword } from "@/lib/auth/password";
+import { verifyPassword, hashPassword, strongPassword } from "@/lib/auth/password";
 import { createSession, destroySession, getSession } from "@/lib/auth/session";
 import { homePathFor } from "@/lib/auth/permissions";
 import { logAction } from "@/lib/audit";
+import { rateLimited } from "@/lib/auth/throttle";
+import { randomBytes } from "node:crypto";
 
-// --- Simple in-memory rate limiter for auth (per-identifier) ---
-const attempts = new Map<string, { count: number; first: number }>();
-const WINDOW = 15 * 60 * 1000; // 15 min
-const MAX_ATTEMPTS = 8;
-
-function rateLimited(key: string): boolean {
-  const now = Date.now();
-  const rec = attempts.get(key);
-  if (!rec || now - rec.first > WINDOW) {
-    attempts.set(key, { count: 1, first: now });
-    return false;
-  }
-  rec.count += 1;
-  return rec.count > MAX_ATTEMPTS;
-}
+let dummyHash: Promise<string> | undefined;
 
 const loginSchema = z.object({
-  identifier: z.string().min(1, "Enter your username, email, or student ID"),
-  password: z.string().min(1, "Enter your password"),
+  identifier: z.string().trim().toLowerCase().min(1, "Enter your username, email, or student ID").max(254),
+  password: z.string().min(1, "Enter your password").max(1024),
   remember: z.boolean().optional(),
 });
 
@@ -46,37 +34,44 @@ export async function loginAction(
   }
   const { identifier, password, remember } = parsed.data;
 
-  if (rateLimited(identifier.toLowerCase())) {
+  if (await rateLimited(identifier)) {
     return { error: "Too many attempts. Please try again in a few minutes." };
   }
 
   // Identifier may be username, email, or student ID.
-  const user = await db.user.findFirst({
+  const matches = await db.user.findMany({
     where: {
       OR: [
-        { username: identifier },
-        { email: identifier },
-        { student: { studentId: identifier } },
+        { username: { equals: identifier, mode: "insensitive" } },
+        { email: { equals: identifier, mode: "insensitive" } },
+        { student: { studentId: { equals: identifier, mode: "insensitive" } } },
       ],
     },
+    include: { teacher: { select: { status: true } }, student: { select: { status: true } } },
+    take: 2,
   });
 
   const genericError = "Invalid credentials.";
-  if (!user) return { error: genericError };
-  if (user.status !== "ACTIVE") {
-    return { error: "Invalid credentials." };
-  }
-
-  const valid = await verifyPassword(password, user.passwordHash);
-  if (!valid) {
-    await logAction({ userId: user.id, action: "Login failed", entity: "User", entityId: user.id });
+  const user = matches.length === 1 ? matches[0] : null;
+  dummyHash ??= hashPassword(randomBytes(24).toString("base64url"));
+  const valid = await verifyPassword(password, user?.passwordHash ?? await dummyHash);
+  if (!user || !valid || user.status !== "ACTIVE" ||
+      (user.role === "TEACHER" && (!user.teacher || user.teacher.status !== "ACTIVE")) ||
+      (user.role === "STUDENT" && (!user.student || ["SUSPENDED", "DROPPED"].includes(user.student.status))) ||
+      (user.mustChangePassword && user.passwordExpiresAt && user.passwordExpiresAt.getTime() <= Date.now())) {
     return { error: genericError };
   }
 
-  await db.user.update({
-    where: { id: user.id },
-    data: { lastLogin: new Date() },
+  const current = await db.$transaction(async tx => {
+    await tx.$queryRaw`SELECT id FROM "User" WHERE id=${user.id} FOR UPDATE`;
+    const fresh = await tx.user.findUnique({ where: { id: user.id } });
+    if (!fresh || fresh.status !== "ACTIVE" || fresh.role !== user.role ||
+        fresh.sessionVersion !== user.sessionVersion || fresh.passwordHash !== user.passwordHash) return null;
+    await tx.user.update({ where: { id: user.id }, data: { lastLogin: new Date() } });
+    await logAction({ userId: user.id, action: "User logged in", entity: "User", entityId: user.id }, tx);
+    return fresh;
   });
+  if (!current) return { error: genericError };
 
   await createSession(
     {
@@ -84,11 +79,10 @@ export async function loginAction(
       role: user.role,
       username: user.username,
       mustChangePassword: user.mustChangePassword,
+      sessionVersion: current.sessionVersion,
     },
     Boolean(remember)
   );
-
-  await logAction({ userId: user.id, action: "User logged in", entity: "User", entityId: user.id });
 
   if (user.mustChangePassword) {
     redirect(user.role === "STUDENT" ? "/student/change-password" : "/change-password");
@@ -97,18 +91,17 @@ export async function loginAction(
 }
 
 export async function logoutAction(): Promise<void> {
-  const session = await getSession();
-  if (session) {
-    await logAction({ userId: session.userId, action: "User logged out", entity: "User", entityId: session.userId });
-  }
-  await destroySession();
+  try {
+    const session = await getSession();
+    if (session) await logAction({ userId: session.userId, action: "User logged out", entity: "User", entityId: session.userId });
+  } finally { await destroySession(); }
   redirect("/login");
 }
 
 const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1),
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    newPassword: strongPassword,
     confirmPassword: z.string().min(1),
   })
   .refine((d) => d.newPassword === d.confirmPassword, {
@@ -122,6 +115,7 @@ export async function changePasswordAction(
 ): Promise<ActionState> {
   const session = await getSession();
   if (!session) redirect("/login");
+  if (await rateLimited(`password-change:${session.userId}`)) return { error: "Too many attempts. Please try again in a few minutes." };
 
   const parsed = changePasswordSchema.safeParse({
     currentPassword: formData.get("currentPassword"),
@@ -133,23 +127,28 @@ export async function changePasswordAction(
   }
 
   const user = await db.user.findUnique({ where: { id: session.userId } });
-  if (!user) redirect("/login");
+  if (!user || user.status !== "ACTIVE" || user.sessionVersion !== session.sessionVersion || user.role !== session.role) redirect("/login");
 
   const valid = await verifyPassword(parsed.data.currentPassword, user.passwordHash);
   if (!valid) return { error: "Current password is incorrect." };
+  if (await verifyPassword(parsed.data.newPassword, user.passwordHash)) return { error: "Choose a different new password." };
 
   const newHash = await hashPassword(parsed.data.newPassword);
-  await db.user.update({
-    where: { id: user.id },
-    data: { passwordHash: newHash, mustChangePassword: false },
+  const updated = await db.$transaction(async tx => {
+    const result = await tx.user.updateMany({
+      where: { id: user.id, sessionVersion: session.sessionVersion, role: session.role, status: "ACTIVE" },
+      data: { passwordHash: newHash, mustChangePassword: false, passwordExpiresAt: null, sessionVersion: { increment: 1 } },
+    });
+    if (result.count !== 1) return null;
+    await logAction({ userId: user.id, action: "Password changed", entity: "User", entityId: user.id }, tx);
+    return tx.user.findUnique({ where: { id: user.id } });
   });
+  if (!updated) { await destroySession(); redirect("/login"); }
 
   await createSession(
-    { userId: user.id, role: user.role, username: user.username, mustChangePassword: false },
+    { userId: user.id, role: user.role, username: user.username, mustChangePassword: false, sessionVersion: updated.sessionVersion },
     false
   );
-
-  await logAction({ userId: user.id, action: "Password changed", entity: "User", entityId: user.id });
 
   redirect(homePathFor(user.role));
 }

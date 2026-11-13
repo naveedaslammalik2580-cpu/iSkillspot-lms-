@@ -60,6 +60,83 @@ export async function getAllFees(filters?: {
   }));
 }
 
+/**
+ * Paginated fee listing, same shape as listStudents/listCourses/listBatches/
+ * listTeachers — page/pageSize in, { rows, total, page, pageSize, pages }
+ * out. For the admin fee list specifically. `getAllFees` above stays
+ * unpaginated and untouched — it also backs getFeesForStudent(), a single
+ * student's own (small, unbounded-by-need) fee list, which must not be
+ * capped to a page size. Financial totals shown on the admin page come from
+ * getFeeSummary() below, which already aggregates in Postgres and is
+ * completely independent of this row list — pagination here cannot affect
+ * those totals since they were never computed from the row array.
+ */
+export async function listFees(filters?: {
+  status?: FeeStatus;
+  courseId?: string;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<{
+  rows: FeeListRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pages: number;
+}> {
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 20;
+
+  const where = {
+    status: filters?.status,
+    courseId: filters?.courseId,
+    ...(filters?.search
+      ? {
+          student: {
+            OR: [
+              { fullName: { contains: filters.search, mode: "insensitive" as const } },
+              { studentId: { contains: filters.search, mode: "insensitive" as const } },
+            ],
+          },
+        }
+      : {}),
+  };
+
+  const [fees, total] = await Promise.all([
+    db.fee.findMany({
+      where,
+      include: {
+        student: { select: { id: true, fullName: true, studentId: true } },
+        course: { select: { id: true, title: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    db.fee.count({ where }),
+  ]);
+
+  return {
+    rows: fees.map((f) => ({
+      id: f.id,
+      studentId: f.student.id,
+      studentName: f.student.fullName,
+      studentCode: f.student.studentId,
+      courseId: f.course.id,
+      courseName: f.course.title,
+      finalFee: f.finalFee,
+      amountPaid: f.amountPaid,
+      remainingBalance: f.remainingBalance,
+      status: f.status,
+      dueDate: f.dueDate,
+    })),
+    total,
+    page,
+    pageSize,
+    pages: Math.ceil(total / pageSize),
+  };
+}
+
 export interface FeeSummary {
   totalOutstanding: number;
   paidThisMonth: number;

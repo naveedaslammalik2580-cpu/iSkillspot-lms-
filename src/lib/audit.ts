@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
+import type { Prisma } from "@prisma/client";
 
 export async function logAction(params: {
   userId?: string | null;
@@ -7,7 +8,7 @@ export async function logAction(params: {
   entity?: string;
   entityId?: string;
   metadata?: Record<string, unknown>;
-}): Promise<void> {
+}, client: Pick<Prisma.TransactionClient, "auditLog"> = db): Promise<void> {
   let ip: string | undefined;
   try {
     const h = await headers();
@@ -19,7 +20,7 @@ export async function logAction(params: {
     ip = undefined;
   }
 
-  await db.auditLog.create({
+  await client.auditLog.create({
     data: {
       userId: params.userId ?? undefined,
       action: params.action,

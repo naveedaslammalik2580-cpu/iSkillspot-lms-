@@ -5,20 +5,19 @@ import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
-import { hashPassword, generateTempPassword } from "@/lib/auth/password";
+import { hashPassword, generateTempPassword, temporaryPasswordExpiry } from "@/lib/auth/password";
 import { logAction } from "@/lib/audit";
+import { emailSchema, usernameSchema, assertIdentityAvailable } from "@/lib/auth/identity";
+import { authorizeActor, manageableTarget } from "@/lib/auth/account-policy";
+import { resetAccountPassword, setAccountActive } from "@/lib/auth/accounts";
 
 // Schema note: Teacher has no employeeId field (spec allowed for this — "if
 // present"). It isn't, so this module doesn't expose one.
 
 const createTeacherSchema = z.object({
   fullName: z.string().min(2, "Full name is required").max(200),
-  email: z.string().email("Valid email required"),
-  username: z
-    .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(50)
-    .regex(/^[a-zA-Z0-9._-]+$/, "Username may only contain letters, numbers, dots, underscores, and hyphens"),
+  email: emailSchema,
+  username: usernameSchema,
   phone: z.string().optional(),
   specialization: z.string().max(500).optional(),
 });
@@ -55,6 +54,8 @@ export async function createTeacher(
 
   try {
     const teacher = await db.$transaction(async (tx) => {
+      await authorizeActor(tx, session, "teacher.manage");
+      await assertIdentityAvailable(tx, d.email, d.username);
       const user = await tx.user.create({
         data: {
           username: d.username,
@@ -63,9 +64,10 @@ export async function createTeacher(
           role: "TEACHER",
           status: "ACTIVE",
           mustChangePassword: true,
+          passwordExpiresAt: temporaryPasswordExpiry(),
         },
       });
-      return tx.teacher.create({
+      const profile = await tx.teacher.create({
         data: {
           userId: user.id,
           fullName: d.fullName,
@@ -75,14 +77,9 @@ export async function createTeacher(
           status: "ACTIVE",
         },
       });
-    });
-
-    await logAction({
-      userId: session.userId,
-      action: "Created teacher",
-      entity: "Teacher",
-      entityId: teacher.id,
-      metadata: { fullName: d.fullName, username: d.username },
+      await logAction({ userId: session.userId, action: "Created teacher", entity: "Teacher", entityId: profile.id,
+        metadata: { fullName: d.fullName, username: d.username } }, tx);
+      return profile;
     });
 
     revalidatePath("/admin/teachers");
@@ -119,8 +116,12 @@ export async function updateTeacher(
   }
   const d = parsed.data;
 
-  const existing = await db.teacher.findUnique({ where: { id: d.id } });
+  await db.$transaction(async tx => {
+  await authorizeActor(tx, session, "teacher.manage");
+  const existing = await tx.teacher.findUnique({ where: { id: d.id } });
   if (!existing) return { ok: false, error: "Teacher not found." };
+  const target = await manageableTarget(tx, session, existing.userId);
+  if (target.role !== "TEACHER") throw new Error("Invalid linked account role");
 
   const nextPhone = d.phone || null;
   const nextSpecialization = d.specialization || null;
@@ -131,7 +132,7 @@ export async function updateTeacher(
   if (existing.specialization !== nextSpecialization)
     changes.specialization = { old: existing.specialization, new: nextSpecialization };
 
-  await db.teacher.update({
+  await tx.teacher.update({
     where: { id: d.id },
     data: { fullName: d.fullName, phone: nextPhone, specialization: nextSpecialization },
   });
@@ -143,8 +144,9 @@ export async function updateTeacher(
       entity: "Teacher",
       entityId: d.id,
       metadata: { changes },
-    });
+    }, tx);
   }
+  });
 
   revalidatePath("/admin/teachers");
   revalidatePath(`/admin/teachers/${d.id}`);
@@ -174,17 +176,8 @@ export async function deactivateTeacher(
     };
   }
 
-  await db.$transaction([
-    db.teacher.update({ where: { id }, data: { status: "INACTIVE" } }),
-    db.user.update({ where: { id: existing.userId }, data: { status: "INACTIVE" } }),
-  ]);
-
-  await logAction({
-    userId: session.userId,
-    action: "Deactivated teacher",
-    entity: "Teacher",
-    entityId: id,
-  });
+  try { await setAccountActive(session, existing.userId, false, "TEACHER"); }
+  catch { return { ok: false, error: "Unable to deactivate this account. Check its role and ongoing batches." }; }
 
   revalidatePath("/admin/teachers");
   revalidatePath(`/admin/teachers/${id}`);
@@ -199,20 +192,8 @@ export async function resetTeacherPassword(
   const existing = await db.teacher.findUnique({ where: { id } });
   if (!existing) return { ok: false, error: "Teacher not found." };
 
-  const tempPassword = generateTempPassword();
-  const hash = await hashPassword(tempPassword);
-  await db.user.update({
-    where: { id: existing.userId },
-    data: { passwordHash: hash, mustChangePassword: true },
-  });
-
-  // Never log the password itself — only that a reset happened.
-  await logAction({
-    userId: session.userId,
-    action: "Reset teacher password",
-    entity: "Teacher",
-    entityId: id,
-  });
-
-  return { ok: true, tempPassword };
+  try {
+    const result = await resetAccountPassword(session, existing.userId, "TEACHER");
+    return { ok: true, tempPassword: result.tempPassword };
+  } catch { return { ok: false, error: "Unable to reset this account password." }; }
 }

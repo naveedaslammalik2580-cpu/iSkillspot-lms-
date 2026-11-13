@@ -16,6 +16,8 @@ model User {
   role               Role
   status             AccountStatus  @default(ACTIVE)
   mustChangePassword Boolean        @default(false)
+  sessionVersion     Int            @default(0)
+  passwordExpiresAt  DateTime?
   lastLogin          DateTime?
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
@@ -27,6 +29,22 @@ model User {
 
   @@index([role])
   @@index([status])
+}
+
+// HMAC keys contain no plaintext login identifiers. Shared across app instances.
+model AuthThrottle {
+  key       String   @id
+  count     Int
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+// Durable marker, retained independently of User records.
+model AccountBootstrap {
+  id        String   @id
+  userId    String   @unique
+  createdAt DateTime @default(now())
 }
 
 model Student {

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import type { PaymentMethod } from "@prisma/client";
+import type { PaymentMethod, Prisma } from "@prisma/client";
 
 export interface PaymentRow {
   id: string;
@@ -67,48 +67,102 @@ export interface PaymentListRow extends PaymentRow {
   courseName: string;
 }
 
-/** All payments across the institute, for the daily reconciliation list. */
-export async function getAllPayments(filters?: {
+export interface PaymentListFilters {
   from?: string;
   to?: string;
   method?: PaymentMethod;
   search?: string;
-}): Promise<PaymentListRow[]> {
-  const payments = await db.payment.findMany({
-    where: {
-      paymentMethod: filters?.method,
-      ...(filters?.from || filters?.to
-        ? {
-            paymentDate: {
-              ...(filters?.from ? { gte: new Date(filters.from) } : {}),
-              ...(filters?.to ? { lte: new Date(`${filters.to}T23:59:59`) } : {}),
-            },
-          }
-        : {}),
-      ...(filters?.search
-        ? {
-            student: {
-              OR: [
-                { fullName: { contains: filters.search, mode: "insensitive" as const } },
-                { studentId: { contains: filters.search, mode: "insensitive" as const } },
-              ],
-            },
-          }
-        : {}),
-    },
-    include: {
-      student: { select: { fullName: true, studentId: true } },
-      fee: { include: { course: { select: { title: true } } } },
-    },
-    orderBy: { paymentDate: "desc" },
-  });
+}
 
-  return payments.map((p) => ({
-    ...toRow(p),
-    studentName: p.student.fullName,
-    studentCode: p.student.studentId,
-    courseName: p.fee.course.title,
-  }));
+/**
+ * Shared where-clause builder for the admin payments list and its total —
+ * kept as one function so the two can never drift out of sync (the total
+ * must reflect the same filtered set as the rows, just not the same page
+ * of it).
+ */
+function buildPaymentsWhere(filters?: PaymentListFilters): Prisma.PaymentWhereInput {
+  return {
+    paymentMethod: filters?.method,
+    ...(filters?.from || filters?.to
+      ? {
+          paymentDate: {
+            ...(filters?.from ? { gte: new Date(filters.from) } : {}),
+            ...(filters?.to ? { lte: new Date(`${filters.to}T23:59:59`) } : {}),
+          },
+        }
+      : {}),
+    ...(filters?.search
+      ? {
+          student: {
+            OR: [
+              { fullName: { contains: filters.search, mode: "insensitive" as const } },
+              { studentId: { contains: filters.search, mode: "insensitive" as const } },
+            ],
+          },
+        }
+      : {}),
+  };
+}
+
+/**
+ * Paginated payment listing, same shape as listStudents/listCourses/
+ * listBatches/listTeachers/listFees — page/pageSize in,
+ * { rows, total, page, pageSize, pages } out. For the daily reconciliation
+ * list. Table is empty in current seed data, so this is verified by build/
+ * type-check correctness rather than measured row-count performance.
+ */
+export async function listPayments(filters?: PaymentListFilters & { page?: number; pageSize?: number }): Promise<{
+  rows: PaymentListRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pages: number;
+}> {
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 20;
+  const where = buildPaymentsWhere(filters);
+
+  const [payments, total] = await Promise.all([
+    db.payment.findMany({
+      where,
+      include: {
+        student: { select: { fullName: true, studentId: true } },
+        fee: { include: { course: { select: { title: true } } } },
+      },
+      orderBy: { paymentDate: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    db.payment.count({ where }),
+  ]);
+
+  return {
+    rows: payments.map((p) => ({
+      ...toRow(p),
+      studentName: p.student.fullName,
+      studentCode: p.student.studentId,
+      courseName: p.fee.course.title,
+    })),
+    total,
+    page,
+    pageSize,
+    pages: Math.ceil(total / pageSize),
+  };
+}
+
+/**
+ * Sum of active (non-voided) payment amounts matching the same filters as
+ * listPayments — computed in Postgres, independent of pagination. Was
+ * previously `payments.reduce((sum, p) => sum + (p.voidedAt ? 0 : p.amount), 0)`
+ * over the full (unpaginated) row array; paginating the rows without this
+ * would have silently truncated the displayed total to whatever fit on one
+ * page. Same filtered set as listPayments, by construction (shared
+ * buildPaymentsWhere), just with `voidedAt: null` added.
+ */
+export async function getPaymentsTotal(filters?: PaymentListFilters): Promise<number> {
+  const where = { ...buildPaymentsWhere(filters), voidedAt: null };
+  const result = await db.payment.aggregate({ where, _sum: { amount: true } });
+  return result._sum.amount ?? 0;
 }
 
 export interface PaymentDetail extends PaymentRow {

@@ -8,6 +8,7 @@ import type { Role } from "@prisma/client";
 export type Permission =
   // Admin management
   | "admin.manage"
+  | "account.manage"
   | "settings.manage"
   | "audit.view"
   // People
@@ -44,6 +45,7 @@ export type Permission =
 
 const SUPER_ADMIN: Permission[] = [
   "admin.manage",
+  "account.manage",
   "settings.manage",
   "audit.view",
   "student.create",
@@ -70,6 +72,7 @@ const SUPER_ADMIN: Permission[] = [
 ];
 
 const ADMIN: Permission[] = [
+  "account.manage",
   "student.create",
   "student.edit",
   "student.delete",

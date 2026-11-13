@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/guards";
-import { getAllPayments } from "@/lib/data/payments";
+import { listPayments, getPaymentsTotal } from "@/lib/data/payments";
 import { getSetting } from "@/lib/settings";
 import { PageHeader, EmptyState } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
@@ -25,22 +25,29 @@ export default async function AdminPaymentsPage({
 }) {
   await requirePermission("payment.manage");
   const sp = await searchParams;
+  const page = Number(sp.page ?? "1");
+  const filters = {
+    from: sp.from,
+    to: sp.to,
+    method: sp.method as PaymentMethod | undefined,
+    search: sp.q,
+  };
 
-  const [payments, currency] = await Promise.all([
-    getAllPayments({
-      from: sp.from,
-      to: sp.to,
-      method: sp.method as PaymentMethod | undefined,
-      search: sp.q,
-    }),
+  // `total` (the "collected (active)" figure) is computed in Postgres via
+  // getPaymentsTotal — same filters as the row list, independent of which
+  // page is being viewed. Previously computed with
+  // `payments.reduce((sum, p) => sum + (p.voidedAt ? 0 : p.amount), 0)`
+  // over the full unpaginated array; doing that over just result.rows now
+  // would have silently shown only the current page's collected total.
+  const [result, collectedTotal, currency] = await Promise.all([
+    listPayments({ ...filters, page }),
+    getPaymentsTotal(filters),
     getSetting("currency", "PKR"),
   ]);
 
-  const total = payments.reduce((sum, p) => sum + (p.voidedAt ? 0 : p.amount), 0);
-
   return (
     <>
-      <PageHeader title="Payments" description={`${payments.length} total · ${formatCurrency(total, currency)} collected (active)`} />
+      <PageHeader title="Payments" description={`${result.total} total · ${formatCurrency(collectedTotal, currency)} collected (active)`} />
 
       <Card className="mb-4 p-4">
         <form className="flex flex-wrap items-end gap-3" method="GET">
@@ -72,7 +79,7 @@ export default async function AdminPaymentsPage({
         </form>
       </Card>
 
-      {payments.length === 0 ? (
+      {result.rows.length === 0 ? (
         <EmptyState title="No payments found." hint="Try different filters, or record a payment from a fee's detail page." />
       ) : (
         <Card className="overflow-hidden">
@@ -90,7 +97,7 @@ export default async function AdminPaymentsPage({
                 </tr>
               </thead>
               <tbody>
-                {payments.map((p) => (
+                {result.rows.map((p) => (
                   <tr
                     key={p.id}
                     className={`border-b border-border last:border-0 hover:bg-muted/40 ${p.voidedAt ? "text-muted-foreground line-through" : ""}`}
@@ -115,6 +122,20 @@ export default async function AdminPaymentsPage({
             </table>
           </div>
         </Card>
+      )}
+
+      {result.pages > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {Array.from({ length: result.pages }, (_, i) => i + 1).map((p) => {
+            const params = new URLSearchParams(sp as Record<string, string>);
+            params.set("page", String(p));
+            return (
+              <Button key={p} asChild variant={p === page ? "default" : "outline"} size="sm">
+                <Link href={`/admin/payments?${params.toString()}`}>{p}</Link>
+              </Button>
+            );
+          })}
+        </div>
       )}
     </>
   );

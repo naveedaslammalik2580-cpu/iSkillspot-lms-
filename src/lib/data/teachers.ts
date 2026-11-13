@@ -12,39 +12,73 @@ export interface TeacherListRow {
   studentCount: number;
 }
 
-export async function getAllTeachers(filters?: {
+/**
+ * Paginated teacher listing, same shape as listStudents/listCourses/
+ * listBatches — page/pageSize in, { rows, total, page, pageSize, pages }
+ * out. Previously `getAllTeachers` returned every matching row with no
+ * skip/take (flagged in the performance audit as unbounded, though at
+ * current data volume it wasn't the actual bottleneck — Student 360 was;
+ * this closes it out now that that's done). Sorting/filtering (status,
+ * name/email search) and the single call site
+ * (src/app/admin/teachers/page.tsx) are unchanged.
+ */
+export async function listTeachers(filters?: {
   status?: AccountStatus;
   search?: string;
-}): Promise<TeacherListRow[]> {
-  const teachers = await db.teacher.findMany({
-    where: {
-      status: filters?.status,
-      ...(filters?.search
-        ? {
-            OR: [
-              { fullName: { contains: filters.search, mode: "insensitive" as const } },
-              { email: { contains: filters.search, mode: "insensitive" as const } },
-            ],
-          }
-        : {}),
-    },
-    include: {
-      _count: { select: { batches: true } },
-      batches: { select: { _count: { select: { enrollments: true } } } },
-    },
-    orderBy: { fullName: "asc" },
-  });
+  page?: number;
+  pageSize?: number;
+}): Promise<{
+  rows: TeacherListRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pages: number;
+}> {
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 20;
 
-  return teachers.map((t) => ({
-    id: t.id,
-    fullName: t.fullName,
-    email: t.email,
-    phone: t.phone,
-    specialization: t.specialization,
-    status: t.status,
-    batchCount: t._count.batches,
-    studentCount: t.batches.reduce((sum, b) => sum + b._count.enrollments, 0),
-  }));
+  const where = {
+    status: filters?.status,
+    ...(filters?.search
+      ? {
+          OR: [
+            { fullName: { contains: filters.search, mode: "insensitive" as const } },
+            { email: { contains: filters.search, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+
+  const [teachers, total] = await Promise.all([
+    db.teacher.findMany({
+      where,
+      include: {
+        _count: { select: { batches: true } },
+        batches: { select: { _count: { select: { enrollments: true } } } },
+      },
+      orderBy: { fullName: "asc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    db.teacher.count({ where }),
+  ]);
+
+  return {
+    rows: teachers.map((t) => ({
+      id: t.id,
+      fullName: t.fullName,
+      email: t.email,
+      phone: t.phone,
+      specialization: t.specialization,
+      status: t.status,
+      batchCount: t._count.batches,
+      studentCount: t.batches.reduce((sum, b) => sum + b._count.enrollments, 0),
+    })),
+    total,
+    page,
+    pageSize,
+    pages: Math.ceil(total / pageSize),
+  };
 }
 
 export interface TeacherBatchRow {

@@ -4,18 +4,21 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
-import { hashPassword, generateTempPassword } from "@/lib/auth/password";
+import { hashPassword, generateTempPassword, temporaryPasswordExpiry } from "@/lib/auth/password";
 import {
   generateStudentId,
   generateUsername,
 } from "@/lib/ids";
 import { logAction } from "@/lib/audit";
 import { getSetting } from "@/lib/settings";
+import { emailSchema, assertIdentityAvailable } from "@/lib/auth/identity";
+import { authorizeActor, manageableTarget } from "@/lib/auth/account-policy";
+import { resetAccountPassword, setAccountActive } from "@/lib/auth/accounts";
 
 const createStudentSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   fatherName: z.string().optional(),
-  email: z.string().email("Valid email required"),
+  email: emailSchema,
   phone: z.string().optional(),
   whatsapp: z.string().optional(),
   address: z.string().optional(),
@@ -63,8 +66,6 @@ export async function createStudentAction(
     return { ok: false, error: "A user with this email already exists." };
   }
 
-  const studentId = await generateStudentId();
-  const username = await generateUsername(d.fullName);
   const tempPassword = generateTempPassword();
   const passwordHash = await hashPassword(tempPassword);
 
@@ -74,6 +75,11 @@ export async function createStudentAction(
 
   try {
     const student = await db.$transaction(async (tx) => {
+      await authorizeActor(tx, session, "student.create");
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(752091, 2)`;
+      const studentId = await generateStudentId(tx);
+      const username = await generateUsername(d.fullName, tx);
+      await assertIdentityAvailable(tx, d.email, username);
       const user = await tx.user.create({
         data: {
           username,
@@ -82,6 +88,7 @@ export async function createStudentAction(
           role: "STUDENT",
           status: "ACTIVE",
           mustChangePassword: true,
+          passwordExpiresAt: temporaryPasswordExpiry(),
         },
       });
 
@@ -126,19 +133,13 @@ export async function createStudentAction(
         });
       }
 
-      return student;
-    });
-
-    await logAction({
-      userId: session.userId,
-      action: "Created student",
-      entity: "Student",
-      entityId: student.id,
-      metadata: { studentId, username },
+      await logAction({ userId: session.userId, action: "Created student", entity: "Student", entityId: student.id,
+        metadata: { studentId, username } }, tx);
+      return { ...student, username };
     });
 
     revalidatePath("/admin/students");
-    return { ok: true, id: student.id, studentId, username, tempPassword };
+    return { ok: true, id: student.id, studentId: student.studentId, username: student.username, tempPassword };
   } catch (e) {
     return { ok: false, error: "Failed to create student. Please try again." };
   }
@@ -164,7 +165,13 @@ export async function updateStudentAction(formData: FormData) {
   }
   const d = parsed.data;
 
-  await db.student.update({
+  await db.$transaction(async tx => {
+  await authorizeActor(tx, session, "student.edit");
+  const profile = await tx.student.findUnique({ where: { id: d.id } });
+  if (!profile) throw new Error("Student not found");
+  const target = await manageableTarget(tx, session, profile.userId);
+  if (target.role !== "STUDENT") throw new Error("Invalid linked account role");
+  await tx.student.update({
     where: { id: d.id },
     data: {
       fullName: d.fullName,
@@ -180,13 +187,14 @@ export async function updateStudentAction(formData: FormData) {
 
   // Keep account status in sync when suspended.
   if (d.status === "SUSPENDED" || d.status === "DROPPED") {
-    const student = await db.student.findUnique({ where: { id: d.id } });
+    const student = await tx.student.findUnique({ where: { id: d.id } });
     if (student) {
-      await db.user.update({ where: { id: student.userId }, data: { status: "SUSPENDED" } });
+      await tx.user.update({ where: { id: student.userId }, data: { status: "SUSPENDED", sessionVersion: { increment: 1 } } });
     }
   }
 
-  await logAction({ userId: session.userId, action: "Updated student", entity: "Student", entityId: d.id });
+  await logAction({ userId: session.userId, action: "Updated student", entity: "Student", entityId: d.id }, tx);
+  });
   revalidatePath(`/admin/students/${d.id}`);
   revalidatePath("/admin/students");
   return { ok: true };
@@ -197,31 +205,18 @@ export async function resetStudentPasswordAction(studentId: string) {
   const student = await db.student.findUnique({ where: { id: studentId } });
   if (!student) return { ok: false, error: "Student not found." };
 
-  const temp = generateTempPassword();
-  const hash = await hashPassword(temp);
-  await db.user.update({
-    where: { id: student.userId },
-    data: { passwordHash: hash, mustChangePassword: true },
-  });
-
-  await logAction({ userId: session.userId, action: "Reset password", entity: "Student", entityId: studentId });
-  return { ok: true, tempPassword: temp };
+  try {
+    const result = await resetAccountPassword(session, student.userId, "STUDENT");
+    return { ok: true, tempPassword: result.tempPassword };
+  } catch { return { ok: false, error: "Unable to reset this account password." }; }
 }
 
 export async function toggleStudentAccountAction(studentId: string, activate: boolean) {
   const session = await requirePermission("student.edit");
   const student = await db.student.findUnique({ where: { id: studentId } });
   if (!student) return { ok: false, error: "Student not found." };
-  await db.user.update({
-    where: { id: student.userId },
-    data: { status: activate ? "ACTIVE" : "INACTIVE" },
-  });
-  await logAction({
-    userId: session.userId,
-    action: activate ? "Activated student account" : "Deactivated student account",
-    entity: "Student",
-    entityId: studentId,
-  });
+  try { await setAccountActive(session, student.userId, activate, "STUDENT"); }
+  catch { return { ok: false, error: "Unable to change account status. Check its role and academic status." }; }
   revalidatePath(`/admin/students/${studentId}`);
   return { ok: true };
 }

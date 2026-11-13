@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/guards";
-import { getAllFees, getFeeSummary } from "@/lib/data/fees";
+import { listFees, getFeeSummary } from "@/lib/data/fees";
 import { getCoursePicker } from "@/lib/data/courses";
 import { getSetting } from "@/lib/settings";
 import { PageHeader, EmptyState } from "@/components/page-header";
@@ -19,12 +19,14 @@ export default async function AdminFeesPage({
 }) {
   await requirePermission("fee.manage");
   const sp = await searchParams;
+  const page = Number(sp.page ?? "1");
 
-  const [fees, summary, courses, currency] = await Promise.all([
-    getAllFees({
+  const [result, summary, courses, currency] = await Promise.all([
+    listFees({
       status: sp.status as FeeStatus | undefined,
       courseId: sp.courseId,
       search: sp.q,
+      page,
     }),
     getFeeSummary(),
     getCoursePicker(),
@@ -35,7 +37,7 @@ export default async function AdminFeesPage({
     <>
       <PageHeader
         title="Fees"
-        description={`${fees.length} total`}
+        description={`${result.total} total`}
         action={
           <Button asChild>
             <Link href="/admin/fees/new">
@@ -96,7 +98,7 @@ export default async function AdminFeesPage({
         </form>
       </Card>
 
-      {fees.length === 0 ? (
+      {result.rows.length === 0 ? (
         <EmptyState title="No fees found." hint="Try different filters, or create the first fee record." />
       ) : (
         <Card className="overflow-hidden">
@@ -114,7 +116,7 @@ export default async function AdminFeesPage({
                 </tr>
               </thead>
               <tbody>
-                {fees.map((f) => (
+                {result.rows.map((f) => (
                   <tr key={f.id} className="border-b border-border last:border-0 hover:bg-muted/40">
                     <td className="px-4 py-3">
                       <Link href={`/admin/fees/${f.id}`} className="font-medium text-primary hover:underline">
@@ -134,6 +136,20 @@ export default async function AdminFeesPage({
             </table>
           </div>
         </Card>
+      )}
+
+      {result.pages > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {Array.from({ length: result.pages }, (_, i) => i + 1).map((p) => {
+            const params = new URLSearchParams(sp as Record<string, string>);
+            params.set("page", String(p));
+            return (
+              <Button key={p} asChild variant={p === page ? "default" : "outline"} size="sm">
+                <Link href={`/admin/fees?${params.toString()}`}>{p}</Link>
+              </Button>
+            );
+          })}
+        </div>
       )}
     </>
   );

@@ -1,17 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { jwtVerify } from "jose";
-
-const COOKIE_NAME = "isp_session";
-
-function secret() {
-  const s = process.env.SESSION_SECRET;
-  if (!s || s.length < 32) {
-    throw new Error(
-      "SESSION_SECRET must be set and at least 32 characters long."
-    );
-  }
-  return new TextEncoder().encode(s);
-}
+import { COOKIE_NAME, verifyToken } from "@/lib/auth/token";
 
 // Route prefixes and the roles allowed to reach them.
 const RULES: { prefix: string; roles: string[] }[] = [
@@ -32,7 +20,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    const { payload } = await jwtVerify(token, secret());
+    const payload = await verifyToken(token);
     const role = payload.role as string;
 
     if (!rule.roles.includes(role)) {

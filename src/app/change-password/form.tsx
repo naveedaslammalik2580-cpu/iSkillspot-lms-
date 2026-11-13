@@ -22,7 +22,8 @@ export function ChangePasswordForm({ forced }: { forced?: boolean }) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="newPassword">New password</Label>
-          <Input id="newPassword" name="newPassword" type="password" required />
+          <Input id="newPassword" name="newPassword" type="password" autoComplete="new-password" minLength={12} maxLength={72} required />
+          <p className="text-xs text-muted-foreground">Use at least 12 characters, including uppercase, lowercase, a number and a symbol. Maximum 72 UTF-8 bytes.</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="confirmPassword">Confirm new password</Label>
