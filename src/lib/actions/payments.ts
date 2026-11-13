@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
+import { notifyStudent } from "@/lib/notifications";
 import { recomputeFeeStatus } from "@/lib/actions/fees";
 
 const PAYMENT_METHODS = ["CASH", "BANK_TRANSFER", "CHEQUE", "CARD", "ONLINE", "OTHER"] as const;
@@ -77,6 +78,14 @@ export async function recordPayment(
     revalidatePath("/admin/payments");
     revalidatePath("/admin/fees");
     revalidatePath(`/admin/fees/${d.feeId}`);
+    await notifyStudent(fee.studentId, {
+      type: "FEE",
+      title: "Payment recorded",
+      message: "A payment has been recorded on your account. Open Fees to see your updated statement.",
+      linkUrl: "/student/fees",
+      dedupeKey: `payment:${payment.id}`,
+    });
+
     return { ok: true, paymentId: payment.id };
   } catch {
     return { ok: false, error: "Failed to record payment. Please try again." };
@@ -122,6 +131,17 @@ export async function voidPayment(
     entityId: d.id,
     metadata: { feeId: existing.feeId, amount: existing.amount, reason: d.reason },
   });
+
+  const voidedFee = await db.fee.findUnique({ where: { id: existing.feeId }, select: { studentId: true } });
+  if (voidedFee) {
+    await notifyStudent(voidedFee.studentId, {
+      type: "FEE",
+      title: "Payment update",
+      message: "A payment record on your account was updated. Open Fees to see your current statement.",
+      linkUrl: "/student/fees",
+      dedupeKey: `payment-voided:${d.id}`,
+    });
+  }
 
   revalidatePath("/admin/payments");
   revalidatePath("/admin/fees");

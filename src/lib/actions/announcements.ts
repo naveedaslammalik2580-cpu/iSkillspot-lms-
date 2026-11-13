@@ -6,6 +6,7 @@ import type { Role } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
+import { notifyAnnouncementPublished } from "@/lib/notifications";
 
 // "announcement.manage" isn't in the permission matrix (only sendAll/sendBatch,
 // neither of which map cleanly to "can administer any announcement"), so this
@@ -89,7 +90,7 @@ export async function createAnnouncement(
   });
 
   if (publishNow) {
-    // TODO: fire notification when notifications module lands
+    await notifyAnnouncementPublished(announcement);
   }
 
   await logAction({
@@ -212,7 +213,7 @@ export async function publishAnnouncement(
     data: { status: "PUBLISHED", publishedAt: new Date() },
   });
 
-  // TODO: fire notification when notifications module lands
+  await notifyAnnouncementPublished(existing);
 
   await logAction({
     userId: session.userId,

@@ -6,6 +6,7 @@ import type { FeeStatus, Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
+import { notifyStudent } from "@/lib/notifications";
 
 export type FeeResult = { ok: true; feeId: string } | { ok: false; error: string };
 
@@ -74,6 +75,14 @@ export async function createFee(
       entity: "Fee",
       entityId: fee.id,
       metadata: { studentId: d.studentId, courseId: d.courseId, finalFee },
+    });
+
+    await notifyStudent(fee.studentId, {
+      type: "FEE",
+      title: "New fee assigned",
+      message: "A new fee has been added to your account. Open Fees to see the details.",
+      linkUrl: "/student/fees",
+      dedupeKey: `fee-created:${fee.id}`,
     });
 
     revalidatePath("/admin/fees");
@@ -145,6 +154,17 @@ export async function updateFee(
       entityId: d.id,
       metadata: { changes },
     });
+
+    const updated = await db.fee.findUnique({ where: { id: d.id }, select: { studentId: true, updatedAt: true } });
+    if (updated) {
+      await notifyStudent(updated.studentId, {
+        type: "FEE",
+        title: "Fee updated",
+        message: "One of your fees has been updated. Open Fees to see the details.",
+        linkUrl: "/student/fees",
+        dedupeKey: `fee-updated:${d.id}:${updated.updatedAt.toISOString()}`,
+      });
+    }
   }
 
   revalidatePath("/admin/fees");
