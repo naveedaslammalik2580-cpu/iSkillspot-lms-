@@ -4,3 +4,4 @@ node_modules
 *.log
 .claude/
 *.tsbuildinfo
+.seed-credentials.local.json
