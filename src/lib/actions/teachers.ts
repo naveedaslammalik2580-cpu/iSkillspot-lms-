@@ -1,1 +1,219 @@
-InVzZSBzZXJ2ZXIiOwoKaW1wb3J0IHsgeiB9IGZyb20gInpvZCI7CmltcG9ydCB7IFByaXNtYSB9IGZyb20gIkBwcmlzbWEvY2xpZW50IjsKaW1wb3J0IHsgcmV2YWxpZGF0ZVBhdGggfSBmcm9tICJuZXh0L2NhY2hlIjsKaW1wb3J0IHsgZGIgfSBmcm9tICJAL2xpYi9kYiI7CmltcG9ydCB7IHJlcXVpcmVQZXJtaXNzaW9uIH0gZnJvbSAiQC9saWIvYXV0aC9ndWFyZHMiOwppbXBvcnQgeyBoYXNoUGFzc3dvcmQsIGdlbmVyYXRlVGVtcFBhc3N3b3JkLCB0ZW1wb3JhcnlQYXNzd29yZEV4cGlyeSB9IGZyb20gIkAvbGliL2F1dGgvcGFzc3dvcmQiOwppbXBvcnQgeyBsb2dBY3Rpb24gfSBmcm9tICJAL2xpYi9hdWRpdCI7CmltcG9ydCB7IGVtYWlsU2NoZW1hLCB1c2VybmFtZVNjaGVtYSwgYXNzZXJ0SWRlbnRpdHlBdmFpbGFibGUgfSBmcm9tICJAL2xpYi9hdXRoL2lkZW50aXR5IjsKaW1wb3J0IHsgYXV0aG9yaXplQWN0b3IsIG1hbmFnZWFibGVUYXJnZXQgfSBmcm9tICJAL2xpYi9hdXRoL2FjY291bnQtcG9saWN5IjsKaW1wb3J0IHsgcmVzZXRBY2NvdW50UGFzc3dvcmQsIHNlbmRBY2NvdW50UmVzZXRMaW5rLCBzZXRBY2NvdW50QWN0aXZlIH0gZnJvbSAiQC9saWIvYXV0aC9hY2NvdW50cyI7CgovLyBTY2hlbWEgbm90ZTogVGVhY2hlciBoYXMgbm8gZW1wbG95ZWVJZCBmaWVsZCAoc3BlYyBhbGxvd2VkIGZvciB0aGlzIOKAlCAiaWYKLy8gcHJlc2VudCIpLiBJdCBpc24ndCwgc28gdGhpcyBtb2R1bGUgZG9lc24ndCBleHBvc2Ugb25lLgoKY29uc3QgY3JlYXRlVGVhY2hlclNjaGVtYSA9IHoub2JqZWN0KHsKICBmdWxsTmFtZTogei5zdHJpbmcoKS5taW4oMiwgIkZ1bGwgbmFtZSBpcyByZXF1aXJlZCIpLm1heCgyMDApLAogIGVtYWlsOiBlbWFpbFNjaGVtYSwKICB1c2VybmFtZTogdXNlcm5hbWVTY2hlbWEsCiAgcGhvbmU6IHouc3RyaW5nKCkub3B0aW9uYWwoKSwKICBzcGVjaWFsaXphdGlvbjogei5zdHJpbmcoKS5tYXgoNTAwKS5vcHRpb25hbCgpLAp9KTsKCmV4cG9ydCB0eXBlIFRlYWNoZXJSZXN1bHQgPQogIHwgeyBvazogdHJ1ZTsgdGVhY2hlcklkOiBzdHJpbmc7IHRlbXBQYXNzd29yZDogc3RyaW5nIH0KICB8IHsgb2s6IGZhbHNlOyBlcnJvcjogc3RyaW5nIH07CgpmdW5jdGlvbiB1bmlxdWVGaWVsZEVycm9yKGU6IFByaXNtYS5QcmlzbWFDbGllbnRLbm93blJlcXVlc3RFcnJvcik6IHN0cmluZyB7CiAgY29uc3QgdGFyZ2V0ID0gQXJyYXkuaXNBcnJheShlLm1ldGE/LnRhcmdldCkgPyAoZS5tZXRhIS50YXJnZXQgYXMgc3RyaW5nW10pIDogW107CiAgaWYgKHRhcmdldC5pbmNsdWRlcygidXNlcm5hbWUiKSkgcmV0dXJuICJBIHVzZXIgd2l0aCB0aGlzIHVzZXJuYW1lIGFscmVhZHkgZXhpc3RzLiI7CiAgaWYgKHRhcmdldC5pbmNsdWRlcygiZW1haWwiKSkgcmV0dXJuICJBIHVzZXIgd2l0aCB0aGlzIGVtYWlsIGFscmVhZHkgZXhpc3RzLiI7CiAgcmV0dXJuICJBIHVzZXIgd2l0aCB0aGVzZSBkZXRhaWxzIGFscmVhZHkgZXhpc3RzLiI7Cn0KCi8qKgogKiBDcmVhdGVzIGJvdGggdGhlIFVzZXIgKHJvbGUgVEVBQ0hFUikgYW5kIFRlYWNoZXIgcm93IGluIG9uZSB0cmFuc2FjdGlvbiwKICogbWF0Y2hpbmcgY3JlYXRlU3R1ZGVudEFjdGlvbidzIGFjY291bnQrcHJvZmlsZSBwYXR0ZXJuLiBUZW1wIHBhc3N3b3JkIGlzCiAqIHNob3duIG9uY2UgdG8gdGhlIGFkbWluLCBzYW1lIGFzIHRoZSBhZGQtc3R1ZGVudCBmbG93LgogKi8KZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIGNyZWF0ZVRlYWNoZXIoCiAgaW5wdXQ6IHouaW5mZXI8dHlwZW9mIGNyZWF0ZVRlYWNoZXJTY2hlbWE+Cik6IFByb21pc2U8VGVhY2hlclJlc3VsdD4gewogIGNvbnN0IHNlc3Npb24gPSBhd2FpdCByZXF1aXJlUGVybWlzc2lvbigidGVhY2hlci5tYW5hZ2UiKTsKCiAgY29uc3QgcGFyc2VkID0gY3JlYXRlVGVhY2hlclNjaGVtYS5zYWZlUGFyc2UoaW5wdXQpOwogIGlmICghcGFyc2VkLnN1Y2Nlc3MpIHsKICAgIHJldHVybiB7IG9rOiBmYWxzZSwgZXJyb3I6IHBhcnNlZC5lcnJvci5lcnJvcnNbMF0/Lm1lc3NhZ2UgPz8gIkludmFsaWQgaW5wdXQiIH07CiAgfQogIGNvbnN0IGQgPSBwYXJzZWQuZGF0YTsKCiAgY29uc3QgdGVtcFBhc3N3b3JkID0gZ2VuZXJhdGVUZW1wUGFzc3dvcmQoKTsKICBjb25zdCBwYXNzd29yZEhhc2ggPSBhd2FpdCBoYXNoUGFzc3dvcmQodGVtcFBhc3N3b3JkKTsKCiAgdHJ5IHsKICAgIGNvbnN0IHRlYWNoZXIgPSBhd2FpdCBkYi4kdHJhbnNhY3Rpb24oYXN5bmMgKHR4KSA9PiB7CiAgICAgIGF3YWl0IGF1dGhvcml6ZUFjdG9yKHR4LCBzZXNzaW9uLCAidGVhY2hlci5tYW5hZ2UiKTsKICAgICAgYXdhaXQgYXNzZXJ0SWRlbnRpdHlBdmFpbGFibGUodHgsIGQuZW1haWwsIGQudXNlcm5hbWUpOwogICAgICBjb25zdCB1c2VyID0gYXdhaXQgdHgudXNlci5jcmVhdGUoewogICAgICAgIGRhdGE6IHsKICAgICAgICAgIHVzZXJuYW1lOiBkLnVzZXJuYW1lLAogICAgICAgICAgZW1haWw6IGQuZW1haWwsCiAgICAgICAgICBwYXNzd29yZEhhc2gsCiAgICAgICAgICByb2xlOiAiVEVBQ0hFUiIsCiAgICAgICAgICBzdGF0dXM6ICJBQ1RJVkUiLAogICAgICAgICAgbXVzdENoYW5nZVBhc3N3b3JkOiB0cnVlLAogICAgICAgICAgcGFzc3dvcmRFeHBpcmVzQXQ6IHRlbXBvcmFyeVBhc3N3b3JkRXhwaXJ5KCksCiAgICAgICAgfSwKICAgICAgfSk7CiAgICAgIGNvbnN0IHByb2ZpbGUgPSBhd2FpdCB0eC50ZWFjaGVyLmNyZWF0ZSh7CiAgICAgICAgZGF0YTogewogICAgICAgICAgdXNlcklkOiB1c2VyLmlkLAogICAgICAgICAgZnVsbE5hbWU6IGQuZnVsbE5hbWUsCiAgICAgICAgICBwaG9uZTogZC5waG9uZSB8fCBudWxsLAogICAgICAgICAgZW1haWw6IGQuZW1haWwsCiAgICAgICAgICBzcGVjaWFsaXphdGlvbjogZC5zcGVjaWFsaXphdGlvbiB8fCBudWxsLAogICAgICAgICAgc3RhdHVzOiAiQUNUSVZFIiwKICAgICAgICB9LAogICAgICB9KTsKICAgICAgYXdhaXQgbG9nQWN0aW9uKHsgdXNlcklkOiBzZXNzaW9uLnVzZXJJZCwgYWN0aW9uOiAiQ3JlYXRlZCB0ZWFjaGVyIiwgZW50aXR5OiAiVGVhY2hlciIsIGVudGl0eUlkOiBwcm9maWxlLmlkLAogICAgICAgIG1ldGFkYXRhOiB7IGZ1bGxOYW1lOiBkLmZ1bGxOYW1lLCB1c2VybmFtZTogZC51c2VybmFtZSB9IH0sIHR4KTsKICAgICAgcmV0dXJuIHByb2ZpbGU7CiAgICB9KTsKCiAgICByZXZhbGlkYXRlUGF0aCgiL2FkbWluL3RlYWNoZXJzIik7CiAgICByZXR1cm4geyBvazogdHJ1ZSwgdGVhY2hlcklkOiB0ZWFjaGVyLmlkLCB0ZW1wUGFzc3dvcmQgfTsKICB9IGNhdGNoIChlKSB7CiAgICBpZiAoZSBpbnN0YW5jZW9mIFByaXNtYS5QcmlzbWFDbGllbnRLbm93blJlcXVlc3RFcnJvciAmJiBlLmNvZGUgPT09ICJQMjAwMiIpIHsKICAgICAgcmV0dXJuIHsgb2s6IGZhbHNlLCBlcnJvcjogdW5pcXVlRmllbGRFcnJvcihlKSB9OwogICAgfQogICAgcmV0dXJuIHsgb2s6IGZhbHNlLCBlcnJvcjogIkZhaWxlZCB0byBjcmVhdGUgdGVhY2hlci4gUGxlYXNlIHRyeSBhZ2Fpbi4iIH07CiAgfQp9Cgpjb25zdCB1cGRhdGVUZWFjaGVyU2NoZW1hID0gei5vYmplY3QoewogIGlkOiB6LnN0cmluZygpLm1pbigxKSwKICBmdWxsTmFtZTogei5zdHJpbmcoKS5taW4oMiwgIkZ1bGwgbmFtZSBpcyByZXF1aXJlZCIpLm1heCgyMDApLAogIHBob25lOiB6LnN0cmluZygpLm9wdGlvbmFsKCksCiAgc3BlY2lhbGl6YXRpb246IHouc3RyaW5nKCkubWF4KDUwMCkub3B0aW9uYWwoKSwKfSk7CgovKioKICogRWRpdHMgcHJvZmlsZSBmaWVsZHMgb25seSDigJQgZW1haWwvdXNlcm5hbWUvcm9sZSBhcmUgVXNlci1sZXZlbCBhbmQgb3V0IG9mCiAqIHNjb3BlIGhlcmUuIFN0YXR1cyBjaGFuZ2VzIGdvIHRocm91Z2ggZGVhY3RpdmF0ZVRlYWNoZXIgaW5zdGVhZCwgd2hpY2gKICogY2FycmllcyB0aGUgYWN0aXZlLWJhdGNoZXMgc2FmZXR5IGNoZWNrOyBsZXR0aW5nIGEgcGxhaW4gZWRpdCBmbGlwIHN0YXR1cwogKiB3b3VsZCBieXBhc3MgdGhhdC4KICovCmV4cG9ydCBhc3luYyBmdW5jdGlvbiB1cGRhdGVUZWFjaGVyKAogIGlucHV0OiB6LmluZmVyPHR5cGVvZiB1cGRhdGVUZWFjaGVyU2NoZW1hPgopOiBQcm9taXNlPHsgb2s6IHRydWUgfSB8IHsgb2s6IGZhbHNlOyBlcnJvcjogc3RyaW5nIH0+IHsKICBjb25zdCBzZXNzaW9uID0gYXdhaXQgcmVxdWlyZVBlcm1pc3Npb24oInRlYWNoZXIubWFuYWdlIik7CgogIGNvbnN0IHBhcnNlZCA9IHVwZGF0ZVRlYWNoZXJTY2hlbWEuc2FmZVBhcnNlKGlucHV0KTsKICBpZiAoIXBhcnNlZC5zdWNjZXNzKSB7CiAgICByZXR1cm4geyBvazogZmFsc2UsIGVycm9yOiBwYXJzZWQuZXJyb3IuZXJyb3JzWzBdPy5tZXNzYWdlID8/ICJJbnZhbGlkIGlucHV0IiB9OwogIH0KICBjb25zdCBkID0gcGFyc2VkLmRhdGE7CgogIGNvbnN0IHVwZGF0ZWQgPSBhd2FpdCBkYi4kdHJhbnNhY3Rpb24oYXN5bmMgdHggPT4gewogICAgICBhd2FpdCBhdXRob3JpemVBY3Rvcih0eCwgc2Vzc2lvbiwgInRlYWNoZXIubWFuYWdlIik7CiAgICAgIGNvbnN0IGV4aXN0aW5nID0gYXdhaXQgdHgudGVhY2hlci5maW5kVW5pcXVlKHsgd2hlcmU6IHsgaWQ6IGQuaWQgfSB9KTsKICAgICAgaWYgKCFleGlzdGluZykgcmV0dXJuIGZhbHNlOwogICAgICBjb25zdCB0YXJnZXQgPSBhd2FpdCBtYW5hZ2VhYmxlVGFyZ2V0KHR4LCBzZXNzaW9uLCBleGlzdGluZy51c2VySWQpOwogICAgICBpZiAodGFyZ2V0LnJvbGUgIT09ICJURUFDSEVSIikgdGhyb3cgbmV3IEVycm9yKCJJbnZhbGlkIGxpbmtlZCBhY2NvdW50IHJvbGUiKTsKCiAgICAgIGNvbnN0IG5leHRQaG9uZSA9IGQucGhvbmUgfHwgbnVsbDsKICAgICAgY29uc3QgbmV4dFNwZWNpYWxpemF0aW9uID0gZC5zcGVjaWFsaXphdGlvbiB8fCBudWxsOwoKICAgICAgY29uc3QgY2hhbmdlczogUmVjb3JkPHN0cmluZywgeyBvbGQ6IHVua25vd247IG5ldzogdW5rbm93biB9PiA9IHt9OwogICAgICBpZiAoZXhpc3RpbmcuZnVsbE5hbWUgIT09IGQuZnVsbE5hbWUpIGNoYW5nZXMuZnVsbE5hbWUgPSB7IG9sZDogZXhpc3RpbmcuZnVsbE5hbWUsIG5ldzogZC5mdWxsTmFtZSB9OwogICAgICBpZiAoZXhpc3RpbmcucGhvbmUgIT09IG5leHRQaG9uZSkgY2hhbmdlcy5waG9uZSA9IHsgb2xkOiBleGlzdGluZy5waG9uZSwgbmV3OiBuZXh0UGhvbmUgfTsKICAgICAgaWYgKGV4aXN0aW5nLnNwZWNpYWxpemF0aW9uICE9PSBuZXh0U3BlY2lhbGl6YXRpb24pCiAgICAgICAgY2hhbmdlcy5zcGVjaWFsaXphdGlvbiA9IHsgb2xkOiBleGlzdGluZy5zcGVjaWFsaXphdGlvbiwgbmV3OiBuZXh0U3BlY2lhbGl6YXRpb24gfTsKCiAgICAgIGF3YWl0IHR4LnRlYWNoZXIudXBkYXRlKHsKICAgICAgICB3aGVyZTogeyBpZDogZC5pZCB9LAogICAgICAgIGRhdGE6IHsgZnVsbE5hbWU6IGQuZnVsbE5hbWUsIHBob25lOiBuZXh0UGhvbmUsIHNwZWNpYWxpemF0aW9uOiBuZXh0U3BlY2lhbGl6YXRpb24gfSwKICAgICAgfSk7CgogICAgICBpZiAoT2JqZWN0LmtleXMoY2hhbmdlcykubGVuZ3RoID4gMCkgewogICAgICAgIGF3YWl0IGxvZ0FjdGlvbih7CiAgICAgICAgICB1c2VySWQ6IHNlc3Npb24udXNlcklkLAogICAgICAgICAgYWN0aW9uOiAiVXBkYXRlZCB0ZWFjaGVyIiwKICAgICAgICAgIGVudGl0eTogIlRlYWNoZXIiLAogICAgICAgICAgZW50aXR5SWQ6IGQuaWQsCiAgICAgICAgICBtZXRhZGF0YTogeyBjaGFuZ2VzIH0sCiAgICAgICAgfSwgdHgpOwogICAgICB9CiAgICAgIHJldHVybiB0cnVlOwogIH0pOwogIGlmICghdXBkYXRlZCkgcmV0dXJuIHsgb2s6IGZhbHNlLCBlcnJvcjogIlRlYWNoZXIgbm90IGZvdW5kLiIgfTsKCiAgcmV2YWxpZGF0ZVBhdGgoIi9hZG1pbi90ZWFjaGVycyIpOwogIHJldmFsaWRhdGVQYXRoKGAvYWRtaW4vdGVhY2hlcnMvJHtkLmlkfWApOwogIHJldHVybiB7IG9rOiB0cnVlIH07Cn0KCi8qKgogKiBEZWFjdGl2YXRlLCBkb24ndCBkZWxldGUuIFJlZnVzZXMgaWYgdGhlIHRlYWNoZXIgaGFzIGFueSBPTkdPSU5HIGJhdGNoZXMKICogKEJhdGNoU3RhdHVzIGhhcyBubyAiQUNUSVZFIiB2YWx1ZSDigJQgT05HT0lORyBpcyB0aGUgZXF1aXZhbGVudCkg4oCUCiAqIHJlYXNzaWduIHRob3NlIGZpcnN0LgogKi8KZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIGRlYWN0aXZhdGVUZWFjaGVyKAogIGlkOiBzdHJpbmcKKTogUHJvbWlzZTx7IG9rOiB0cnVlIH0gfCB7IG9rOiBmYWxzZTsgZXJyb3I6IHN0cmluZyB9PiB7CiAgY29uc3Qgc2Vzc2lvbiA9IGF3YWl0IHJlcXVpcmVQZXJtaXNzaW9uKCJ0ZWFjaGVyLm1hbmFnZSIpOwoKICBjb25zdCBleGlzdGluZyA9IGF3YWl0IGRiLnRlYWNoZXIuZmluZFVuaXF1ZSh7CiAgICB3aGVyZTogeyBpZCB9LAogICAgaW5jbHVkZTogeyBiYXRjaGVzOiB7IHdoZXJlOiB7IHN0YXR1czogIk9OR09JTkciIH0sIHNlbGVjdDogeyBpZDogdHJ1ZSB9IH0gfSwKICB9KTsKICBpZiAoIWV4aXN0aW5nKSByZXR1cm4geyBvazogZmFsc2UsIGVycm9yOiAiVGVhY2hlciBub3QgZm91bmQuIiB9OwoKICBpZiAoZXhpc3RpbmcuYmF0Y2hlcy5sZW5ndGggPiAwKSB7CiAgICByZXR1cm4gewogICAgICBvazogZmFsc2UsCiAgICAgIGVycm9yOiBgQ2Fubm90IGRlYWN0aXZhdGU6IHRoaXMgdGVhY2hlciBoYXMgJHtleGlzdGluZy5iYXRjaGVzLmxlbmd0aH0gb25nb2luZyBiYXRjaChlcykuIFJlYXNzaWduIHRoZW0gZmlyc3QuYCwKICAgIH07CiAgfQoKICB0cnkgeyBhd2FpdCBzZXRBY2NvdW50QWN0aXZlKHNlc3Npb24sIGV4aXN0aW5nLnVzZXJJZCwgZmFsc2UsICJURUFDSEVSIik7IH0KICBjYXRjaCB7IHJldHVybiB7IG9rOiBmYWxzZSwgZXJyb3I6ICJVbmFibGUgdG8gZGVhY3RpdmF0ZSB0aGlzIGFjY291bnQuIENoZWNrIGl0cyByb2xlIGFuZCBvbmdvaW5nIGJhdGNoZXMuIiB9OyB9CgogIHJldmFsaWRhdGVQYXRoKCIvYWRtaW4vdGVhY2hlcnMiKTsKICByZXZhbGlkYXRlUGF0aChgL2FkbWluL3RlYWNoZXJzLyR7aWR9YCk7CiAgcmV0dXJuIHsgb2s6IHRydWUgfTsKfQoKZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIHJlc2V0VGVhY2hlclBhc3N3b3JkKAogIGlkOiBzdHJpbmcKKTogUHJvbWlzZTx7IG9rOiB0cnVlOyB0ZW1wUGFzc3dvcmQ6IHN0cmluZyB9IHwgeyBvazogZmFsc2U7IGVycm9yOiBzdHJpbmcgfT4gewogIGNvbnN0IHNlc3Npb24gPSBhd2FpdCByZXF1aXJlUGVybWlzc2lvbigidGVhY2hlci5tYW5hZ2UiKTsKCiAgY29uc3QgZXhpc3RpbmcgPSBhd2FpdCBkYi50ZWFjaGVyLmZpbmRVbmlxdWUoeyB3aGVyZTogeyBpZCB9IH0pOwogIGlmICghZXhpc3RpbmcpIHJldHVybiB7IG9rOiBmYWxzZSwgZXJyb3I6ICJUZWFjaGVyIG5vdCBmb3VuZC4iIH07CgogIHRyeSB7CiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCByZXNldEFjY291bnRQYXNzd29yZChzZXNzaW9uLCBleGlzdGluZy51c2VySWQsICJURUFDSEVSIik7CiAgICByZXR1cm4geyBvazogdHJ1ZSwgdGVtcFBhc3N3b3JkOiByZXN1bHQudGVtcFBhc3N3b3JkIH07CiAgfSBjYXRjaCB7IHJldHVybiB7IG9rOiBmYWxzZSwgZXJyb3I6ICJVbmFibGUgdG8gcmVzZXQgdGhpcyBhY2NvdW50IHBhc3N3b3JkLiIgfTsgfQp9CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gc2VuZFRlYWNoZXJSZXNldExpbmtBY3Rpb24oCiAgaWQ6IHN0cmluZwopOiBQcm9taXNlPHsgb2s6IHRydWUgfSB8IHsgb2s6IGZhbHNlOyBlcnJvcjogc3RyaW5nIH0+IHsKICBjb25zdCBzZXNzaW9uID0gYXdhaXQgcmVxdWlyZVBlcm1pc3Npb24oInRlYWNoZXIubWFuYWdlIik7CgogIGNvbnN0IGV4aXN0aW5nID0gYXdhaXQgZGIudGVhY2hlci5maW5kVW5pcXVlKHsgd2hlcmU6IHsgaWQgfSB9KTsKICBpZiAoIWV4aXN0aW5nKSByZXR1cm4geyBvazogZmFsc2UsIGVycm9yOiAiVGVhY2hlciBub3QgZm91bmQuIiB9OwoKICB0cnkgewogICAgY29uc3QgcmVzdWx0ID0gYXdhaXQgc2VuZEFjY291bnRSZXNldExpbmsoc2Vzc2lvbiwgZXhpc3RpbmcudXNlcklkLCAiVEVBQ0hFUiIpOwogICAgaWYgKHJlc3VsdCA9PT0gIm5vdC1jb25maWd1cmVkIikgewogICAgICByZXR1cm4geyBvazogZmFsc2UsIGVycm9yOiAiRW1haWwgaXMgbm90IGNvbmZpZ3VyZWQgb24gdGhlIHNlcnZlciwgc28gbm8gbGluayB3YXMgc2VudC4gVXNlIHRoZSB0ZW1wb3JhcnktcGFzc3dvcmQgcmVzZXQgaW5zdGVhZC4iIH07CiAgICB9CiAgICBpZiAocmVzdWx0ID09PSAiZmFpbGVkIikgcmV0dXJuIHsgb2s6IGZhbHNlLCBlcnJvcjogIlRoZSByZXNldCBlbWFpbCBjb3VsZCBub3QgYmUgc2VudC4gUGxlYXNlIHRyeSBhZ2Fpbi4iIH07CiAgICByZXR1cm4geyBvazogdHJ1ZSB9OwogIH0gY2F0Y2ggeyByZXR1cm4geyBvazogZmFsc2UsIGVycm9yOiAiVW5hYmxlIHRvIHNlbmQgYSByZXNldCBsaW5rIGZvciB0aGlzIGFjY291bnQuIiB9OyB9Cn0K
+"use server";
+
+import { z } from "zod";
+import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { db } from "@/lib/db";
+import { requirePermission } from "@/lib/auth/guards";
+import { hashPassword, generateTempPassword, temporaryPasswordExpiry } from "@/lib/auth/password";
+import { logAction } from "@/lib/audit";
+import { emailSchema, usernameSchema, assertIdentityAvailable } from "@/lib/auth/identity";
+import { authorizeActor, manageableTarget } from "@/lib/auth/account-policy";
+import { resetAccountPassword, sendAccountResetLink, setAccountActive } from "@/lib/auth/accounts";
+
+// Schema note: Teacher has no employeeId field (spec allowed for this — "if
+// present"). It isn't, so this module doesn't expose one.
+
+const createTeacherSchema = z.object({
+  fullName: z.string().min(2, "Full name is required").max(200),
+  email: emailSchema,
+  username: usernameSchema,
+  phone: z.string().optional(),
+  specialization: z.string().max(500).optional(),
+});
+
+export type TeacherResult =
+  | { ok: true; teacherId: string; tempPassword: string }
+  | { ok: false; error: string };
+
+function uniqueFieldError(e: Prisma.PrismaClientKnownRequestError): string {
+  const target = Array.isArray(e.meta?.target) ? (e.meta!.target as string[]) : [];
+  if (target.includes("username")) return "A user with this username already exists.";
+  if (target.includes("email")) return "A user with this email already exists.";
+  return "A user with these details already exists.";
+}
+
+/**
+ * Creates both the User (role TEACHER) and Teacher row in one transaction,
+ * matching createStudentAction's account+profile pattern. Temp password is
+ * shown once to the admin, same as the add-student flow.
+ */
+export async function createTeacher(
+  input: z.infer<typeof createTeacherSchema>
+): Promise<TeacherResult> {
+  const session = await requirePermission("teacher.manage");
+
+  const parsed = createTeacherSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  }
+  const d = parsed.data;
+
+  const tempPassword = generateTempPassword();
+  const passwordHash = await hashPassword(tempPassword);
+
+  try {
+    const teacher = await db.$transaction(async (tx) => {
+      await authorizeActor(tx, session, "teacher.manage");
+      await assertIdentityAvailable(tx, d.email, d.username);
+      const user = await tx.user.create({
+        data: {
+          username: d.username,
+          email: d.email,
+          passwordHash,
+          role: "TEACHER",
+          status: "ACTIVE",
+          mustChangePassword: true,
+          passwordExpiresAt: temporaryPasswordExpiry(),
+        },
+      });
+      const profile = await tx.teacher.create({
+        data: {
+          userId: user.id,
+          fullName: d.fullName,
+          phone: d.phone || null,
+          email: d.email,
+          specialization: d.specialization || null,
+          status: "ACTIVE",
+        },
+      });
+      await logAction({ userId: session.userId, action: "Created teacher", entity: "Teacher", entityId: profile.id,
+        metadata: { fullName: d.fullName, username: d.username } }, tx);
+      return profile;
+    });
+
+    revalidatePath("/admin/teachers");
+    return { ok: true, teacherId: teacher.id, tempPassword };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+      return { ok: false, error: uniqueFieldError(e) };
+    }
+    return { ok: false, error: "Failed to create teacher. Please try again." };
+  }
+}
+
+const updateTeacherSchema = z.object({
+  id: z.string().min(1),
+  fullName: z.string().min(2, "Full name is required").max(200),
+  phone: z.string().optional(),
+  specialization: z.string().max(500).optional(),
+});
+
+/**
+ * Edits profile fields only — email/username/role are User-level and out of
+ * scope here. Status changes go through deactivateTeacher instead, which
+ * carries the active-batches safety check; letting a plain edit flip status
+ * would bypass that.
+ */
+export async function updateTeacher(
+  input: z.infer<typeof updateTeacherSchema>
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const session = await requirePermission("teacher.manage");
+
+  const parsed = updateTeacherSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  }
+  const d = parsed.data;
+
+  const updated = await db.$transaction(async tx => {
+      await authorizeActor(tx, session, "teacher.manage");
+      const existing = await tx.teacher.findUnique({ where: { id: d.id } });
+      if (!existing) return false;
+      const target = await manageableTarget(tx, session, existing.userId);
+      if (target.role !== "TEACHER") throw new Error("Invalid linked account role");
+
+      const nextPhone = d.phone || null;
+      const nextSpecialization = d.specialization || null;
+
+      const changes: Record<string, { old: unknown; new: unknown }> = {};
+      if (existing.fullName !== d.fullName) changes.fullName = { old: existing.fullName, new: d.fullName };
+      if (existing.phone !== nextPhone) changes.phone = { old: existing.phone, new: nextPhone };
+      if (existing.specialization !== nextSpecialization)
+        changes.specialization = { old: existing.specialization, new: nextSpecialization };
+
+      await tx.teacher.update({
+        where: { id: d.id },
+        data: { fullName: d.fullName, phone: nextPhone, specialization: nextSpecialization },
+      });
+
+      if (Object.keys(changes).length > 0) {
+        await logAction({
+          userId: session.userId,
+          action: "Updated teacher",
+          entity: "Teacher",
+          entityId: d.id,
+          metadata: { changes },
+        }, tx);
+      }
+      return true;
+  });
+  if (!updated) return { ok: false, error: "Teacher not found." };
+
+  revalidatePath("/admin/teachers");
+  revalidatePath(`/admin/teachers/${d.id}`);
+  return { ok: true };
+}
+
+/**
+ * Deactivate, don't delete. Refuses if the teacher has any ONGOING batches
+ * (BatchStatus has no "ACTIVE" value — ONGOING is the equivalent) —
+ * reassign those first.
+ */
+export async function deactivateTeacher(
+  id: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const session = await requirePermission("teacher.manage");
+
+  const existing = await db.teacher.findUnique({
+    where: { id },
+    include: { batches: { where: { status: "ONGOING" }, select: { id: true } } },
+  });
+  if (!existing) return { ok: false, error: "Teacher not found." };
+
+  if (existing.batches.length > 0) {
+    return {
+      ok: false,
+      error: `Cannot deactivate: this teacher has ${existing.batches.length} ongoing batch(es). Reassign them first.`,
+    };
+  }
+
+  try { await setAccountActive(session, existing.userId, false, "TEACHER"); }
+  catch { return { ok: false, error: "Unable to deactivate this account. Check its role and ongoing batches." }; }
+
+  revalidatePath("/admin/teachers");
+  revalidatePath(`/admin/teachers/${id}`);
+  return { ok: true };
+}
+
+export async function resetTeacherPassword(
+  id: string
+): Promise<{ ok: true; tempPassword: string } | { ok: false; error: string }> {
+  const session = await requirePermission("teacher.manage");
+
+  const existing = await db.teacher.findUnique({ where: { id } });
+  if (!existing) return { ok: false, error: "Teacher not found." };
+
+  try {
+    const result = await resetAccountPassword(session, existing.userId, "TEACHER");
+    return { ok: true, tempPassword: result.tempPassword };
+  } catch { return { ok: false, error: "Unable to reset this account password." }; }
+}
+
+export async function sendTeacherResetLinkAction(
+  id: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const session = await requirePermission("teacher.manage");
+
+  const existing = await db.teacher.findUnique({ where: { id } });
+  if (!existing) return { ok: false, error: "Teacher not found." };
+
+  try {
+    const result = await sendAccountResetLink(session, existing.userId, "TEACHER");
+    if (result === "not-configured") {
+      return { ok: false, error: "Email is not configured on the server, so no link was sent. Use the temporary-password reset instead." };
+    }
+    if (result === "failed") return { ok: false, error: "The reset email could not be sent. Please try again." };
+    return { ok: true };
+  } catch { return { ok: false, error: "Unable to send a reset link for this account." }; }
+}

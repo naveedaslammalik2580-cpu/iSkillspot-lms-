@@ -1,1 +1,95 @@
-aW1wb3J0IHsgeiB9IGZyb20gInpvZCI7CmltcG9ydCB0eXBlIHsgU2Vzc2lvblBheWxvYWQgfSBmcm9tICIuL3Rva2VuIjsKaW1wb3J0IHR5cGUgeyBSb2xlIH0gZnJvbSAiQHByaXNtYS9jbGllbnQiOwppbXBvcnQgeyBkYiB9IGZyb20gIkAvbGliL2RiIjsKaW1wb3J0IHsgaGFzaFBhc3N3b3JkLCBnZW5lcmF0ZVRlbXBQYXNzd29yZCwgdGVtcG9yYXJ5UGFzc3dvcmRFeHBpcnkgfSBmcm9tICIuL3Bhc3N3b3JkIjsKaW1wb3J0IHsgZW1haWxTY2hlbWEsIHVzZXJuYW1lU2NoZW1hLCBhc3NlcnRJZGVudGl0eUF2YWlsYWJsZSwgQWNjb3VudEVycm9yIH0gZnJvbSAiLi9pZGVudGl0eSI7CmltcG9ydCB7IGF1dGhvcml6ZUFjdG9yLCBtYW5hZ2VhYmxlVGFyZ2V0IH0gZnJvbSAiLi9hY2NvdW50LXBvbGljeSI7CmltcG9ydCB7IGRlbGl2ZXJQYXNzd29yZFJlc2V0RW1haWwsIGhhc2hSZXNldFRva2VuLCBpc3N1ZVBhc3N3b3JkUmVzZXRUb2tlbiB9IGZyb20gIi4vcGFzc3dvcmQtcmVzZXQiOwppbXBvcnQgeyBsb2dBY3Rpb24gfSBmcm9tICJAL2xpYi9hdWRpdCI7CgpleHBvcnQgY29uc3QgYWRtaW5BY2NvdW50U2NoZW1hID0gei5vYmplY3QoeyB1c2VybmFtZTogdXNlcm5hbWVTY2hlbWEsIGVtYWlsOiBlbWFpbFNjaGVtYSB9KS5zdHJpY3QoKTsKCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBjcmVhdGVBZG1pbkFjY291bnQoc2Vzc2lvbjogU2Vzc2lvblBheWxvYWQsIGlucHV0OiB1bmtub3duKSB7CiAgY29uc3QgZGF0YSA9IGFkbWluQWNjb3VudFNjaGVtYS5wYXJzZShpbnB1dCk7CiAgY29uc3QgdGVtcFBhc3N3b3JkID0gZ2VuZXJhdGVUZW1wUGFzc3dvcmQoKTsKICBjb25zdCBwYXNzd29yZEhhc2ggPSBhd2FpdCBoYXNoUGFzc3dvcmQodGVtcFBhc3N3b3JkKTsKICBjb25zdCBhY2NvdW50ID0gYXdhaXQgZGIuJHRyYW5zYWN0aW9uKGFzeW5jIHR4ID0+IHsKICAgIGF3YWl0IGF1dGhvcml6ZUFjdG9yKHR4LCBzZXNzaW9uLCAiYWRtaW4ubWFuYWdlIik7CiAgICBhd2FpdCBhc3NlcnRJZGVudGl0eUF2YWlsYWJsZSh0eCwgZGF0YS5lbWFpbCwgZGF0YS51c2VybmFtZSk7CiAgICBjb25zdCB1c2VyID0gYXdhaXQgdHgudXNlci5jcmVhdGUoeyBkYXRhOiB7IC4uLmRhdGEsIHBhc3N3b3JkSGFzaCwgcm9sZTogIkFETUlOIiwgc3RhdHVzOiAiQUNUSVZFIiwKICAgICAgbXVzdENoYW5nZVBhc3N3b3JkOiB0cnVlLCBwYXNzd29yZEV4cGlyZXNBdDogdGVtcG9yYXJ5UGFzc3dvcmRFeHBpcnkoKSB9IH0pOwogICAgYXdhaXQgbG9nQWN0aW9uKHsgdXNlcklkOiBzZXNzaW9uLnVzZXJJZCwgYWN0aW9uOiAiQ3JlYXRlZCBhZG1pbmlzdHJhdG9yIiwgZW50aXR5OiAiVXNlciIsIGVudGl0eUlkOiB1c2VyLmlkIH0sIHR4KTsKICAgIHJldHVybiB7IGlkOiB1c2VyLmlkLCB1c2VybmFtZTogdXNlci51c2VybmFtZSB9OwogIH0pOwogIHJldHVybiB7IC4uLmFjY291bnQsIHRlbXBQYXNzd29yZCB9Owp9CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gcmVzZXRBY2NvdW50UGFzc3dvcmQoc2Vzc2lvbjogU2Vzc2lvblBheWxvYWQsIHVzZXJJZDogc3RyaW5nLCBleHBlY3RlZFJvbGU/OiBSb2xlKSB7CiAgY29uc3QgdGVtcFBhc3N3b3JkID0gZ2VuZXJhdGVUZW1wUGFzc3dvcmQoKTsKICBjb25zdCBwYXNzd29yZEhhc2ggPSBhd2FpdCBoYXNoUGFzc3dvcmQodGVtcFBhc3N3b3JkKTsKICBhd2FpdCBkYi4kdHJhbnNhY3Rpb24oYXN5bmMgdHggPT4gewogICAgYXdhaXQgYXV0aG9yaXplQWN0b3IodHgsIHNlc3Npb24sICJhY2NvdW50Lm1hbmFnZSIpOwogICAgY29uc3QgdGFyZ2V0ID0gYXdhaXQgbWFuYWdlYWJsZVRhcmdldCh0eCwgc2Vzc2lvbiwgdXNlcklkKTsKICAgIGlmIChleHBlY3RlZFJvbGUgJiYgdGFyZ2V0LnJvbGUgIT09IGV4cGVjdGVkUm9sZSkgdGhyb3cgbmV3IEFjY291bnRFcnJvcigiSW52YWxpZCBsaW5rZWQgYWNjb3VudCByb2xlLiIpOwogICAgYXdhaXQgdHgudXNlci51cGRhdGUoeyB3aGVyZTogeyBpZDogdXNlcklkIH0sIGRhdGE6IHsgcGFzc3dvcmRIYXNoLCBtdXN0Q2hhbmdlUGFzc3dvcmQ6IHRydWUsCiAgICAgIHBhc3N3b3JkRXhwaXJlc0F0OiB0ZW1wb3JhcnlQYXNzd29yZEV4cGlyeSgpLCBzZXNzaW9uVmVyc2lvbjogeyBpbmNyZW1lbnQ6IDEgfSB9IH0pOwogICAgYXdhaXQgbG9nQWN0aW9uKHsgdXNlcklkOiBzZXNzaW9uLnVzZXJJZCwgYWN0aW9uOiAiUmVzZXQgYWNjb3VudCBwYXNzd29yZCIsIGVudGl0eTogIlVzZXIiLCBlbnRpdHlJZDogdXNlcklkIH0sIHR4KTsKICB9KTsKICByZXR1cm4geyB0ZW1wUGFzc3dvcmQgfTsKfQoKLyoqCiAqIFN0YWZmLWluaXRpYXRlZCBwYXNzd29yZCByZWNvdmVyeSBieSBlbWFpbGVkIHJlc2V0IGxpbmsg4oCUIHRoZQogKiBwcmVmZXJyZWQgcmVjb3ZlcnkgcGF0aCAodGhlIHRlbXBvcmFyeS1wYXNzd29yZCByZXNldCBiZWxvdyByZW1haW5zCiAqIHRoZSBmYWxsYmFjayBmb3IgYWNjb3VudHMgdGhhdCBjYW5ub3QgcmVjZWl2ZSBlbWFpbCkuIEF1dGhvcml6YXRpb24KICogaXMgaWRlbnRpY2FsIHRvIHRoZSBvdGhlciBhY2NvdW50IG11dGF0aW9uczogdGhlIGFjdG9yIG11c3QgaG9sZAogKiBhY2NvdW50Lm1hbmFnZSBhbmQgdGhlIHRhcmdldCBtdXN0IGJlIHdpdGhpbiB0aGUgYWN0b3IncyBtYW5hZ2VhYmxlCiAqIHJvbGVzLCByZWNoZWNrZWQgaW5zaWRlIGEgdHJhbnNhY3Rpb24uIFRoZSBzdGFmZiBtZW1iZXIgbmV2ZXIgc2VlcwogKiBhIGNyZWRlbnRpYWw7IHRoZSBsaW5rIGdvZXMgb25seSB0byB0aGUgYWNjb3VudCdzIG93biBlbWFpbC4KICovCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBzZW5kQWNjb3VudFJlc2V0TGluaygKICBzZXNzaW9uOiBTZXNzaW9uUGF5bG9hZCwKICB1c2VySWQ6IHN0cmluZywKICBleHBlY3RlZFJvbGU/OiBSb2xlCik6IFByb21pc2U8InNlbnQiIHwgIm5vdC1jb25maWd1cmVkIiB8ICJmYWlsZWQiPiB7CiAgY29uc3QgdGFyZ2V0ID0gYXdhaXQgZGIuJHRyYW5zYWN0aW9uKGFzeW5jICh0eCkgPT4gewogICAgYXdhaXQgYXV0aG9yaXplQWN0b3IodHgsIHNlc3Npb24sICJhY2NvdW50Lm1hbmFnZSIpOwogICAgY29uc3QgdCA9IGF3YWl0IG1hbmFnZWFibGVUYXJnZXQodHgsIHNlc3Npb24sIHVzZXJJZCk7CiAgICBpZiAoZXhwZWN0ZWRSb2xlICYmIHQucm9sZSAhPT0gZXhwZWN0ZWRSb2xlKSB0aHJvdyBuZXcgQWNjb3VudEVycm9yKCJJbnZhbGlkIGxpbmtlZCBhY2NvdW50IHJvbGUuIik7CiAgICBjb25zdCBmdWxsID0gYXdhaXQgdHgudXNlci5maW5kVW5pcXVlKHsgd2hlcmU6IHsgaWQ6IHVzZXJJZCB9LCBzZWxlY3Q6IHsgZW1haWw6IHRydWUsIHN0YXR1czogdHJ1ZSB9IH0pOwogICAgaWYgKCFmdWxsKSB0aHJvdyBuZXcgQWNjb3VudEVycm9yKCJBY2NvdW50IG5vdCBmb3VuZC4iKTsKICAgIHJldHVybiBmdWxsOwogIH0pOwogIGlmICh0YXJnZXQuc3RhdHVzICE9PSAiQUNUSVZFIikgdGhyb3cgbmV3IEFjY291bnRFcnJvcigiT25seSBhY3RpdmUgYWNjb3VudHMgY2FuIHJlY2VpdmUgYSByZXNldCBsaW5rLiIpOwoKICBjb25zdCBpc3N1ZWQgPSBhd2FpdCBpc3N1ZVBhc3N3b3JkUmVzZXRUb2tlbih1c2VySWQsIHNlc3Npb24udXNlcklkKTsKICBpZiAoIWlzc3VlZCkgcmV0dXJuICJmYWlsZWQiOwogIGNvbnN0IGRlbGl2ZXJ5ID0gYXdhaXQgZGVsaXZlclBhc3N3b3JkUmVzZXRFbWFpbCh7IGVtYWlsOiB0YXJnZXQuZW1haWwgfSwgaXNzdWVkLnRva2VuKTsKICBpZiAoIWRlbGl2ZXJ5LmRlbGl2ZXJlZCkgewogICAgLy8gVGhlIGxpbmsgbmV2ZXIgcmVhY2hlZCB0aGUgYWNjb3VudCBob2xkZXIg4oCUIHJldm9rZSB0aGUgdG9rZW4gc28KICAgIC8vIG5vIGxpdmUsIHVuY29tbXVuaWNhdGVkIGNyZWRlbnRpYWwgcmVtYWlucy4KICAgIGF3YWl0IGRiLnBhc3N3b3JkUmVzZXRUb2tlbi5kZWxldGVNYW55KHsgd2hlcmU6IHsgdG9rZW5IYXNoOiBoYXNoUmVzZXRUb2tlbihpc3N1ZWQudG9rZW4pIH0gfSk7CiAgICByZXR1cm4gZGVsaXZlcnkucmVhc29uID09PSAibm90LWNvbmZpZ3VyZWQiID8gIm5vdC1jb25maWd1cmVkIiA6ICJmYWlsZWQiOwogIH0KICBhd2FpdCBsb2dBY3Rpb24oeyB1c2VySWQ6IHNlc3Npb24udXNlcklkLCBhY3Rpb246ICJTZW50IHBhc3N3b3JkIHJlc2V0IGxpbmsiLCBlbnRpdHk6ICJVc2VyIiwgZW50aXR5SWQ6IHVzZXJJZCB9KTsKICByZXR1cm4gInNlbnQiOwp9CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gc2V0QWNjb3VudEFjdGl2ZShzZXNzaW9uOiBTZXNzaW9uUGF5bG9hZCwgdXNlcklkOiBzdHJpbmcsIGFjdGl2ZTogYm9vbGVhbiwgZXhwZWN0ZWRSb2xlPzogUm9sZSkgewogIGlmICh0eXBlb2YgYWN0aXZlICE9PSAiYm9vbGVhbiIpIHRocm93IG5ldyBBY2NvdW50RXJyb3IoIkludmFsaWQgYWNjb3VudCBzdGF0dXMuIik7CiAgYXdhaXQgZGIuJHRyYW5zYWN0aW9uKGFzeW5jIHR4ID0+IHsKICAgIGF3YWl0IGF1dGhvcml6ZUFjdG9yKHR4LCBzZXNzaW9uLCAiYWNjb3VudC5tYW5hZ2UiKTsKICAgIGNvbnN0IHRhcmdldCA9IGF3YWl0IG1hbmFnZWFibGVUYXJnZXQodHgsIHNlc3Npb24sIHVzZXJJZCk7CiAgICBpZiAoZXhwZWN0ZWRSb2xlICYmIHRhcmdldC5yb2xlICE9PSBleHBlY3RlZFJvbGUpIHRocm93IG5ldyBBY2NvdW50RXJyb3IoIkludmFsaWQgbGlua2VkIGFjY291bnQgcm9sZS4iKTsKICAgIGlmIChhY3RpdmUgJiYgdGFyZ2V0LnN0dWRlbnQgJiYgWyJTVVNQRU5ERUQiLCAiRFJPUFBFRCJdLmluY2x1ZGVzKHRhcmdldC5zdHVkZW50LnN0YXR1cykpIHsKICAgICAgdGhyb3cgbmV3IEFjY291bnRFcnJvcigiUmVzdG9yZSB0aGUgc3R1ZGVudCdzIGFjYWRlbWljIHN0YXR1cyBiZWZvcmUgYWN0aXZhdGluZyB0aGlzIGFjY291bnQuIik7CiAgICB9CiAgICBpZiAoIWFjdGl2ZSAmJiB0YXJnZXQudGVhY2hlciAmJiBhd2FpdCB0eC5iYXRjaC5jb3VudCh7IHdoZXJlOiB7IHRlYWNoZXJJZDogdGFyZ2V0LnRlYWNoZXIuaWQsIHN0YXR1czogIk9OR09JTkciIH0gfSkpIHsKICAgICAgdGhyb3cgbmV3IEFjY291bnRFcnJvcigiUmVhc3NpZ24gdGhpcyB0ZWFjaGVyJ3Mgb25nb2luZyBiYXRjaGVzIGJlZm9yZSBkZWFjdGl2YXRpb24uIik7CiAgICB9CiAgICBpZiAodGFyZ2V0LnRlYWNoZXIpIGF3YWl0IHR4LnRlYWNoZXIudXBkYXRlKHsgd2hlcmU6IHsgaWQ6IHRhcmdldC50ZWFjaGVyLmlkIH0sIGRhdGE6IHsgc3RhdHVzOiBhY3RpdmUgPyAiQUNUSVZFIiA6ICJJTkFDVElWRSIgfSB9KTsKICAgIGF3YWl0IHR4LnVzZXIudXBkYXRlKHsgd2hlcmU6IHsgaWQ6IHVzZXJJZCB9LCBkYXRhOiB7IHN0YXR1czogYWN0aXZlID8gIkFDVElWRSIgOiAiSU5BQ1RJVkUiLCBzZXNzaW9uVmVyc2lvbjogeyBpbmNyZW1lbnQ6IDEgfSB9IH0pOwogICAgYXdhaXQgbG9nQWN0aW9uKHsgdXNlcklkOiBzZXNzaW9uLnVzZXJJZCwgYWN0aW9uOiBhY3RpdmUgPyAiQWN0aXZhdGVkIGFjY291bnQiIDogIkRlYWN0aXZhdGVkIGFjY291bnQiLCBlbnRpdHk6ICJVc2VyIiwgZW50aXR5SWQ6IHVzZXJJZCB9LCB0eCk7CiAgfSk7Cn0K
+import { z } from "zod";
+import type { SessionPayload } from "./token";
+import type { Role } from "@prisma/client";
+import { db } from "@/lib/db";
+import { hashPassword, generateTempPassword, temporaryPasswordExpiry } from "./password";
+import { emailSchema, usernameSchema, assertIdentityAvailable, AccountError } from "./identity";
+import { authorizeActor, manageableTarget } from "./account-policy";
+import { deliverPasswordResetEmail, hashResetToken, issuePasswordResetToken } from "./password-reset";
+import { logAction } from "@/lib/audit";
+
+export const adminAccountSchema = z.object({ username: usernameSchema, email: emailSchema }).strict();
+
+export async function createAdminAccount(session: SessionPayload, input: unknown) {
+  const data = adminAccountSchema.parse(input);
+  const tempPassword = generateTempPassword();
+  const passwordHash = await hashPassword(tempPassword);
+  const account = await db.$transaction(async tx => {
+    await authorizeActor(tx, session, "admin.manage");
+    await assertIdentityAvailable(tx, data.email, data.username);
+    const user = await tx.user.create({ data: { ...data, passwordHash, role: "ADMIN", status: "ACTIVE",
+      mustChangePassword: true, passwordExpiresAt: temporaryPasswordExpiry() } });
+    await logAction({ userId: session.userId, action: "Created administrator", entity: "User", entityId: user.id }, tx);
+    return { id: user.id, username: user.username };
+  });
+  return { ...account, tempPassword };
+}
+
+export async function resetAccountPassword(session: SessionPayload, userId: string, expectedRole?: Role) {
+  const tempPassword = generateTempPassword();
+  const passwordHash = await hashPassword(tempPassword);
+  await db.$transaction(async tx => {
+    await authorizeActor(tx, session, "account.manage");
+    const target = await manageableTarget(tx, session, userId);
+    if (expectedRole && target.role !== expectedRole) throw new AccountError("Invalid linked account role.");
+    await tx.user.update({ where: { id: userId }, data: { passwordHash, mustChangePassword: true,
+      passwordExpiresAt: temporaryPasswordExpiry(), sessionVersion: { increment: 1 } } });
+    await logAction({ userId: session.userId, action: "Reset account password", entity: "User", entityId: userId }, tx);
+  });
+  return { tempPassword };
+}
+
+/**
+ * Staff-initiated password recovery by emailed reset link — the
+ * preferred recovery path (the temporary-password reset below remains
+ * the fallback for accounts that cannot receive email). Authorization
+ * is identical to the other account mutations: the actor must hold
+ * account.manage and the target must be within the actor's manageable
+ * roles, rechecked inside a transaction. The staff member never sees
+ * a credential; the link goes only to the account's own email.
+ */
+export async function sendAccountResetLink(
+  session: SessionPayload,
+  userId: string,
+  expectedRole?: Role
+): Promise<"sent" | "not-configured" | "failed"> {
+  const target = await db.$transaction(async (tx) => {
+    await authorizeActor(tx, session, "account.manage");
+    const t = await manageableTarget(tx, session, userId);
+    if (expectedRole && t.role !== expectedRole) throw new AccountError("Invalid linked account role.");
+    const full = await tx.user.findUnique({ where: { id: userId }, select: { email: true, status: true } });
+    if (!full) throw new AccountError("Account not found.");
+    return full;
+  });
+  if (target.status !== "ACTIVE") throw new AccountError("Only active accounts can receive a reset link.");
+
+  const issued = await issuePasswordResetToken(userId, session.userId);
+  if (!issued) return "failed";
+  const delivery = await deliverPasswordResetEmail({ email: target.email }, issued.token);
+  if (!delivery.delivered) {
+    // The link never reached the account holder — revoke the token so
+    // no live, uncommunicated credential remains.
+    await db.passwordResetToken.deleteMany({ where: { tokenHash: hashResetToken(issued.token) } });
+    return delivery.reason === "not-configured" ? "not-configured" : "failed";
+  }
+  await logAction({ userId: session.userId, action: "Sent password reset link", entity: "User", entityId: userId });
+  return "sent";
+}
+
+export async function setAccountActive(session: SessionPayload, userId: string, active: boolean, expectedRole?: Role) {
+  if (typeof active !== "boolean") throw new AccountError("Invalid account status.");
+  await db.$transaction(async tx => {
+    await authorizeActor(tx, session, "account.manage");
+    const target = await manageableTarget(tx, session, userId);
+    if (expectedRole && target.role !== expectedRole) throw new AccountError("Invalid linked account role.");
+    if (active && target.student && ["SUSPENDED", "DROPPED"].includes(target.student.status)) {
+      throw new AccountError("Restore the student's academic status before activating this account.");
+    }
+    if (!active && target.teacher && await tx.batch.count({ where: { teacherId: target.teacher.id, status: "ONGOING" } })) {
+      throw new AccountError("Reassign this teacher's ongoing batches before deactivation.");
+    }
+    if (target.teacher) await tx.teacher.update({ where: { id: target.teacher.id }, data: { status: active ? "ACTIVE" : "INACTIVE" } });
+    await tx.user.update({ where: { id: userId }, data: { status: active ? "ACTIVE" : "INACTIVE", sessionVersion: { increment: 1 } } });
+    await logAction({ userId: session.userId, action: active ? "Activated account" : "Deactivated account", entity: "User", entityId: userId }, tx);
+  });
+}

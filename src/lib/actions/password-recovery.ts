@@ -1,1 +1,128 @@
-InVzZSBzZXJ2ZXIiOwoKaW1wb3J0IHsgaGVhZGVycyB9IGZyb20gIm5leHQvaGVhZGVycyI7CmltcG9ydCB7IHogfSBmcm9tICJ6b2QiOwppbXBvcnQgeyBkYiB9IGZyb20gIkAvbGliL2RiIjsKaW1wb3J0IHsgZW1haWxTY2hlbWEgfSBmcm9tICJAL2xpYi9hdXRoL2lkZW50aXR5IjsKaW1wb3J0IHsgc3Ryb25nUGFzc3dvcmQgfSBmcm9tICJAL2xpYi9hdXRoL3Bhc3N3b3JkIjsKaW1wb3J0IHsgcmF0ZUxpbWl0ZWQgfSBmcm9tICJAL2xpYi9hdXRoL3Rocm90dGxlIjsKaW1wb3J0IHsKICBhY2NvdW50RWxpZ2libGVGb3JSZWNvdmVyeSwKICBjb25zdW1lUGFzc3dvcmRSZXNldFRva2VuLAogIGRlbGl2ZXJQYXNzd29yZFJlc2V0RW1haWwsCiAgaGFzaFJlc2V0VG9rZW4sCiAgaXNzdWVQYXNzd29yZFJlc2V0VG9rZW4sCn0gZnJvbSAiQC9saWIvYXV0aC9wYXNzd29yZC1yZXNldCI7CmltcG9ydCB7IHNlbmRBY2NvdW50UmVzZXRMaW5rIH0gZnJvbSAiQC9saWIvYXV0aC9hY2NvdW50cyI7CmltcG9ydCB7IGdldFNlc3Npb24gfSBmcm9tICJAL2xpYi9hdXRoL3Nlc3Npb24iOwppbXBvcnQgeyBsb2dBY3Rpb24gfSBmcm9tICJAL2xpYi9hdWRpdCI7CgpleHBvcnQgdHlwZSBSZWNvdmVyeVN0YXRlID0geyBlcnJvcj86IHN0cmluZzsgb2s/OiBib29sZWFuIH07Cgpjb25zdCByZXF1ZXN0U2NoZW1hID0gei5vYmplY3QoeyBlbWFpbDogZW1haWxTY2hlbWEgfSk7CgovKioKICogU2VsZi1zZXJ2aWNlIHJlY292ZXJ5IHJlcXVlc3QuIFRoZSByZXNwb25zZSBpcyBJREVOVElDQUwgd2hldGhlciB0aGUKICogZW1haWwgaXMgdW5rbm93biwgYmVsb25ncyB0byBhbiBpbmVsaWdpYmxlIGFjY291bnQsIGlzIHJhdGUtbGltaXRlZCwKICogb3IgYSByZXNldCBlbWFpbCB3YXMgYWN0dWFsbHkgc2VudCDigJQgYWNjb3VudCBlbnVtZXJhdGlvbiBtdXN0IG5vdCBiZQogKiBwb3NzaWJsZSB0aHJvdWdoIHRoaXMgZW5kcG9pbnQuCiAqLwpleHBvcnQgYXN5bmMgZnVuY3Rpb24gcmVxdWVzdFBhc3N3b3JkUmVzZXRBY3Rpb24oCiAgX3ByZXY6IFJlY292ZXJ5U3RhdGUsCiAgZm9ybURhdGE6IEZvcm1EYXRhCik6IFByb21pc2U8UmVjb3ZlcnlTdGF0ZT4gewogIGNvbnN0IHBhcnNlZCA9IHJlcXVlc3RTY2hlbWEuc2FmZVBhcnNlKHsgZW1haWw6IGZvcm1EYXRhLmdldCgiZW1haWwiKSB9KTsKICBpZiAoIXBhcnNlZC5zdWNjZXNzKSB7CiAgICByZXR1cm4geyBlcnJvcjogcGFyc2VkLmVycm9yLmVycm9yc1swXT8ubWVzc2FnZSA/PyAiRW50ZXIgYSB2YWxpZCBlbWFpbCBhZGRyZXNzLiIgfTsKICB9CiAgY29uc3QgZW1haWwgPSBwYXJzZWQuZGF0YS5lbWFpbDsKCiAgY29uc3QgaCA9IGF3YWl0IGhlYWRlcnMoKTsKICBjb25zdCBpcCA9IChoLmdldCgieC1mb3J3YXJkZWQtZm9yIikgPz8gIiIpLnNwbGl0KCIsIilbMF0udHJpbSgpOwogIGlmIChhd2FpdCByYXRlTGltaXRlZChgcGFzc3dvcmQtcmVzZXQtcmVxdWVzdDoke2VtYWlsfWApKSByZXR1cm4geyBvazogdHJ1ZSB9OwogIGlmIChpcCAmJiAoYXdhaXQgcmF0ZUxpbWl0ZWQoYHBhc3N3b3JkLXJlc2V0LXJlcXVlc3QtaXA6JHtpcH1gKSkpIHJldHVybiB7IG9rOiB0cnVlIH07CgogIGNvbnN0IHVzZXIgPSBhd2FpdCBkYi51c2VyLmZpbmRGaXJzdCh7CiAgICB3aGVyZTogeyBlbWFpbDogeyBlcXVhbHM6IGVtYWlsLCBtb2RlOiAiaW5zZW5zaXRpdmUiIH0gfSwKICAgIGluY2x1ZGU6IHsgdGVhY2hlcjogeyBzZWxlY3Q6IHsgc3RhdHVzOiB0cnVlIH0gfSwgc3R1ZGVudDogeyBzZWxlY3Q6IHsgc3RhdHVzOiB0cnVlIH0gfSB9LAogIH0pOwoKICBpZiAodXNlciAmJiBhY2NvdW50RWxpZ2libGVGb3JSZWNvdmVyeSh1c2VyKSkgewogICAgY29uc3QgaXNzdWVkID0gYXdhaXQgaXNzdWVQYXNzd29yZFJlc2V0VG9rZW4odXNlci5pZCwgbnVsbCk7CiAgICBpZiAoaXNzdWVkKSB7CiAgICAgIGNvbnN0IGRlbGl2ZXJ5ID0gYXdhaXQgZGVsaXZlclBhc3N3b3JkUmVzZXRFbWFpbCh1c2VyLCBpc3N1ZWQudG9rZW4pOwogICAgICB0cnkgewogICAgICAgIGF3YWl0IGxvZ0FjdGlvbih7CiAgICAgICAgICB1c2VySWQ6IHVzZXIuaWQsCiAgICAgICAgICBhY3Rpb246IGRlbGl2ZXJ5LmRlbGl2ZXJlZAogICAgICAgICAgICA/ICJQYXNzd29yZCByZXNldCBlbWFpbCByZXF1ZXN0ZWQiCiAgICAgICAgICAgIDogIlBhc3N3b3JkIHJlc2V0IHJlcXVlc3RlZCAoZW1haWwgZGVsaXZlcnkgdW5hdmFpbGFibGUpIiwKICAgICAgICAgIGVudGl0eTogIlVzZXIiLAogICAgICAgICAgZW50aXR5SWQ6IHVzZXIuaWQsCiAgICAgICAgfSk7CiAgICAgIH0gY2F0Y2ggeyAvKiBhdWRpdGluZyBtdXN0IG5vdCBjaGFuZ2UgdGhlIHJlc3BvbnNlICovIH0KICAgIH0KICB9CiAgcmV0dXJuIHsgb2s6IHRydWUgfTsKfQoKY29uc3QgcmVzZXRTY2hlbWEgPSB6CiAgLm9iamVjdCh7CiAgICB0b2tlbjogei5zdHJpbmcoKS5taW4oMSkubWF4KDIwMCksCiAgICBuZXdQYXNzd29yZDogc3Ryb25nUGFzc3dvcmQsCiAgICBjb25maXJtUGFzc3dvcmQ6IHouc3RyaW5nKCkubWluKDEpLAogIH0pCiAgLnJlZmluZSgoZCkgPT4gZC5uZXdQYXNzd29yZCA9PT0gZC5jb25maXJtUGFzc3dvcmQsIHsKICAgIG1lc3NhZ2U6ICJQYXNzd29yZHMgZG8gbm90IG1hdGNoIiwKICAgIHBhdGg6IFsiY29uZmlybVBhc3N3b3JkIl0sCiAgfSk7Cgpjb25zdCBHRU5FUklDX1JFU0VUX0VSUk9SID0gIlRoaXMgcmVzZXQgbGluayBpcyBpbnZhbGlkIG9yIGhhcyBleHBpcmVkLiBQbGVhc2UgcmVxdWVzdCBhIG5ldyBvbmUuIjsKCmV4cG9ydCBhc3luYyBmdW5jdGlvbiByZXNldFBhc3N3b3JkQWN0aW9uKAogIF9wcmV2OiBSZWNvdmVyeVN0YXRlLAogIGZvcm1EYXRhOiBGb3JtRGF0YQopOiBQcm9taXNlPFJlY292ZXJ5U3RhdGU+IHsKICBjb25zdCBwYXJzZWQgPSByZXNldFNjaGVtYS5zYWZlUGFyc2UoewogICAgdG9rZW46IGZvcm1EYXRhLmdldCgidG9rZW4iKSwKICAgIG5ld1Bhc3N3b3JkOiBmb3JtRGF0YS5nZXQoIm5ld1Bhc3N3b3JkIiksCiAgICBjb25maXJtUGFzc3dvcmQ6IGZvcm1EYXRhLmdldCgiY29uZmlybVBhc3N3b3JkIiksCiAgfSk7CiAgaWYgKCFwYXJzZWQuc3VjY2VzcykgewogICAgLy8gUGFzc3dvcmQtcG9saWN5IHByb2JsZW1zIGFyZSBzYWZlIHRvIGV4cGxhaW47IGFueXRoaW5nIGFib3V0IHRoZQogICAgLy8gdG9rZW4gaXRzZWxmIHN0YXlzIGdlbmVyaWMuCiAgICBjb25zdCBpc3N1ZSA9IHBhcnNlZC5lcnJvci5pc3N1ZXNbMF07CiAgICBpZiAoaXNzdWUgJiYgaXNzdWUucGF0aFswXSAhPT0gInRva2VuIikgcmV0dXJuIHsgZXJyb3I6IGlzc3VlLm1lc3NhZ2UgfTsKICAgIHJldHVybiB7IGVycm9yOiBHRU5FUklDX1JFU0VUX0VSUk9SIH07CiAgfQogIGlmIChhd2FpdCByYXRlTGltaXRlZChgcGFzc3dvcmQtcmVzZXQtY29uc3VtZToke2hhc2hSZXNldFRva2VuKHBhcnNlZC5kYXRhLnRva2VuKX1gKSkgewogICAgcmV0dXJuIHsgZXJyb3I6ICJUb28gbWFueSBhdHRlbXB0cy4gUGxlYXNlIHJlcXVlc3QgYSBuZXcgcmVzZXQgbGluay4iIH07CiAgfQogIGNvbnN0IHJlc3VsdCA9IGF3YWl0IGNvbnN1bWVQYXNzd29yZFJlc2V0VG9rZW4ocGFyc2VkLmRhdGEudG9rZW4sIHBhcnNlZC5kYXRhLm5ld1Bhc3N3b3JkKTsKICBpZiAoIXJlc3VsdC5vaykgcmV0dXJuIHsgZXJyb3I6IEdFTkVSSUNfUkVTRVRfRVJST1IgfTsKICByZXR1cm4geyBvazogdHJ1ZSB9Owp9CgpleHBvcnQgdHlwZSBTdGFmZlJlc2V0TGlua1Jlc3VsdCA9IHsgb2s6IHRydWUgfSB8IHsgb2s6IGZhbHNlOyBlcnJvcjogc3RyaW5nIH07CgovKiogU3RhZmYtaW5pdGlhdGVkIHJlc2V0IGxpbmsgZm9yIGFuIGFjY291bnQgbWFuYWdlZCB2aWEgL2FkbWluL2FjY291bnRzLiAqLwpleHBvcnQgYXN5bmMgZnVuY3Rpb24gc2VuZFJlc2V0TGlua0FjdGlvbih1c2VySWQ6IHN0cmluZyk6IFByb21pc2U8U3RhZmZSZXNldExpbmtSZXN1bHQ+IHsKICBjb25zdCBzZXNzaW9uID0gYXdhaXQgZ2V0U2Vzc2lvbigpOwogIGlmICghc2Vzc2lvbikgcmV0dXJuIHsgb2s6IGZhbHNlLCBlcnJvcjogIllvdXIgc2Vzc2lvbiBoYXMgZXhwaXJlZC4gU2lnbiBpbiBhZ2Fpbi4iIH07CiAgdHJ5IHsKICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IHNlbmRBY2NvdW50UmVzZXRMaW5rKHNlc3Npb24sIHVzZXJJZCk7CiAgICBpZiAocmVzdWx0ID09PSAibm90LWNvbmZpZ3VyZWQiKSB7CiAgICAgIHJldHVybiB7CiAgICAgICAgb2s6IGZhbHNlLAogICAgICAgIGVycm9yOgogICAgICAgICAgIkVtYWlsIGlzIG5vdCBjb25maWd1cmVkIG9uIHRoZSBzZXJ2ZXIsIHNvIG5vIGxpbmsgd2FzIHNlbnQuIFVzZSDigJxSZXNldCBwYXNzd29yZOKAnSB0byBpc3N1ZSBhIHRlbXBvcmFyeSBwYXNzd29yZCBpbnN0ZWFkLiIsCiAgICAgIH07CiAgICB9CiAgICBpZiAocmVzdWx0ID09PSAiZmFpbGVkIikgewogICAgICByZXR1cm4geyBvazogZmFsc2UsIGVycm9yOiAiVGhlIHJlc2V0IGVtYWlsIGNvdWxkIG5vdCBiZSBzZW50LiBQbGVhc2UgdHJ5IGFnYWluLiIgfTsKICAgIH0KICAgIHJldHVybiB7IG9rOiB0cnVlIH07CiAgfSBjYXRjaCB7CiAgICByZXR1cm4geyBvazogZmFsc2UsIGVycm9yOiAiVW5hYmxlIHRvIHNlbmQgYSByZXNldCBsaW5rIGZvciB0aGlzIGFjY291bnQuIiB9OwogIH0KfQo=
+"use server";
+
+import { headers } from "next/headers";
+import { z } from "zod";
+import { db } from "@/lib/db";
+import { emailSchema } from "@/lib/auth/identity";
+import { strongPassword } from "@/lib/auth/password";
+import { rateLimited } from "@/lib/auth/throttle";
+import {
+  accountEligibleForRecovery,
+  consumePasswordResetToken,
+  deliverPasswordResetEmail,
+  hashResetToken,
+  issuePasswordResetToken,
+} from "@/lib/auth/password-reset";
+import { sendAccountResetLink } from "@/lib/auth/accounts";
+import { getSession } from "@/lib/auth/session";
+import { logAction } from "@/lib/audit";
+
+export type RecoveryState = { error?: string; ok?: boolean };
+
+const requestSchema = z.object({ email: emailSchema });
+
+/**
+ * Self-service recovery request. The response is IDENTICAL whether the
+ * email is unknown, belongs to an ineligible account, is rate-limited,
+ * or a reset email was actually sent — account enumeration must not be
+ * possible through this endpoint.
+ */
+export async function requestPasswordResetAction(
+  _prev: RecoveryState,
+  formData: FormData
+): Promise<RecoveryState> {
+  const parsed = requestSchema.safeParse({ email: formData.get("email") });
+  if (!parsed.success) {
+    return { error: parsed.error.errors[0]?.message ?? "Enter a valid email address." };
+  }
+  const email = parsed.data.email;
+
+  const h = await headers();
+  const ip = (h.get("x-forwarded-for") ?? "").split(",")[0].trim();
+  if (await rateLimited(`password-reset-request:${email}`)) return { ok: true };
+  if (ip && (await rateLimited(`password-reset-request-ip:${ip}`))) return { ok: true };
+
+  const user = await db.user.findFirst({
+    where: { email: { equals: email, mode: "insensitive" } },
+    include: { teacher: { select: { status: true } }, student: { select: { status: true } } },
+  });
+
+  if (user && accountEligibleForRecovery(user)) {
+    const issued = await issuePasswordResetToken(user.id, null);
+    if (issued) {
+      const delivery = await deliverPasswordResetEmail(user, issued.token);
+      try {
+        await logAction({
+          userId: user.id,
+          action: delivery.delivered
+            ? "Password reset email requested"
+            : "Password reset requested (email delivery unavailable)",
+          entity: "User",
+          entityId: user.id,
+        });
+      } catch { /* auditing must not change the response */ }
+    }
+  }
+  return { ok: true };
+}
+
+const resetSchema = z
+  .object({
+    token: z.string().min(1).max(200),
+    newPassword: strongPassword,
+    confirmPassword: z.string().min(1),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+const GENERIC_RESET_ERROR = "This reset link is invalid or has expired. Please request a new one.";
+
+export async function resetPasswordAction(
+  _prev: RecoveryState,
+  formData: FormData
+): Promise<RecoveryState> {
+  const parsed = resetSchema.safeParse({
+    token: formData.get("token"),
+    newPassword: formData.get("newPassword"),
+    confirmPassword: formData.get("confirmPassword"),
+  });
+  if (!parsed.success) {
+    // Password-policy problems are safe to explain; anything about the
+    // token itself stays generic.
+    const issue = parsed.error.issues[0];
+    if (issue && issue.path[0] !== "token") return { error: issue.message };
+    return { error: GENERIC_RESET_ERROR };
+  }
+  if (await rateLimited(`password-reset-consume:${hashResetToken(parsed.data.token)}`)) {
+    return { error: "Too many attempts. Please request a new reset link." };
+  }
+  const result = await consumePasswordResetToken(parsed.data.token, parsed.data.newPassword);
+  if (!result.ok) return { error: GENERIC_RESET_ERROR };
+  return { ok: true };
+}
+
+export type StaffResetLinkResult = { ok: true } | { ok: false; error: string };
+
+/** Staff-initiated reset link for an account managed via /admin/accounts. */
+export async function sendResetLinkAction(userId: string): Promise<StaffResetLinkResult> {
+  const session = await getSession();
+  if (!session) return { ok: false, error: "Your session has expired. Sign in again." };
+  try {
+    const result = await sendAccountResetLink(session, userId);
+    if (result === "not-configured") {
+      return {
+        ok: false,
+        error:
+          "Email is not configured on the server, so no link was sent. Use “Reset password” to issue a temporary password instead.",
+      };
+    }
+    if (result === "failed") {
+      return { ok: false, error: "The reset email could not be sent. Please try again." };
+    }
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Unable to send a reset link for this account." };
+  }
+}

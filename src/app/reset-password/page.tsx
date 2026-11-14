@@ -1,1 +1,30 @@
-aW1wb3J0IHsgR3JhZHVhdGlvbkNhcCB9IGZyb20gImx1Y2lkZS1yZWFjdCI7CmltcG9ydCB7IHZlcmlmeVBhc3N3b3JkUmVzZXRUb2tlbiB9IGZyb20gIkAvbGliL2F1dGgvcGFzc3dvcmQtcmVzZXQiOwppbXBvcnQgeyBSZXNldFBhc3N3b3JkRm9ybSwgSW52YWxpZFJlc2V0TGluayB9IGZyb20gIi4vcmVzZXQtZm9ybSI7CgpleHBvcnQgZGVmYXVsdCBhc3luYyBmdW5jdGlvbiBSZXNldFBhc3N3b3JkUGFnZSh7CiAgc2VhcmNoUGFyYW1zLAp9OiB7CiAgc2VhcmNoUGFyYW1zOiBQcm9taXNlPHsgdG9rZW4/OiBzdHJpbmcgfT47Cn0pIHsKICBjb25zdCB7IHRva2VuIH0gPSBhd2FpdCBzZWFyY2hQYXJhbXM7CiAgY29uc3QgdmFsaWQgPSB0b2tlbiA/IGF3YWl0IHZlcmlmeVBhc3N3b3JkUmVzZXRUb2tlbih0b2tlbikgOiBudWxsOwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9ImZsZXggbWluLWgtc2NyZWVuIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBiZy1ncmFkaWVudC10by1iciBmcm9tLWFjY2VudCB0by1iYWNrZ3JvdW5kIHAtNCI+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJ3LWZ1bGwgbWF4LXctbWQiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYi04IGZsZXggZmxleC1jb2wgaXRlbXMtY2VudGVyIHRleHQtY2VudGVyIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYi0zIGZsZXggaC0xNCB3LTE0IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciByb3VuZGVkLXhsIGJnLXByaW1hcnkgdGV4dC1wcmltYXJ5LWZvcmVncm91bmQiPgogICAgICAgICAgICA8R3JhZHVhdGlvbkNhcCBjbGFzc05hbWU9ImgtOCB3LTgiIC8+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxoMSBjbGFzc05hbWU9InRleHQtMnhsIGZvbnQtYm9sZCI+aVNraWxsU3BvdDwvaDE+CiAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj5MZWFybmluZyBNYW5hZ2VtZW50IFN5c3RlbTwvcD4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgPGRpdiBjbGFzc05hbWU9InJvdW5kZWQtbGcgYm9yZGVyIGJvcmRlci1ib3JkZXIgYmctY2FyZCBwLTYgc2hhZG93LXNtIj4KICAgICAgICAgIHt2YWxpZCAmJiB0b2tlbiA/IDxSZXNldFBhc3N3b3JkRm9ybSB0b2tlbj17dG9rZW59IC8+IDogPEludmFsaWRSZXNldExpbmsgLz59CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CiAgKTsKfQo=
+import { GraduationCap } from "lucide-react";
+import { verifyPasswordResetToken } from "@/lib/auth/password-reset";
+import { ResetPasswordForm, InvalidResetLink } from "./reset-form";
+
+export default async function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>;
+}) {
+  const { token } = await searchParams;
+  const valid = token ? await verifyPasswordResetToken(token) : null;
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-accent to-background p-4">
+      <div className="w-full max-w-md">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <GraduationCap className="h-8 w-8" />
+          </div>
+          <h1 className="text-2xl font-bold">iSkillSpot</h1>
+          <p className="text-sm text-muted-foreground">Learning Management System</p>
+        </div>
+
+        <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+          {valid && token ? <ResetPasswordForm token={token} /> : <InvalidResetLink />}
+        </div>
+      </div>
+    </div>
+  );
+}
