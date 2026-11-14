@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { resetStudentPasswordAction, toggleStudentAccountAction } from "@/lib/actions/students";
+import { resetStudentPasswordAction, sendStudentResetLinkAction, toggleStudentAccountAction } from "@/lib/actions/students";
+import { SendResetLinkButton } from "@/components/auth/send-reset-link-button";
 import { KeyRound, Power } from "lucide-react";
 
 export function StudentActions({
@@ -43,6 +44,7 @@ export function StudentActions({
         <Button variant={isActive ? "destructive" : "default"} size="sm" onClick={toggle} disabled={busy}>
           <Power className="h-4 w-4" /> {isActive ? "Deactivate" : "Activate"}
         </Button>
+        <SendResetLinkButton onSend={() => sendStudentResetLinkAction(studentId)} />
       </div>
       {tempPassword && (
         <p className="rounded-md bg-muted px-3 py-2 text-xs">

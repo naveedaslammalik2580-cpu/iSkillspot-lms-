@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { hashPassword, generateTempPassword, temporaryPasswordExpiry } from "./password";
 import { emailSchema, usernameSchema, assertIdentityAvailable, AccountError } from "./identity";
 import { authorizeActor, manageableTarget } from "./account-policy";
+import { deliverPasswordResetEmail, hashResetToken, issuePasswordResetToken } from "./password-reset";
 import { logAction } from "@/lib/audit";
 
 export const adminAccountSchema = z.object({ username: usernameSchema, email: emailSchema }).strict();
@@ -36,6 +37,43 @@ export async function resetAccountPassword(session: SessionPayload, userId: stri
     await logAction({ userId: session.userId, action: "Reset account password", entity: "User", entityId: userId }, tx);
   });
   return { tempPassword };
+}
+
+/**
+ * Staff-initiated password recovery by emailed reset link — the
+ * preferred recovery path (the temporary-password reset below remains
+ * the fallback for accounts that cannot receive email). Authorization
+ * is identical to the other account mutations: the actor must hold
+ * account.manage and the target must be within the actor's manageable
+ * roles, rechecked inside a transaction. The staff member never sees
+ * a credential; the link goes only to the account's own email.
+ */
+export async function sendAccountResetLink(
+  session: SessionPayload,
+  userId: string,
+  expectedRole?: Role
+): Promise<"sent" | "not-configured" | "failed"> {
+  const target = await db.$transaction(async (tx) => {
+    await authorizeActor(tx, session, "account.manage");
+    const t = await manageableTarget(tx, session, userId);
+    if (expectedRole && t.role !== expectedRole) throw new AccountError("Invalid linked account role.");
+    const full = await tx.user.findUnique({ where: { id: userId }, select: { email: true, status: true } });
+    if (!full) throw new AccountError("Account not found.");
+    return full;
+  });
+  if (target.status !== "ACTIVE") throw new AccountError("Only active accounts can receive a reset link.");
+
+  const issued = await issuePasswordResetToken(userId, session.userId);
+  if (!issued) return "failed";
+  const delivery = await deliverPasswordResetEmail({ email: target.email }, issued.token);
+  if (!delivery.delivered) {
+    // The link never reached the account holder — revoke the token so
+    // no live, uncommunicated credential remains.
+    await db.passwordResetToken.deleteMany({ where: { tokenHash: hashResetToken(issued.token) } });
+    return delivery.reason === "not-configured" ? "not-configured" : "failed";
+  }
+  await logAction({ userId: session.userId, action: "Sent password reset link", entity: "User", entityId: userId });
+  return "sent";
 }
 
 export async function setAccountActive(session: SessionPayload, userId: string, active: boolean, expectedRole?: Role) {

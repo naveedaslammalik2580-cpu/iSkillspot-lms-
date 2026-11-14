@@ -14,7 +14,7 @@ import { notifyUser } from "@/lib/notifications";
 import { getSetting } from "@/lib/settings";
 import { emailSchema, assertIdentityAvailable } from "@/lib/auth/identity";
 import { authorizeActor, manageableTarget } from "@/lib/auth/account-policy";
-import { resetAccountPassword, setAccountActive } from "@/lib/auth/accounts";
+import { resetAccountPassword, sendAccountResetLink, setAccountActive } from "@/lib/auth/accounts";
 
 const createStudentSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
@@ -219,6 +219,23 @@ export async function resetStudentPasswordAction(studentId: string) {
     const result = await resetAccountPassword(session, student.userId, "STUDENT");
     return { ok: true, tempPassword: result.tempPassword };
   } catch { return { ok: false, error: "Unable to reset this account password." }; }
+}
+
+export async function sendStudentResetLinkAction(
+  studentId: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const session = await requirePermission("student.edit");
+  const student = await db.student.findUnique({ where: { id: studentId } });
+  if (!student) return { ok: false, error: "Student not found." };
+
+  try {
+    const result = await sendAccountResetLink(session, student.userId, "STUDENT");
+    if (result === "not-configured") {
+      return { ok: false, error: "Email is not configured on the server, so no link was sent. Use the temporary-password reset instead." };
+    }
+    if (result === "failed") return { ok: false, error: "The reset email could not be sent. Please try again." };
+    return { ok: true };
+  } catch { return { ok: false, error: "Unable to send a reset link for this account." }; }
 }
 
 export async function toggleStudentAccountAction(studentId: string, activate: boolean) {

@@ -1,16 +1,26 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { loginAction, type ActionState } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/auth/password-input";
 import { GraduationCap } from "lucide-react";
 
 const initial: ActionState = {};
 
-export default function LoginPage() {
+function LoginForm() {
   const [state, formAction, pending] = useActionState(loginAction, initial);
+  // Controlled identifier: React resets uncontrolled form fields after
+  // an action round-trip, which used to wipe the typed username after
+  // every failed attempt. (The password field intentionally clears.)
+  const [identifier, setIdentifier] = useState("");
+  const params = useSearchParams();
+  const justReset = params.get("reset") === "1";
+  const sessionExpired = params.get("expired") === "1";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-accent to-background p-4">
@@ -29,14 +39,45 @@ export default function LoginPage() {
             Use the credentials provided by your institute.
           </p>
 
+          {justReset && (
+            <p className="mb-4 rounded-md bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
+              Your password has been reset. Sign in with your new password.
+            </p>
+          )}
+          {sessionExpired && !justReset && (
+            <p className="mb-4 rounded-md bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
+              Your session has expired. Please sign in again.
+            </p>
+          )}
+
           <form action={formAction} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="identifier">Username / Email / Student ID</Label>
-              <Input id="identifier" name="identifier" autoComplete="username" required />
+              <Input
+                id="identifier"
+                name="identifier"
+                autoComplete="username"
+                required
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" autoComplete="current-password" required />
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <PasswordInput
+                id="password"
+                name="password"
+                autoComplete="current-password"
+                required
+              />
             </div>
             <label className="flex items-center gap-2 text-sm text-muted-foreground">
               <input type="checkbox" name="remember" className="h-4 w-4 rounded border-input" />
@@ -60,5 +101,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

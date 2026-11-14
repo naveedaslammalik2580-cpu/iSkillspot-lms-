@@ -9,7 +9,7 @@ import { hashPassword, generateTempPassword, temporaryPasswordExpiry } from "@/l
 import { logAction } from "@/lib/audit";
 import { emailSchema, usernameSchema, assertIdentityAvailable } from "@/lib/auth/identity";
 import { authorizeActor, manageableTarget } from "@/lib/auth/account-policy";
-import { resetAccountPassword, setAccountActive } from "@/lib/auth/accounts";
+import { resetAccountPassword, sendAccountResetLink, setAccountActive } from "@/lib/auth/accounts";
 
 // Schema note: Teacher has no employeeId field (spec allowed for this — "if
 // present"). It isn't, so this module doesn't expose one.
@@ -198,4 +198,22 @@ export async function resetTeacherPassword(
     const result = await resetAccountPassword(session, existing.userId, "TEACHER");
     return { ok: true, tempPassword: result.tempPassword };
   } catch { return { ok: false, error: "Unable to reset this account password." }; }
+}
+
+export async function sendTeacherResetLinkAction(
+  id: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const session = await requirePermission("teacher.manage");
+
+  const existing = await db.teacher.findUnique({ where: { id } });
+  if (!existing) return { ok: false, error: "Teacher not found." };
+
+  try {
+    const result = await sendAccountResetLink(session, existing.userId, "TEACHER");
+    if (result === "not-configured") {
+      return { ok: false, error: "Email is not configured on the server, so no link was sent. Use the temporary-password reset instead." };
+    }
+    if (result === "failed") return { ok: false, error: "The reset email could not be sent. Please try again." };
+    return { ok: true };
+  } catch { return { ok: false, error: "Unable to send a reset link for this account." }; }
 }
