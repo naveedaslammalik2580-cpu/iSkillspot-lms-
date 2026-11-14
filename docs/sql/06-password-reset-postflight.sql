@@ -1,1 +1,37 @@
-LS0gUkVBRCBPTkxZLiBSdW4gQUZURVIgdGhlIHBhc3N3b3JkLXJlc2V0IG1pZ3JhdGlvbiwgYmVmb3JlIGRlcGxveWluZwotLSB0aGUgdXBkYXRlZCBhcHBsaWNhdGlvbi4KQkVHSU4gUkVBRCBPTkxZOwoKLS0gRXhwZWN0ZWQ6IDcgY29sdW1ucyAoaWQsIHVzZXJJZCwgdG9rZW5IYXNoLCBleHBpcmVzQXQsIHVzZWRBdCwgcmVxdWVzdGVkQnlJZCwgY3JlYXRlZEF0KS4KU0VMRUNUIGNvbHVtbl9uYW1lLCBkYXRhX3R5cGUsIGlzX251bGxhYmxlIEZST00gaW5mb3JtYXRpb25fc2NoZW1hLmNvbHVtbnMKV0hFUkUgdGFibGVfc2NoZW1hID0gJ3B1YmxpYycgQU5EIHRhYmxlX25hbWUgPSAnUGFzc3dvcmRSZXNldFRva2VuJwpPUkRFUiBCWSBvcmRpbmFsX3Bvc2l0aW9uOwoKLS0gRXhwZWN0ZWQ6IFBhc3N3b3JkUmVzZXRUb2tlbl9wa2V5LCBQYXNzd29yZFJlc2V0VG9rZW5fdG9rZW5IYXNoX2tleSwKLS0gUGFzc3dvcmRSZXNldFRva2VuX3VzZXJJZF9pZHgsIFBhc3N3b3JkUmVzZXRUb2tlbl9leHBpcmVzQXRfaWR4LgpTRUxFQ1QgaW5kZXhuYW1lIEZST00gcGdfaW5kZXhlcwpXSEVSRSBzY2hlbWFuYW1lID0gJ3B1YmxpYycgQU5EIHRhYmxlbmFtZSA9ICdQYXNzd29yZFJlc2V0VG9rZW4nOwoKLS0gRXhwZWN0ZWQ6IG9uZSBGSyBQYXNzd29yZFJlc2V0VG9rZW5fdXNlcklkX2ZrZXkgLT4gIlVzZXIiKCJpZCIpLCBkZWxldGUgcnVsZSBDQVNDQURFLgpTRUxFQ1QgY29ubmFtZSwgY29uZmRlbHR5cGUgRlJPTSBwZ19jb25zdHJhaW50CldIRVJFIGNvbnJlbGlkID0gJ3B1YmxpYy4iUGFzc3dvcmRSZXNldFRva2VuIic6OnJlZ2NsYXNzIEFORCBjb250eXBlID0gJ2YnOwoKLS0gUkxTIHBvc3R1cmUgZm9yIHRoZSBuZXcgdGFibGUgKHRoZSB0b2tlbiBoYXNoZXMgYXJlIGNyZWRlbnRpYWxzLWdyYWRlCi0tIGRhdGE7IGFub24vYXV0aGVudGljYXRlZCBtdXN0IGhhdmUgbm8gYWNjZXNzIOKAlCB0aGUgYXBwIGNvbm5lY3RzIHZpYQotLSBQcmlzbWEgYXMgdGhlIG93bmVyIHJvbGUsIHdoaWNoIGJ5cGFzc2VzIFJMUykuClNFTEVDVCByZWxuYW1lLCByZWxyb3dzZWN1cml0eSBGUk9NIHBnX2NsYXNzCkpPSU4gcGdfbmFtZXNwYWNlIE9OIHBnX25hbWVzcGFjZS5vaWQgPSBwZ19jbGFzcy5yZWxuYW1lc3BhY2UKV0hFUkUgbnNwbmFtZSA9ICdwdWJsaWMnIEFORCByZWxuYW1lID0gJ1Bhc3N3b3JkUmVzZXRUb2tlbic7ClNFTEVDVCByLnJvbG5hbWUsCiAgICAgICBoYXNfdGFibGVfcHJpdmlsZWdlKHIucm9sbmFtZSwgJ3B1YmxpYy4iUGFzc3dvcmRSZXNldFRva2VuIicsICdTRUxFQ1QnKSBBUyBjYW5fc2VsZWN0LAogICAgICAgaGFzX3RhYmxlX3ByaXZpbGVnZShyLnJvbG5hbWUsICdwdWJsaWMuIlBhc3N3b3JkUmVzZXRUb2tlbiInLCAnSU5TRVJUJykgQVMgY2FuX2luc2VydApGUk9NIHBnX3JvbGVzIHIgV0hFUkUgci5yb2xuYW1lIElOICgnYW5vbicsICdhdXRoZW50aWNhdGVkJyk7CgotLSBCdXNpbmVzcyBpbnZhcmlhbnRzIG11c3QgbWF0Y2ggdGhlIHByZWZsaWdodCBjb3VudHMuClNFTEVDVCBjb3VudCgqKSBBUyB1c2VyX2NvdW50IEZST00gcHVibGljLiJVc2VyIjsKU0VMRUNUIGNvdW50KCopIEFTIHN1cGVyX2FkbWluX2NvdW50IEZST00gcHVibGljLiJVc2VyIiBXSEVSRSByb2xlID0gJ1NVUEVSX0FETUlOJzsKCi0tIEEgZnJlc2hseSBtaWdyYXRlZCBzeXN0ZW0gaGFzIGlzc3VlZCBubyB0b2tlbnMgeWV0LiBFeHBlY3RlZDogMC4KU0VMRUNUIGNvdW50KCopIEFTIHBhc3N3b3JkX3Jlc2V0X3Rva2VucyBGUk9NIHB1YmxpYy4iUGFzc3dvcmRSZXNldFRva2VuIjsKCkNPTU1JVDsK
+-- READ ONLY. Run AFTER the password-reset migration, before deploying
+-- the updated application.
+BEGIN READ ONLY;
+
+-- Expected: 7 columns (id, userId, tokenHash, expiresAt, usedAt, requestedById, createdAt).
+SELECT column_name, data_type, is_nullable FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'PasswordResetToken'
+ORDER BY ordinal_position;
+
+-- Expected: PasswordResetToken_pkey, PasswordResetToken_tokenHash_key,
+-- PasswordResetToken_userId_idx, PasswordResetToken_expiresAt_idx.
+SELECT indexname FROM pg_indexes
+WHERE schemaname = 'public' AND tablename = 'PasswordResetToken';
+
+-- Expected: one FK PasswordResetToken_userId_fkey -> "User"("id"), delete rule CASCADE.
+SELECT conname, confdeltype FROM pg_constraint
+WHERE conrelid = 'public."PasswordResetToken"'::regclass AND contype = 'f';
+
+-- RLS posture for the new table (the token hashes are credentials-grade
+-- data; anon/authenticated must have no access — the app connects via
+-- Prisma as the owner role, which bypasses RLS).
+SELECT relname, relrowsecurity FROM pg_class
+JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
+WHERE nspname = 'public' AND relname = 'PasswordResetToken';
+SELECT r.rolname,
+       has_table_privilege(r.rolname, 'public."PasswordResetToken"', 'SELECT') AS can_select,
+       has_table_privilege(r.rolname, 'public."PasswordResetToken"', 'INSERT') AS can_insert
+FROM pg_roles r WHERE r.rolname IN ('anon', 'authenticated');
+
+-- Business invariants must match the preflight counts.
+SELECT count(*) AS user_count FROM public."User";
+SELECT count(*) AS super_admin_count FROM public."User" WHERE role = 'SUPER_ADMIN';
+
+-- A freshly migrated system has issued no tokens yet. Expected: 0.
+SELECT count(*) AS password_reset_tokens FROM public."PasswordResetToken";
+
+COMMIT;

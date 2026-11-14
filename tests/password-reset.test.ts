@@ -1,1 +1,231 @@
-LyoqCiAqIFBhc3N3b3JkIHJlY292ZXJ5IHRlc3RzIOKAlCBub2RlOnRlc3QgdmlhIHRzeC4KICoKICogRXhlcmNpc2VzIHRoZSBSRUFMIHJlY292ZXJ5IHNlcnZpY2UgKHNyYy9saWIvYXV0aC9wYXNzd29yZC1yZXNldC50cykKICogYW5kIHRoZSBzdGFmZiBsaW5rIHNlcnZpY2UgKHNyYy9saWIvYXV0aC9hY2NvdW50cy50cykgYWdhaW5zdCBhCiAqIGRpc3Bvc2FibGUgZGF0YWJhc2UgKHJlZnVzZXMgbm9uLSJ0ZXN0IiBkYXRhYmFzZSBuYW1lcyk6CiAqIC0gdG9rZW5zIGFyZSBzdG9yZWQgT05MWSBhcyBTSEEtMjU2IGhhc2hlcywgZXhwaXJlIGluIDMwIG1pbnV0ZXMKICogLSBzaW5nbGUgdXNlOiByZXBsYXkgYWZ0ZXIgYSBzdWNjZXNzZnVsIHJlc2V0IGZhaWxzCiAqIC0gaXNzdWluZyBhIG5ldyB0b2tlbiBzdXBlcnNlZGVzIHRoZSBwcmV2aW91cyBvbmUKICogLSBleHBpcmVkIHRva2VucyBjYW5ub3QgYmUgY29uc3VtZWQKICogLSBhIHN1Y2Nlc3NmdWwgcmVzZXQgY2hhbmdlcyB0aGUgcGFzc3dvcmQsIGNsZWFycyB0aGUgZm9yY2VkLWNoYW5nZQogKiAgIGZsYWdzIGFuZCBidW1wcyBzZXNzaW9uVmVyc2lvbiAodGhlIHNlc3Npb24tcmV2b2NhdGlvbiBtZWNoYW5pc20pCiAqIC0gaW5lbGlnaWJsZSAoZGVhY3RpdmF0ZWQpIGFjY291bnRzIGNhbm5vdCBjb21wbGV0ZSBhIHJlc2V0CiAqIC0gaXNzdWFuY2UgaXMgY2FwcGVkIHBlciBob3VyIChlbWFpbC1ib21iaW5nIGd1YXJkKQogKiAtIHN0YWZmIGxpbmstc2VuZGluZyBlbmZvcmNlcyB0aGUgcm9sZSBoaWVyYXJjaHkgc2VydmVyLXNpZGUKICogLSB3aXRoIG5vIGVtYWlsIHByb3ZpZGVyIGNvbmZpZ3VyZWQsIGRlbGl2ZXJ5IGhvbmVzdGx5IHJlcG9ydHMKICogICAibm90LWNvbmZpZ3VyZWQiIGFuZCBubyBsaXZlIHRva2VuIGlzIGxlZnQgYmVoaW5kCiAqCiAqIEV2ZXJ5IHRlc3QgdXNlcyBpdHMgb3duIGZpeHR1cmUgYWNjb3VudCBzbyB0aGUgcGVyLWhvdXIgaXNzdWFuY2UgY2FwCiAqIGFuZCB0b2tlbiBzdXBlcnNlZGluZyBuZXZlciBsZWFrIGJldHdlZW4gdGVzdHMuCiAqLwppbXBvcnQgeyBhZnRlciwgYmVmb3JlLCBkZXNjcmliZSwgaXQgfSBmcm9tICJub2RlOnRlc3QiOwppbXBvcnQgYXNzZXJ0IGZyb20gIm5vZGU6YXNzZXJ0L3N0cmljdCI7CmltcG9ydCB7IGNyZWF0ZUhhc2ggfSBmcm9tICJub2RlOmNyeXB0byI7Cgpwcm9jZXNzLmVudi5BUFBfVVJMID0gImh0dHA6Ly9sb2NhbGhvc3Q6MzEwMCI7CmRlbGV0ZSBwcm9jZXNzLmVudi5TTVRQX0hPU1Q7CmRlbGV0ZSBwcm9jZXNzLmVudi5SRVNFTkRfQVBJX0tFWTsKZGVsZXRlIHByb2Nlc3MuZW52LkVNQUlMX0ZST007CgppbXBvcnQgeyBkYiB9IGZyb20gIkAvbGliL2RiIjsKaW1wb3J0IHsKICBoYXNoUmVzZXRUb2tlbiwKICBpc3N1ZVBhc3N3b3JkUmVzZXRUb2tlbiwKICB2ZXJpZnlQYXNzd29yZFJlc2V0VG9rZW4sCiAgY29uc3VtZVBhc3N3b3JkUmVzZXRUb2tlbiwKICBSRVNFVF9UT0tFTl9UVExfTUlOVVRFUywKfSBmcm9tICJAL2xpYi9hdXRoL3Bhc3N3b3JkLXJlc2V0IjsKaW1wb3J0IHsgc2VuZEFjY291bnRSZXNldExpbmsgfSBmcm9tICJAL2xpYi9hdXRoL2FjY291bnRzIjsKaW1wb3J0IHsgdmVyaWZ5UGFzc3dvcmQgfSBmcm9tICJAL2xpYi9hdXRoL3Bhc3N3b3JkIjsKaW1wb3J0IHsgZW1haWxQcm92aWRlckNvbmZpZ3VyZWQsIHNlbmRFbWFpbCB9IGZyb20gIkAvbGliL2VtYWlsIjsKaW1wb3J0IHR5cGUgeyBTZXNzaW9uUGF5bG9hZCB9IGZyb20gIkAvbGliL2F1dGgvdG9rZW4iOwoKY29uc3QgdXNlcklkczogc3RyaW5nW10gPSBbXTsKY29uc3QgTkVXX1BBU1NXT1JEID0gIkJyYW5kTmV3I1Bhc3MyMDI2IjsKCmFzeW5jIGZ1bmN0aW9uIG1rVXNlcihyb2xlOiAiU1VQRVJfQURNSU4iIHwgIkFETUlOIiB8ICJURUFDSEVSIiB8ICJTVFVERU5UIikgewogIGNvbnN0IHMgPSBNYXRoLnJhbmRvbSgpLnRvU3RyaW5nKDM2KS5zbGljZSgyLCAxMCk7CiAgY29uc3QgdSA9IGF3YWl0IGRiLnVzZXIuY3JlYXRlKHsKICAgIGRhdGE6IHsgdXNlcm5hbWU6IGBwcl8ke3N9YCwgZW1haWw6IGBwcl8ke3N9QHRlc3QubG9jYWxgLCBwYXNzd29yZEhhc2g6ICJ4Iiwgcm9sZSwgc3RhdHVzOiAiQUNUSVZFIiB9LAogIH0pOwogIHVzZXJJZHMucHVzaCh1LmlkKTsKICByZXR1cm4gdTsKfQoKYXN5bmMgZnVuY3Rpb24gbWtTdHVkZW50VXNlcigpIHsKICBjb25zdCB1ID0gYXdhaXQgbWtVc2VyKCJTVFVERU5UIik7CiAgY29uc3QgcyA9IE1hdGgucmFuZG9tKCkudG9TdHJpbmcoMzYpLnNsaWNlKDIsIDgpOwogIGF3YWl0IGRiLnN0dWRlbnQuY3JlYXRlKHsKICAgIGRhdGE6IHsgdXNlcklkOiB1LmlkLCBzdHVkZW50SWQ6IGBQUi0ke3N9YCwgZnVsbE5hbWU6ICJSZXNldCBUZXN0IFN0dWRlbnQiIH0sCiAgfSk7CiAgcmV0dXJuIHU7Cn0KCmZ1bmN0aW9uIHNlc3Npb25PZih1OiB7IGlkOiBzdHJpbmc7IHVzZXJuYW1lOiBzdHJpbmc7IHJvbGU6IFNlc3Npb25QYXlsb2FkWyJyb2xlIl07IHNlc3Npb25WZXJzaW9uOiBudW1iZXIgfSk6IFNlc3Npb25QYXlsb2FkIHsKICByZXR1cm4geyB1c2VySWQ6IHUuaWQsIHVzZXJuYW1lOiB1LnVzZXJuYW1lLCByb2xlOiB1LnJvbGUsIG11c3RDaGFuZ2VQYXNzd29yZDogZmFsc2UsIHNlc3Npb25WZXJzaW9uOiB1LnNlc3Npb25WZXJzaW9uIH07Cn0KCmJlZm9yZShhc3luYyAoKSA9PiB7CiAgY29uc3Qgcm93ID0gYXdhaXQgZGIuJHF1ZXJ5UmF3PHsgY3VycmVudF9kYXRhYmFzZTogc3RyaW5nIH1bXT5gU0VMRUNUIGN1cnJlbnRfZGF0YWJhc2UoKWA7CiAgYXNzZXJ0Lm1hdGNoKHJvd1swXS5jdXJyZW50X2RhdGFiYXNlLCAvdGVzdC8sICJyZWZ1c2luZyB0byBydW4gdGVzdHMgYWdhaW5zdCBhIG5vbi10ZXN0IGRhdGFiYXNlIik7Cn0pOwoKYWZ0ZXIoYXN5bmMgKCkgPT4gewogIGF3YWl0IGRiLnVzZXIuZGVsZXRlTWFueSh7IHdoZXJlOiB7IGlkOiB7IGluOiB1c2VySWRzIH0gfSB9KTsKICBhd2FpdCBkYi4kZGlzY29ubmVjdCgpOwp9KTsKCmRlc2NyaWJlKCJ0b2tlbiBzdG9yYWdlIGFuZCBsaWZlY3ljbGUiLCAoKSA9PiB7CiAgaXQoInN0b3JlcyBvbmx5IHRoZSBTSEEtMjU2IGhhc2gsIHdpdGggYSB+MzAgbWludXRlIGV4cGlyeSIsIGFzeW5jICgpID0+IHsKICAgIGNvbnN0IHVzZXIgPSBhd2FpdCBta1N0dWRlbnRVc2VyKCk7CiAgICBjb25zdCBpc3N1ZWQgPSBhd2FpdCBpc3N1ZVBhc3N3b3JkUmVzZXRUb2tlbih1c2VyLmlkLCBudWxsKTsKICAgIGFzc2VydC5vayhpc3N1ZWQpOwogICAgY29uc3Qgcm93ID0gYXdhaXQgZGIucGFzc3dvcmRSZXNldFRva2VuLmZpbmRGaXJzdCh7IHdoZXJlOiB7IHVzZXJJZDogdXNlci5pZCB9IH0pOwogICAgYXNzZXJ0Lm9rKHJvdyk7CiAgICBhc3NlcnQuZXF1YWwocm93LnRva2VuSGFzaCwgaGFzaFJlc2V0VG9rZW4oaXNzdWVkLnRva2VuKSk7CiAgICBhc3NlcnQubm90RXF1YWwocm93LnRva2VuSGFzaCwgaXNzdWVkLnRva2VuKTsKICAgIGFzc2VydC5lcXVhbChyb3cudG9rZW5IYXNoLCBjcmVhdGVIYXNoKCJzaGEyNTYiKS51cGRhdGUoaXNzdWVkLnRva2VuKS5kaWdlc3QoImhleCIpKTsKICAgIGNvbnN0IHR0bE1zID0gcm93LmV4cGlyZXNBdC5nZXRUaW1lKCkgLSBEYXRlLm5vdygpOwogICAgYXNzZXJ0Lm9rKHR0bE1zID4gKFJFU0VUX1RPS0VOX1RUTF9NSU5VVEVTIC0gMikgKiA2MF8wMDAgJiYgdHRsTXMgPD0gUkVTRVRfVE9LRU5fVFRMX01JTlVURVMgKiA2MF8wMDApOwogICAgYXNzZXJ0LmVxdWFsKHJvdy51c2VkQXQsIG51bGwpOwogIH0pOwoKICBpdCgidmVyaWZpZXMgYSBsaXZlIHRva2VuIGFuZCByZWplY3RzIGdhcmJhZ2UiLCBhc3luYyAoKSA9PiB7CiAgICBjb25zdCB1c2VyID0gYXdhaXQgbWtTdHVkZW50VXNlcigpOwogICAgY29uc3QgaXNzdWVkID0gYXdhaXQgaXNzdWVQYXNzd29yZFJlc2V0VG9rZW4odXNlci5pZCwgbnVsbCk7CiAgICBhc3NlcnQub2soaXNzdWVkKTsKICAgIGFzc2VydC5kZWVwRXF1YWwoYXdhaXQgdmVyaWZ5UGFzc3dvcmRSZXNldFRva2VuKGlzc3VlZC50b2tlbiksIHsgdXNlcklkOiB1c2VyLmlkIH0pOwogICAgYXNzZXJ0LmVxdWFsKGF3YWl0IHZlcmlmeVBhc3N3b3JkUmVzZXRUb2tlbigibm90LWEtcmVhbC10b2tlbiIpLCBudWxsKTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCB2ZXJpZnlQYXNzd29yZFJlc2V0VG9rZW4oIiIpLCBudWxsKTsKICB9KTsKCiAgaXQoImEgbmV3IHRva2VuIHN1cGVyc2VkZXMgdGhlIHByZXZpb3VzIG9uZSIsIGFzeW5jICgpID0+IHsKICAgIGNvbnN0IHVzZXIgPSBhd2FpdCBta1N0dWRlbnRVc2VyKCk7CiAgICBjb25zdCBmaXJzdCA9IGF3YWl0IGlzc3VlUGFzc3dvcmRSZXNldFRva2VuKHVzZXIuaWQsIG51bGwpOwogICAgY29uc3Qgc2Vjb25kID0gYXdhaXQgaXNzdWVQYXNzd29yZFJlc2V0VG9rZW4odXNlci5pZCwgbnVsbCk7CiAgICBhc3NlcnQub2soZmlyc3QgJiYgc2Vjb25kKTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCB2ZXJpZnlQYXNzd29yZFJlc2V0VG9rZW4oZmlyc3QudG9rZW4pLCBudWxsKTsKICAgIGFzc2VydC5kZWVwRXF1YWwoYXdhaXQgdmVyaWZ5UGFzc3dvcmRSZXNldFRva2VuKHNlY29uZC50b2tlbiksIHsgdXNlcklkOiB1c2VyLmlkIH0pOwogICAgY29uc3QgY29uc3VtZWQgPSBhd2FpdCBjb25zdW1lUGFzc3dvcmRSZXNldFRva2VuKGZpcnN0LnRva2VuLCBORVdfUEFTU1dPUkQpOwogICAgYXNzZXJ0LmVxdWFsKGNvbnN1bWVkLm9rLCBmYWxzZSk7CiAgfSk7CgogIGl0KCJleHBpcmVkIHRva2VucyB2ZXJpZnkgYXMgbnVsbCBhbmQgY2Fubm90IGJlIGNvbnN1bWVkIiwgYXN5bmMgKCkgPT4gewogICAgY29uc3QgdXNlciA9IGF3YWl0IG1rU3R1ZGVudFVzZXIoKTsKICAgIGNvbnN0IHRva2VuID0gImV4cGlyZWQtZml4dHVyZS10b2tlbi0wMTIzNDU2Nzg5YWJjZGVmIjsKICAgIGF3YWl0IGRiLnBhc3N3b3JkUmVzZXRUb2tlbi5jcmVhdGUoewogICAgICBkYXRhOiB7IHVzZXJJZDogdXNlci5pZCwgdG9rZW5IYXNoOiBoYXNoUmVzZXRUb2tlbih0b2tlbiksIGV4cGlyZXNBdDogbmV3IERhdGUoRGF0ZS5ub3coKSAtIDYwXzAwMCkgfSwKICAgIH0pOwogICAgYXNzZXJ0LmVxdWFsKGF3YWl0IHZlcmlmeVBhc3N3b3JkUmVzZXRUb2tlbih0b2tlbiksIG51bGwpOwogICAgY29uc3QgY29uc3VtZWQgPSBhd2FpdCBjb25zdW1lUGFzc3dvcmRSZXNldFRva2VuKHRva2VuLCBORVdfUEFTU1dPUkQpOwogICAgYXNzZXJ0LmRlZXBFcXVhbChjb25zdW1lZCwgeyBvazogZmFsc2UsIHJlYXNvbjogImV4cGlyZWQiIH0pOwogIH0pOwoKICBpdCgiaXNzdWFuY2UgaXMgY2FwcGVkIHBlciBhY2NvdW50IHBlciBob3VyIiwgYXN5bmMgKCkgPT4gewogICAgY29uc3QgdXNlciA9IGF3YWl0IG1rU3R1ZGVudFVzZXIoKTsKICAgIGZvciAobGV0IGkgPSAwOyBpIDwgNTsgaSsrKSB7CiAgICAgIGFzc2VydC5vayhhd2FpdCBpc3N1ZVBhc3N3b3JkUmVzZXRUb2tlbih1c2VyLmlkLCBudWxsKSwgYGlzc3VlICMke2kgKyAxfSBzaG91bGQgc3VjY2VlZGApOwogICAgfQogICAgYXNzZXJ0LmVxdWFsKGF3YWl0IGlzc3VlUGFzc3dvcmRSZXNldFRva2VuKHVzZXIuaWQsIG51bGwpLCBudWxsKTsKICB9KTsKfSk7CgpkZXNjcmliZSgiY29uc3VtaW5nIGEgdG9rZW4iLCAoKSA9PiB7CiAgaXQoInJlc2V0cyB0aGUgcGFzc3dvcmQsIGNsZWFycyBmb3JjZWQtY2hhbmdlIGZsYWdzIGFuZCBidW1wcyBzZXNzaW9uVmVyc2lvbiIsIGFzeW5jICgpID0+IHsKICAgIGNvbnN0IHVzZXIgPSBhd2FpdCBta1N0dWRlbnRVc2VyKCk7CiAgICBhd2FpdCBkYi51c2VyLnVwZGF0ZSh7IHdoZXJlOiB7IGlkOiB1c2VyLmlkIH0sIGRhdGE6IHsgbXVzdENoYW5nZVBhc3N3b3JkOiB0cnVlLCBwYXNzd29yZEV4cGlyZXNBdDogbmV3IERhdGUoRGF0ZS5ub3coKSArIDM2MDBfMDAwKSB9IH0pOwogICAgY29uc3QgaXNzdWVkID0gYXdhaXQgaXNzdWVQYXNzd29yZFJlc2V0VG9rZW4odXNlci5pZCwgbnVsbCk7CiAgICBhc3NlcnQub2soaXNzdWVkKTsKICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IGNvbnN1bWVQYXNzd29yZFJlc2V0VG9rZW4oaXNzdWVkLnRva2VuLCBORVdfUEFTU1dPUkQpOwogICAgYXNzZXJ0LmRlZXBFcXVhbChyZXN1bHQsIHsgb2s6IHRydWUsIHVzZXJJZDogdXNlci5pZCB9KTsKCiAgICBjb25zdCBhZnRlciA9IGF3YWl0IGRiLnVzZXIuZmluZFVuaXF1ZSh7IHdoZXJlOiB7IGlkOiB1c2VyLmlkIH0gfSk7CiAgICBhc3NlcnQub2soYWZ0ZXIpOwogICAgYXNzZXJ0LmVxdWFsKGF3YWl0IHZlcmlmeVBhc3N3b3JkKE5FV19QQVNTV09SRCwgYWZ0ZXIucGFzc3dvcmRIYXNoKSwgdHJ1ZSk7CiAgICBhc3NlcnQuZXF1YWwoYWZ0ZXIubXVzdENoYW5nZVBhc3N3b3JkLCBmYWxzZSk7CiAgICBhc3NlcnQuZXF1YWwoYWZ0ZXIucGFzc3dvcmRFeHBpcmVzQXQsIG51bGwpOwogICAgYXNzZXJ0Lm9rKGFmdGVyLnNlc3Npb25WZXJzaW9uID4gdXNlci5zZXNzaW9uVmVyc2lvbiwgInNlc3Npb25WZXJzaW9uIG11c3QgaW5jcmVhc2UgKHJldm9rZXMgZXhpc3Rpbmcgc2Vzc2lvbnMpIik7CgogICAgY29uc3Qgcm93ID0gYXdhaXQgZGIucGFzc3dvcmRSZXNldFRva2VuLmZpbmRVbmlxdWUoeyB3aGVyZTogeyB0b2tlbkhhc2g6IGhhc2hSZXNldFRva2VuKGlzc3VlZC50b2tlbikgfSB9KTsKICAgIGFzc2VydC5vayhyb3c/LnVzZWRBdCwgInRva2VuIG11c3QgYmUgbWFya2VkIHVzZWQiKTsKICB9KTsKCiAgaXQoInJlcGxheSBvZiB0aGUgc2FtZSBsaW5rIGZhaWxzIGFuZCBjaGFuZ2VzIG5vdGhpbmciLCBhc3luYyAoKSA9PiB7CiAgICBjb25zdCB1c2VyID0gYXdhaXQgbWtTdHVkZW50VXNlcigpOwogICAgY29uc3QgaXNzdWVkID0gYXdhaXQgaXNzdWVQYXNzd29yZFJlc2V0VG9rZW4odXNlci5pZCwgbnVsbCk7CiAgICBhc3NlcnQub2soaXNzdWVkKTsKICAgIGFzc2VydC5lcXVhbCgoYXdhaXQgY29uc3VtZVBhc3N3b3JkUmVzZXRUb2tlbihpc3N1ZWQudG9rZW4sIE5FV19QQVNTV09SRCkpLm9rLCB0cnVlKTsKICAgIGNvbnN0IHJlcGxheSA9IGF3YWl0IGNvbnN1bWVQYXNzd29yZFJlc2V0VG9rZW4oaXNzdWVkLnRva2VuLCAiQW5vdGhlciNQYXNzMjAyNiIpOwogICAgYXNzZXJ0LmRlZXBFcXVhbChyZXBsYXksIHsgb2s6IGZhbHNlLCByZWFzb246ICJ1c2VkIiB9KTsKICAgIGNvbnN0IGFmdGVyID0gYXdhaXQgZGIudXNlci5maW5kVW5pcXVlKHsgd2hlcmU6IHsgaWQ6IHVzZXIuaWQgfSB9KTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCB2ZXJpZnlQYXNzd29yZChORVdfUEFTU1dPUkQsIGFmdGVyIS5wYXNzd29yZEhhc2gpLCB0cnVlLCAicGFzc3dvcmQgbXVzdCBiZSB1bmNoYW5nZWQgYnkgdGhlIHJlcGxheSIpOwogIH0pOwoKICBpdCgiYSBkZWFjdGl2YXRlZCBhY2NvdW50IGNhbm5vdCBjb21wbGV0ZSBhIHJlc2V0IiwgYXN5bmMgKCkgPT4gewogICAgY29uc3QgdXNlciA9IGF3YWl0IG1rU3R1ZGVudFVzZXIoKTsKICAgIGNvbnN0IGlzc3VlZCA9IGF3YWl0IGlzc3VlUGFzc3dvcmRSZXNldFRva2VuKHVzZXIuaWQsIG51bGwpOwogICAgYXNzZXJ0Lm9rKGlzc3VlZCk7CiAgICBhd2FpdCBkYi51c2VyLnVwZGF0ZSh7IHdoZXJlOiB7IGlkOiB1c2VyLmlkIH0sIGRhdGE6IHsgc3RhdHVzOiAiSU5BQ1RJVkUiIH0gfSk7CiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCBjb25zdW1lUGFzc3dvcmRSZXNldFRva2VuKGlzc3VlZC50b2tlbiwgTkVXX1BBU1NXT1JEKTsKICAgIGFzc2VydC5kZWVwRXF1YWwocmVzdWx0LCB7IG9rOiBmYWxzZSwgcmVhc29uOiAiaW5lbGlnaWJsZSIgfSk7CiAgfSk7CgogIGl0KCJhbiB1bmtub3duIHRva2VuIGlzIHJlamVjdGVkIGFzIGludmFsaWQiLCBhc3luYyAoKSA9PiB7CiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCBjb25zdW1lUGFzc3dvcmRSZXNldFRva2VuKCJuZXZlci1pc3N1ZWQtdG9rZW4iLCBORVdfUEFTU1dPUkQpOwogICAgYXNzZXJ0LmRlZXBFcXVhbChyZXN1bHQsIHsgb2s6IGZhbHNlLCByZWFzb246ICJpbnZhbGlkIiB9KTsKICB9KTsKfSk7CgpkZXNjcmliZSgic3RhZmYtaW5pdGlhdGVkIHJlc2V0IGxpbmtzIiwgKCkgPT4gewogIGl0KCJlbWFpbCBwcm92aWRlciBob25lc3RseSByZXBvcnRzIG5vdC1jb25maWd1cmVkIHdoZW4gdW5zZXQiLCBhc3luYyAoKSA9PiB7CiAgICBhc3NlcnQuZXF1YWwoZW1haWxQcm92aWRlckNvbmZpZ3VyZWQoKSwgZmFsc2UpOwogICAgY29uc3QgcmVzID0gYXdhaXQgc2VuZEVtYWlsKHsgdG86ICJ4QHRlc3QubG9jYWwiLCBzdWJqZWN0OiAidCIsIHRleHQ6ICJ0IiwgaHRtbDogIjxwPnQ8L3A+IiB9KTsKICAgIGFzc2VydC5kZWVwRXF1YWwocmVzLCB7IGRlbGl2ZXJlZDogZmFsc2UsIHJlYXNvbjogIm5vdC1jb25maWd1cmVkIiB9KTsKICB9KTsKCiAgaXQoIkFETUlOIG1heSBzZW5kIGEgbGluayB0byBhIFNUVURFTlQ7IHVuY29uZmlndXJlZCBlbWFpbCBsZWF2ZXMgbm8gbGl2ZSB0b2tlbiIsIGFzeW5jICgpID0+IHsKICAgIGNvbnN0IGFkbWluID0gYXdhaXQgbWtVc2VyKCJBRE1JTiIpOwogICAgY29uc3Qgc3R1ZGVudCA9IGF3YWl0IG1rU3R1ZGVudFVzZXIoKTsKICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IHNlbmRBY2NvdW50UmVzZXRMaW5rKHNlc3Npb25PZihhZG1pbiksIHN0dWRlbnQuaWQsICJTVFVERU5UIik7CiAgICBhc3NlcnQuZXF1YWwocmVzdWx0LCAibm90LWNvbmZpZ3VyZWQiKTsKICAgIGFzc2VydC5lcXVhbChhd2FpdCBkYi5wYXNzd29yZFJlc2V0VG9rZW4uY291bnQoeyB3aGVyZTogeyB1c2VySWQ6IHN0dWRlbnQuaWQsIHVzZWRBdDogbnVsbCB9IH0pLCAwKTsKICB9KTsKCiAgaXQoIlNVUEVSX0FETUlOIG1heSBzZW5kIGEgbGluayB0byBhbiBBRE1JTiBhY2NvdW50IiwgYXN5bmMgKCkgPT4gewogICAgY29uc3Qgc3VwZXJBZG1pbiA9IGF3YWl0IG1rVXNlcigiU1VQRVJfQURNSU4iKTsKICAgIGNvbnN0IGFkbWluID0gYXdhaXQgbWtVc2VyKCJBRE1JTiIpOwogICAgY29uc3QgcmVzdWx0ID0gYXdhaXQgc2VuZEFjY291bnRSZXNldExpbmsoc2Vzc2lvbk9mKHN1cGVyQWRtaW4pLCBhZG1pbi5pZCwgIkFETUlOIik7CiAgICBhc3NlcnQuZXF1YWwocmVzdWx0LCAibm90LWNvbmZpZ3VyZWQiKTsgLy8gYXV0aG9yaXplZDsgb25seSBkZWxpdmVyeSBpcyB1bmF2YWlsYWJsZQogIH0pOwoKICBpdCgiQURNSU4gY2Fubm90IHNlbmQgYSBsaW5rIHRvIGFub3RoZXIgQURNSU4iLCBhc3luYyAoKSA9PiB7CiAgICBjb25zdCBhZG1pbiA9IGF3YWl0IG1rVXNlcigiQURNSU4iKTsKICAgIGNvbnN0IG90aGVyQWRtaW4gPSBhd2FpdCBta1VzZXIoIkFETUlOIik7CiAgICBhd2FpdCBhc3NlcnQucmVqZWN0cyhzZW5kQWNjb3VudFJlc2V0TGluayhzZXNzaW9uT2YoYWRtaW4pLCBvdGhlckFkbWluLmlkLCAiQURNSU4iKSk7CiAgfSk7CgogIGl0KCJTVVBFUl9BRE1JTiBjYW5ub3QgYmUgdGFyZ2V0ZWQgdGhyb3VnaCByZWNvdmVyeSIsIGFzeW5jICgpID0+IHsKICAgIGNvbnN0IHN1cGVyQWRtaW4gPSBhd2FpdCBta1VzZXIoIlNVUEVSX0FETUlOIik7CiAgICBjb25zdCBvdGhlclN1cGVyID0gYXdhaXQgbWtVc2VyKCJTVVBFUl9BRE1JTiIpOwogICAgYXdhaXQgYXNzZXJ0LnJlamVjdHMoc2VuZEFjY291bnRSZXNldExpbmsoc2Vzc2lvbk9mKHN1cGVyQWRtaW4pLCBvdGhlclN1cGVyLmlkKSk7CiAgfSk7CgogIGl0KCJURUFDSEVSIGNhbm5vdCBpbml0aWF0ZSByZXNldHMgZm9yIGFueW9uZSIsIGFzeW5jICgpID0+IHsKICAgIGNvbnN0IHRlYWNoZXIgPSBhd2FpdCBta1VzZXIoIlRFQUNIRVIiKTsKICAgIGF3YWl0IGRiLnRlYWNoZXIuY3JlYXRlKHsgZGF0YTogeyB1c2VySWQ6IHRlYWNoZXIuaWQsIGZ1bGxOYW1lOiAiUmVzZXQgVGVzdCBUZWFjaGVyIiwgZW1haWw6IHRlYWNoZXIuZW1haWwgfSB9KTsKICAgIGNvbnN0IHN0dWRlbnQgPSBhd2FpdCBta1N0dWRlbnRVc2VyKCk7CiAgICBhd2FpdCBhc3NlcnQucmVqZWN0cyhzZW5kQWNjb3VudFJlc2V0TGluayhzZXNzaW9uT2YodGVhY2hlciksIHN0dWRlbnQuaWQsICJTVFVERU5UIikpOwogIH0pOwoKICBpdCgibm9ib2R5IGNhbiBzZW5kIGEgcmVzZXQgbGluayB0byB0aGVtc2VsdmVzIiwgYXN5bmMgKCkgPT4gewogICAgY29uc3QgYWRtaW4gPSBhd2FpdCBta1VzZXIoIkFETUlOIik7CiAgICBhd2FpdCBhc3NlcnQucmVqZWN0cyhzZW5kQWNjb3VudFJlc2V0TGluayhzZXNzaW9uT2YoYWRtaW4pLCBhZG1pbi5pZCwgIkFETUlOIikpOwogIH0pOwoKICBpdCgicm9sZSBtaXNtYXRjaCB2aWEgZXhwZWN0ZWRSb2xlIGlzIHJlamVjdGVkIiwgYXN5bmMgKCkgPT4gewogICAgY29uc3QgYWRtaW4gPSBhd2FpdCBta1VzZXIoIkFETUlOIik7CiAgICBjb25zdCBzdHVkZW50ID0gYXdhaXQgbWtTdHVkZW50VXNlcigpOwogICAgYXdhaXQgYXNzZXJ0LnJlamVjdHMoc2VuZEFjY291bnRSZXNldExpbmsoc2Vzc2lvbk9mKGFkbWluKSwgc3R1ZGVudC5pZCwgIlRFQUNIRVIiKSk7CiAgfSk7Cn0pOwo=
+/**
+ * Password recovery tests — node:test via tsx.
+ *
+ * Exercises the REAL recovery service (src/lib/auth/password-reset.ts)
+ * and the staff link service (src/lib/auth/accounts.ts) against a
+ * disposable database (refuses non-"test" database names):
+ * - tokens are stored ONLY as SHA-256 hashes, expire in 30 minutes
+ * - single use: replay after a successful reset fails
+ * - issuing a new token supersedes the previous one
+ * - expired tokens cannot be consumed
+ * - a successful reset changes the password, clears the forced-change
+ *   flags and bumps sessionVersion (the session-revocation mechanism)
+ * - ineligible (deactivated) accounts cannot complete a reset
+ * - issuance is capped per hour (email-bombing guard)
+ * - staff link-sending enforces the role hierarchy server-side
+ * - with no email provider configured, delivery honestly reports
+ *   "not-configured" and no live token is left behind
+ *
+ * Every test uses its own fixture account so the per-hour issuance cap
+ * and token superseding never leak between tests.
+ */
+import { after, before, describe, it } from "node:test";
+import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+
+process.env.APP_URL = "http://localhost:3100";
+delete process.env.SMTP_HOST;
+delete process.env.RESEND_API_KEY;
+delete process.env.EMAIL_FROM;
+
+import { db } from "@/lib/db";
+import {
+  hashResetToken,
+  issuePasswordResetToken,
+  verifyPasswordResetToken,
+  consumePasswordResetToken,
+  RESET_TOKEN_TTL_MINUTES,
+} from "@/lib/auth/password-reset";
+import { sendAccountResetLink } from "@/lib/auth/accounts";
+import { verifyPassword } from "@/lib/auth/password";
+import { emailProviderConfigured, sendEmail } from "@/lib/email";
+import type { SessionPayload } from "@/lib/auth/token";
+
+const userIds: string[] = [];
+const NEW_PASSWORD = "BrandNew#Pass2026";
+
+async function mkUser(role: "SUPER_ADMIN" | "ADMIN" | "TEACHER" | "STUDENT") {
+  const s = Math.random().toString(36).slice(2, 10);
+  const u = await db.user.create({
+    data: { username: `pr_${s}`, email: `pr_${s}@test.local`, passwordHash: "x", role, status: "ACTIVE" },
+  });
+  userIds.push(u.id);
+  return u;
+}
+
+async function mkStudentUser() {
+  const u = await mkUser("STUDENT");
+  const s = Math.random().toString(36).slice(2, 8);
+  await db.student.create({
+    data: { userId: u.id, studentId: `PR-${s}`, fullName: "Reset Test Student" },
+  });
+  return u;
+}
+
+function sessionOf(u: { id: string; username: string; role: SessionPayload["role"]; sessionVersion: number }): SessionPayload {
+  return { userId: u.id, username: u.username, role: u.role, mustChangePassword: false, sessionVersion: u.sessionVersion };
+}
+
+before(async () => {
+  const row = await db.$queryRaw<{ current_database: string }[]>`SELECT current_database()`;
+  assert.match(row[0].current_database, /test/, "refusing to run tests against a non-test database");
+});
+
+after(async () => {
+  await db.user.deleteMany({ where: { id: { in: userIds } } });
+  await db.$disconnect();
+});
+
+describe("token storage and lifecycle", () => {
+  it("stores only the SHA-256 hash, with a ~30 minute expiry", async () => {
+    const user = await mkStudentUser();
+    const issued = await issuePasswordResetToken(user.id, null);
+    assert.ok(issued);
+    const row = await db.passwordResetToken.findFirst({ where: { userId: user.id } });
+    assert.ok(row);
+    assert.equal(row.tokenHash, hashResetToken(issued.token));
+    assert.notEqual(row.tokenHash, issued.token);
+    assert.equal(row.tokenHash, createHash("sha256").update(issued.token).digest("hex"));
+    const ttlMs = row.expiresAt.getTime() - Date.now();
+    assert.ok(ttlMs > (RESET_TOKEN_TTL_MINUTES - 2) * 60_000 && ttlMs <= RESET_TOKEN_TTL_MINUTES * 60_000);
+    assert.equal(row.usedAt, null);
+  });
+
+  it("verifies a live token and rejects garbage", async () => {
+    const user = await mkStudentUser();
+    const issued = await issuePasswordResetToken(user.id, null);
+    assert.ok(issued);
+    assert.deepEqual(await verifyPasswordResetToken(issued.token), { userId: user.id });
+    assert.equal(await verifyPasswordResetToken("not-a-real-token"), null);
+    assert.equal(await verifyPasswordResetToken(""), null);
+  });
+
+  it("a new token supersedes the previous one", async () => {
+    const user = await mkStudentUser();
+    const first = await issuePasswordResetToken(user.id, null);
+    const second = await issuePasswordResetToken(user.id, null);
+    assert.ok(first && second);
+    assert.equal(await verifyPasswordResetToken(first.token), null);
+    assert.deepEqual(await verifyPasswordResetToken(second.token), { userId: user.id });
+    const consumed = await consumePasswordResetToken(first.token, NEW_PASSWORD);
+    assert.equal(consumed.ok, false);
+  });
+
+  it("expired tokens verify as null and cannot be consumed", async () => {
+    const user = await mkStudentUser();
+    const token = "expired-fixture-token-0123456789abcdef";
+    await db.passwordResetToken.create({
+      data: { userId: user.id, tokenHash: hashResetToken(token), expiresAt: new Date(Date.now() - 60_000) },
+    });
+    assert.equal(await verifyPasswordResetToken(token), null);
+    const consumed = await consumePasswordResetToken(token, NEW_PASSWORD);
+    assert.deepEqual(consumed, { ok: false, reason: "expired" });
+  });
+
+  it("issuance is capped per account per hour", async () => {
+    const user = await mkStudentUser();
+    for (let i = 0; i < 5; i++) {
+      assert.ok(await issuePasswordResetToken(user.id, null), `issue #${i + 1} should succeed`);
+    }
+    assert.equal(await issuePasswordResetToken(user.id, null), null);
+  });
+});
+
+describe("consuming a token", () => {
+  it("resets the password, clears forced-change flags and bumps sessionVersion", async () => {
+    const user = await mkStudentUser();
+    await db.user.update({ where: { id: user.id }, data: { mustChangePassword: true, passwordExpiresAt: new Date(Date.now() + 3600_000) } });
+    const issued = await issuePasswordResetToken(user.id, null);
+    assert.ok(issued);
+    const result = await consumePasswordResetToken(issued.token, NEW_PASSWORD);
+    assert.deepEqual(result, { ok: true, userId: user.id });
+
+    const after = await db.user.findUnique({ where: { id: user.id } });
+    assert.ok(after);
+    assert.equal(await verifyPassword(NEW_PASSWORD, after.passwordHash), true);
+    assert.equal(after.mustChangePassword, false);
+    assert.equal(after.passwordExpiresAt, null);
+    assert.ok(after.sessionVersion > user.sessionVersion, "sessionVersion must increase (revokes existing sessions)");
+
+    const row = await db.passwordResetToken.findUnique({ where: { tokenHash: hashResetToken(issued.token) } });
+    assert.ok(row?.usedAt, "token must be marked used");
+  });
+
+  it("replay of the same link fails and changes nothing", async () => {
+    const user = await mkStudentUser();
+    const issued = await issuePasswordResetToken(user.id, null);
+    assert.ok(issued);
+    assert.equal((await consumePasswordResetToken(issued.token, NEW_PASSWORD)).ok, true);
+    const replay = await consumePasswordResetToken(issued.token, "Another#Pass2026");
+    assert.deepEqual(replay, { ok: false, reason: "used" });
+    const after = await db.user.findUnique({ where: { id: user.id } });
+    assert.equal(await verifyPassword(NEW_PASSWORD, after!.passwordHash), true, "password must be unchanged by the replay");
+  });
+
+  it("a deactivated account cannot complete a reset", async () => {
+    const user = await mkStudentUser();
+    const issued = await issuePasswordResetToken(user.id, null);
+    assert.ok(issued);
+    await db.user.update({ where: { id: user.id }, data: { status: "INACTIVE" } });
+    const result = await consumePasswordResetToken(issued.token, NEW_PASSWORD);
+    assert.deepEqual(result, { ok: false, reason: "ineligible" });
+  });
+
+  it("an unknown token is rejected as invalid", async () => {
+    const result = await consumePasswordResetToken("never-issued-token", NEW_PASSWORD);
+    assert.deepEqual(result, { ok: false, reason: "invalid" });
+  });
+});
+
+describe("staff-initiated reset links", () => {
+  it("email provider honestly reports not-configured when unset", async () => {
+    assert.equal(emailProviderConfigured(), false);
+    const res = await sendEmail({ to: "x@test.local", subject: "t", text: "t", html: "<p>t</p>" });
+    assert.deepEqual(res, { delivered: false, reason: "not-configured" });
+  });
+
+  it("ADMIN may send a link to a STUDENT; unconfigured email leaves no live token", async () => {
+    const admin = await mkUser("ADMIN");
+    const student = await mkStudentUser();
+    const result = await sendAccountResetLink(sessionOf(admin), student.id, "STUDENT");
+    assert.equal(result, "not-configured");
+    assert.equal(await db.passwordResetToken.count({ where: { userId: student.id, usedAt: null } }), 0);
+  });
+
+  it("SUPER_ADMIN may send a link to an ADMIN account", async () => {
+    const superAdmin = await mkUser("SUPER_ADMIN");
+    const admin = await mkUser("ADMIN");
+    const result = await sendAccountResetLink(sessionOf(superAdmin), admin.id, "ADMIN");
+    assert.equal(result, "not-configured"); // authorized; only delivery is unavailable
+  });
+
+  it("ADMIN cannot send a link to another ADMIN", async () => {
+    const admin = await mkUser("ADMIN");
+    const otherAdmin = await mkUser("ADMIN");
+    await assert.rejects(sendAccountResetLink(sessionOf(admin), otherAdmin.id, "ADMIN"));
+  });
+
+  it("SUPER_ADMIN cannot be targeted through recovery", async () => {
+    const superAdmin = await mkUser("SUPER_ADMIN");
+    const otherSuper = await mkUser("SUPER_ADMIN");
+    await assert.rejects(sendAccountResetLink(sessionOf(superAdmin), otherSuper.id));
+  });
+
+  it("TEACHER cannot initiate resets for anyone", async () => {
+    const teacher = await mkUser("TEACHER");
+    await db.teacher.create({ data: { userId: teacher.id, fullName: "Reset Test Teacher", email: teacher.email } });
+    const student = await mkStudentUser();
+    await assert.rejects(sendAccountResetLink(sessionOf(teacher), student.id, "STUDENT"));
+  });
+
+  it("nobody can send a reset link to themselves", async () => {
+    const admin = await mkUser("ADMIN");
+    await assert.rejects(sendAccountResetLink(sessionOf(admin), admin.id, "ADMIN"));
+  });
+
+  it("role mismatch via expectedRole is rejected", async () => {
+    const admin = await mkUser("ADMIN");
+    const student = await mkStudentUser();
+    await assert.rejects(sendAccountResetLink(sessionOf(admin), student.id, "TEACHER"));
+  });
+});
