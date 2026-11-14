@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { loginAction, type ActionState } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,7 @@ export default function LoginPage() {
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold">Sign in</h2>
           <p className="mb-6 text-sm text-muted-foreground">
-            Use the credentials provided by your institute.
+            Sign in with your registered email or institute credentials.
           </p>
 
           <form action={formAction} className="space-y-4">
@@ -56,7 +57,8 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Students cannot self-register. Contact the institute for an account.
+          <Link href="/register" className="text-primary underline">Register as a student</Link>
+          {" · "}<Link href="/forgot-password" className="text-primary underline">Forgot password?</Link>
         </p>
       </div>
     </div>

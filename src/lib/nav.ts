@@ -10,6 +10,7 @@ export const ADMIN_NAV: NavItem[] = [
   { label: "Dashboard", href: "/admin/dashboard", icon: "LayoutDashboard" },
   { label: "User Accounts", href: "/admin/accounts", icon: "UserCheck" },
   { label: "Students", href: "/admin/students", icon: "Users" },
+  { label: "Admissions", href: "/admin/admissions", icon: "UserCheck" },
   { label: "Teachers", href: "/admin/teachers", icon: "GraduationCap" },
   { label: "Courses", href: "/admin/courses", icon: "BookOpen" },
   { label: "Batches", href: "/admin/batches", icon: "Layers" },
@@ -39,6 +40,7 @@ export const TEACHER_NAV: NavItem[] = [
 ];
 
 export const STUDENT_NAV: NavItem[] = [
+  { label: "Admissions", href: "/admission", icon: "UserCheck" },
   { label: "Dashboard", href: "/student/dashboard", icon: "LayoutDashboard" },
   { label: "My Courses", href: "/student/courses", icon: "BookOpen" },
   { label: "Assignments", href: "/student/assignments", icon: "FileText" },

@@ -21,9 +21,10 @@ export class AuthError extends Error {
 }
 
 /** Require any authenticated session. Redirects to /login if absent. */
-export async function requireSession(options: { allowPasswordChange?: boolean } = {}): Promise<SessionPayload> {
+export async function requireSession(options: { allowPasswordChange?: boolean; allowAdmission?: boolean } = {}): Promise<SessionPayload> {
   const session = await getSession();
   if (!session) redirect("/login");
+  if (session.role === "STUDENT" && session.admissionRequired && !options.allowAdmission) redirect("/admission");
   if (session.mustChangePassword && !options.allowPasswordChange) {
     redirect(session.role === "STUDENT" ? "/student/change-password" : "/change-password");
   }

@@ -381,7 +381,7 @@ export async function createOrUpdateSubmission(input: {
   if (!assignment) return { ok: false, error: "Not found." };
 
   const enrollment = await db.enrollment.findFirst({
-    where: { studentId: student.id, courseId: assignment.courseId, status: "ACTIVE" },
+    where: { studentId: student.id, courseId: assignment.courseId, accessSuspended: false, status: "ACTIVE" },
     select: { id: true },
   });
   if (!enrollment) return { ok: false, error: "Not found." };
@@ -523,6 +523,7 @@ export async function getSubmissionFileSignedUrl(
   if (session.role === "STUDENT") {
     const student = await db.student.findUnique({ where: { userId: session.userId } });
     if (!student || student.id !== submission.studentId) return { ok: false, error: "Not found." };
+    if (!await db.enrollment.findFirst({ where: { studentId: student.id, courseId: submission.assignment.courseId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } } })) return { ok: false, error: "Not found." };
   } else if (session.role === "TEACHER") {
     const teacher = await db.teacher.findUnique({ where: { userId: session.userId } });
     if (!teacher) return { ok: false, error: "Not found." };

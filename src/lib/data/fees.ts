@@ -241,7 +241,9 @@ export async function getFeeById(id: string): Promise<FeeDetail | null> {
  * this function does not re-check the session itself.
  */
 export async function getFeesForStudent(studentId: string): Promise<FeeListRow[]> {
-  return getAllFees({ studentId });
+  const enrollments = await db.enrollment.findMany({ where: { studentId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } }, select: { courseId: true } });
+  const courses = new Set(enrollments.map(e => e.courseId));
+  return (await getAllFees({ studentId })).filter(f => courses.has(f.courseId));
 }
 
 /** Course.defaultFee for fee-form auto-fill. Null if unset. */

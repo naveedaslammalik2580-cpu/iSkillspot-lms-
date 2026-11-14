@@ -5,5 +5,6 @@ import { homePathFor } from "@/lib/auth/permissions";
 export default async function Home() {
   const session = await getSession();
   if (!session) redirect("/login");
+  if (session.role === "STUDENT" && session.admissionRequired) redirect("/admission");
   redirect(homePathFor(session.role));
 }

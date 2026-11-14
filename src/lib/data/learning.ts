@@ -97,7 +97,7 @@ export interface StudentCourseCard {
 
 export async function getStudentCourses(studentId: string): Promise<StudentCourseCard[]> {
   const enrollments = await db.enrollment.findMany({
-    where: { studentId, status: { in: [...ENROLLMENT_LEARNING_STATUSES] } },
+    where: { studentId, accessSuspended: false, status: { in: [...ENROLLMENT_LEARNING_STATUSES] } },
     include: {
       course: { select: { id: true, title: true, slug: true, description: true, level: true, duration: true } },
       batch: {
@@ -203,7 +203,7 @@ export interface StudentCourseDetail {
 /** Returns null when the student is not enrolled in the course. */
 export async function getStudentCourse(studentId: string, courseId: string): Promise<StudentCourseDetail | null> {
   const enrollment = await db.enrollment.findFirst({
-    where: { studentId, courseId, status: { in: [...ENROLLMENT_LEARNING_STATUSES] } },
+    where: { studentId, courseId, accessSuspended: false, status: { in: [...ENROLLMENT_LEARNING_STATUSES] } },
     include: {
       course: { select: { id: true, title: true, slug: true, description: true, level: true, duration: true } },
       batch: { select: { id: true, name: true, code: true, teacher: { select: { fullName: true } } } },
@@ -298,7 +298,7 @@ export async function getStudentLesson(studentId: string, lessonId: string): Pro
 
   const courseId = lesson.module.courseId;
   const enrollment = await db.enrollment.findFirst({
-    where: { studentId, courseId, status: { in: [...ENROLLMENT_LEARNING_STATUSES] } },
+    where: { studentId, courseId, accessSuspended: false, status: { in: [...ENROLLMENT_LEARNING_STATUSES] } },
     select: { id: true },
   });
   if (!enrollment) return null;

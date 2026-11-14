@@ -38,6 +38,7 @@ async function freePort() {
     const url = `postgresql://auth_test_operator:${password}@127.0.0.1:${port}/${database}?connection_limit=5`;
     const env = { ...process.env, DATABASE_URL: url, DIRECT_URL: url, SESSION_SECRET: randomBytes(48).toString('hex'),
       LMS_BUILD_DIR: '.next-auth-test', AUTH_TEST_ISOLATED: '1', PGHOST:'127.0.0.1', PGPORT:String(port), PGUSER:'auth_test_operator', PGPASSWORD:password,
+      LMS_PUBLIC_URL:'https://lms.example.invalid', RESEND_API_KEY:'', EMAIL_FROM:'', CRON_SECRET:randomBytes(32).toString('hex'),
       PGDATABASE:database, NODE_ENV:'test' };
     // Do not inherit provider keys into tests or the browser server.
     for (const key of Object.keys(env)) if (/SUPABASE|BOOTSTRAP/.test(key)) env[key] = '';
@@ -62,25 +63,38 @@ async function freePort() {
     fs.mkdirSync(path.join(manualPrisma,'migrations'),{recursive:true});
     fs.copyFileSync(path.join(root,'prisma/schema.prisma'),path.join(manualPrisma,'schema.prisma'));
     for (const entry of fs.readdirSync(path.join(root,'prisma/migrations'))) {
-      if (entry !== '20261113120000_auth_account_lifecycle') fs.cpSync(path.join(root,'prisma/migrations',entry),path.join(manualPrisma,'migrations',entry),{recursive:true});
+      if (!['20261113120000_auth_account_lifecycle','20261114120000_student_admissions'].includes(entry)) fs.cpSync(path.join(root,'prisma/migrations',entry),path.join(manualPrisma,'migrations',entry),{recursive:true});
     }
     await run(process.execPath,['node_modules/prisma/build/index.js','migrate','deploy','--schema',path.join(manualPrisma,'schema.prisma')],manualEnv,true);
     const verifyLegacyData = await require('../tests/manual-migration.fixture.cjs').prepare(manualUrl.href);
     for (const file of ['docs/sql/01-auth-preflight.sql','prisma/migrations/20261113120000_auth_account_lifecycle/migration.sql','docs/sql/03-auth-postflight.sql','docs/sql/04-auth-reconcile-history.sql','docs/sql/04-auth-reconcile-history.sql']) {
       await run(path.join(bin,'psql.exe'),['-X','-v','ON_ERROR_STOP=1','-f',path.join(root,file)],manualEnv);
     }
+    for (const file of ['docs/sql/08-admissions-preflight.sql','prisma/migrations/20261114120000_student_admissions/migration.sql','docs/sql/09-admissions-postflight.sql','docs/sql/10-admissions-reconcile-history.sql','docs/sql/10-admissions-reconcile-history.sql']) {
+      await run(path.join(bin,'psql.exe'),['-X','-v','ON_ERROR_STOP=1','-f',path.join(root,file)],manualEnv);
+    }
     await verifyLegacyData();
+    const compatibility = new (require('@prisma/client').PrismaClient)({datasourceUrl:manualUrl.href});
+    try {
+      if (await compatibility.user.count({where:{admissionRequired:true}}) || await compatibility.enrollment.count({where:{accessSuspended:true}})) throw new Error('Existing access compatibility failed');
+    } finally { await compatibility.$disconnect(); }
     const manualStatus=await run(process.execPath,['node_modules/prisma/build/index.js','migrate','status'],manualEnv);
     if (!manualStatus.includes('up to date')) throw new Error('Manual migration history did not reconcile');
     console.log('PASS: preflight, manual migration, postflight and idempotent history reconciliation; Prisma reports up to date.');
     console.log('PASS: existing fixture accounts, hashes, roles, profiles, fees, payments and certificates survived the additive migration.');
     await run(process.execPath, ['node_modules/prisma/build/index.js','validate'], env, true);
+    if (process.argv.includes('--migrations-only')) {
+      console.log('Migration-only verification completed successfully. No shared database was used.');
+      return;
+    }
     console.log('Building application against the isolated database...');
     const npmCli = process.env.npm_execpath || path.join(path.dirname(process.execPath),'node_modules/npm/bin/npm-cli.js');
     await run(process.execPath, [npmCli,'run','build'], {...env,NODE_ENV:'production'},true);
     await run(process.execPath, ['--test','tests/auth.test.cjs'], env,true);
     console.log('Running real Prisma account lifecycle and local browser integration tests...');
     await run(process.execPath, ['tests/auth.integration.cjs'], {...env,NODE_ENV:'production'},true);
+    await run(process.execPath, ['node_modules/tsx/dist/cli.mjs','--test','--test-concurrency=1','tests/learning.test.ts','tests/notifications.test.ts','tests/regression.test.ts','tests/upload-validation.test.ts'],env,true);
+    await run(process.execPath, ['tests/admissions.integration.cjs'], {...env,NODE_ENV:'production'},true);
     const inspect = await run(process.execPath,['node_modules/tsx/dist/cli.mjs','scripts/bootstrap-super-admin.ts','--inspect'],env);
     if (!/superAdminExists:\s*true/.test(inspect)) throw new Error('Bootstrap CLI inspection failed');
     const refused = await run(process.execPath,['node_modules/tsx/dist/cli.mjs','scripts/bootstrap-super-admin.ts','--create','--confirm-project',database],env);

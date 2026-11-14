@@ -121,7 +121,7 @@ export async function getAnnouncementById(
     const student = await db.student.findUnique({ where: { userId: scope.userId } });
     if (!student) return null;
     const enrollments = await db.enrollment.findMany({
-      where: { studentId: student.id },
+      where: { studentId: student.id, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } },
       select: { batchId: true, courseId: true },
     });
     const inAudience =
@@ -150,7 +150,7 @@ export async function getAnnouncementById(
 /** PUBLISHED announcements in this student's audience, newest first. */
 export async function getAnnouncementsForStudent(studentId: string): Promise<AnnouncementListRow[]> {
   const enrollments = await db.enrollment.findMany({
-    where: { studentId },
+    where: { studentId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } },
     select: { batchId: true, courseId: true },
   });
   const batchIds = enrollments.map((e) => e.batchId);

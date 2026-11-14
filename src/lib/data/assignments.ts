@@ -301,7 +301,7 @@ export interface StudentAssignmentRow {
 /** Across all the student's ACTIVE enrollments. Overdue + ungraded first, then dueDate ascending. */
 export async function getAssignmentsForStudent(studentId: string): Promise<StudentAssignmentRow[]> {
   const enrollments = await db.enrollment.findMany({
-    where: { studentId, status: "ACTIVE" },
+    where: { studentId, accessSuspended: false, status: "ACTIVE" },
     select: { courseId: true },
   });
   const courseIds = [...new Set(enrollments.map((e) => e.courseId))];
@@ -376,7 +376,7 @@ export async function getStudentAssignmentDetail(
   if (!assignment) return null;
 
   const enrollment = await db.enrollment.findFirst({
-    where: { studentId, courseId: assignment.courseId, status: "ACTIVE" },
+    where: { studentId, courseId: assignment.courseId, accessSuspended: false, status: "ACTIVE" },
     select: { id: true },
   });
   if (!enrollment) return null;

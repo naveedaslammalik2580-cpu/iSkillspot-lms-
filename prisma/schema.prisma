@@ -13,6 +13,10 @@ model User {
   username           String         @unique
   email              String         @unique
   passwordHash       String
+  emailVerifiedAt    DateTime?
+  admissionRequired  Boolean        @default(false)
+  admissions         Admission[]
+  authTokens         AuthToken[]
   role               Role
   status             AccountStatus  @default(ACTIVE)
   mustChangePassword Boolean        @default(false)
@@ -115,6 +119,9 @@ model Course {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   defaultFee   Float?
+  admissionsOpen Boolean      @default(false)
+  admissionPayment Float?
+  admissions   Admission[]
   assignments  Assignment[]
   batches      Batch[]
   certificates Certificate[]
@@ -209,6 +216,7 @@ model Batch {
   course        Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
   teacher       Teacher?       @relation(fields: [teacherId], references: [id])
   enrollments   Enrollment[]
+  admissions    Admission[]
 
   @@index([courseId])
   @@index([teacherId])
@@ -223,6 +231,7 @@ model Enrollment {
   status         EnrollmentStatus @default(ACTIVE)
   completionDate DateTime?
   progress       Float            @default(0)
+  accessSuspended Boolean         @default(false)
   batch          Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
   course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   student        Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -387,6 +396,8 @@ model Payment {
   amount               Float
   paymentDate          DateTime       @default(now())
   transactionReference String?
+  referenceKey         String?        @unique
+  admission            Admission?
   notes                String?
   recordedBy           String?
   createdAt            DateTime       @default(now())
@@ -509,6 +520,67 @@ model Setting {
   id    String @id @default(cuid())
   key   String @unique
   value String
+}
+
+model Admission {
+  id              String @id @default(cuid())
+  applicationId   String @unique
+  userId          String
+  courseId        String?
+  batchId         String?
+  status          AdmissionStatus @default(DRAFT)
+  totalFee        Float?
+  requiredPayment Float?
+  installmentApproved Boolean @default(false)
+  paymentId       String? @unique
+  reviewNote      String?
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course          Course? @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  batch           Batch? @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  payment         Payment? @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  @@index([userId, status])
+  @@index([status, createdAt])
+}
+
+model AuthToken {
+  id        String @id @default(cuid())
+  userId    String
+  digest    String @unique
+  purpose   String
+  version   Int
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, purpose])
+  @@index([expiresAt])
+}
+
+model EmailOutbox {
+  id            String @id @default(cuid())
+  dedupeKey     String @unique
+  recipient     String
+  subject       String
+  encryptedBody String
+  status        String @default("PENDING")
+  attempts      Int @default(0)
+  availableAt   DateTime @default(now())
+  sentAt        DateTime?
+  lastError     String?
+  createdAt     DateTime @default(now())
+  @@index([status, availableAt])
+}
+
+enum AdmissionStatus {
+  DRAFT
+  PENDING
+  INFORMATION_REQUESTED
+  APPROVED
+  REJECTED
 }
 
 enum Role {

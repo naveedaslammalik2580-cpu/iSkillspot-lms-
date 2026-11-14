@@ -7,6 +7,9 @@ import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
 import { notifyStudent } from "@/lib/notifications";
 import { recomputeFeeStatus } from "@/lib/actions/fees";
+import { authorizeActor } from "@/lib/auth/account-policy";
+import { paymentReferenceKey, validMoney } from "@/lib/admission-policy";
+import { assertPaymentReferenceUnused } from "@/lib/payment-reference";
 
 const PAYMENT_METHODS = ["CASH", "BANK_TRANSFER", "CHEQUE", "CARD", "ONLINE", "OTHER"] as const;
 
@@ -38,7 +41,7 @@ export async function recordPayment(
   const d = parsed.data;
 
   const paidAt = new Date(d.paidAt);
-  if (paidAt.getTime() > Date.now()) {
+  if (!Number.isFinite(paidAt.getTime()) || paidAt.getTime() > Date.now() || !validMoney(d.amount)) {
     return { ok: false, error: "Payment date cannot be in the future." };
   }
 
@@ -51,6 +54,13 @@ export async function recordPayment(
 
   try {
     const payment = await db.$transaction(async (tx) => {
+      await authorizeActor(tx, session, "payment.manage");
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(752091, 9)`;
+      await tx.$queryRaw`SELECT id FROM "Fee" WHERE id=${d.feeId} FOR UPDATE`;
+      const fresh = await tx.fee.findUniqueOrThrow({ where: { id: d.feeId } });
+      if (fresh.status === "WAIVED" || d.amount > fresh.remainingBalance) throw new Error("Invalid payment amount");
+      const referenceKey = d.reference?.trim() ? paymentReferenceKey(d.reference) : null;
+      if (referenceKey) await assertPaymentReferenceUnused(tx, referenceKey);
       const created = await tx.payment.create({
         data: {
           feeId: d.feeId,
@@ -58,12 +68,14 @@ export async function recordPayment(
           amount: d.amount,
           paymentDate: paidAt,
           paymentMethod: d.method,
-          transactionReference: d.reference || null,
+          transactionReference: referenceKey,
+          referenceKey,
           notes: d.notes || null,
           recordedBy: session.userId,
         },
       });
       await recomputeFeeStatus(tx, d.feeId);
+      await logAction({ userId: session.userId, action: "Payment transaction verified", entity: "Payment", entityId: created.id, metadata: { feeId: d.feeId, amount: d.amount } }, tx);
       return created;
     });
 
@@ -117,6 +129,11 @@ export async function voidPayment(
   if (existing.voidedAt) return { ok: false, error: "This payment is already voided." };
 
   await db.$transaction(async (tx) => {
+    await authorizeActor(tx, session, "payment.manage");
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(752091, 9)`;
+    await tx.$queryRaw`SELECT id FROM "Fee" WHERE id=${existing.feeId} FOR UPDATE`;
+    const fresh = await tx.payment.findUniqueOrThrow({ where: { id: d.id } });
+    if (fresh.voidedAt) throw new Error("Payment already voided");
     await tx.payment.update({
       where: { id: d.id },
       data: { voidedAt: new Date(), voidedBy: session.userId, voidReason: d.reason },

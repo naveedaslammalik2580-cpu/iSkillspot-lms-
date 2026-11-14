@@ -10,6 +10,8 @@ import { StatusBadge } from "@/components/status-badge";
 import { StudentActions } from "./actions";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Pencil } from "lucide-react";
+import { ActionForm } from "@/components/admissions/forms";
+import { setEnrollmentAccessAction } from "@/lib/actions/admissions";
 
 export default async function StudentProfile({
   params,
@@ -109,9 +111,9 @@ export default async function StudentProfile({
             <p className="text-sm text-muted-foreground">No enrollments.</p>
           ) : (
             student.enrollments.map((e) => (
-              <div key={e.id} className="flex items-center justify-between border-b border-border py-2 last:border-0 text-sm">
-                <span>{e.course.title}</span>
-                <span className="text-muted-foreground">{Math.round(e.progress)}%</span>
+              <div key={e.id} className="space-y-3 border-b border-border py-3 last:border-0 text-sm">
+                <p>{e.course.title} · {Math.round(e.progress)}% · {e.accessSuspended ? "Access suspended" : "Access enabled"}</p>
+                <ActionForm action={setEnrollmentAccessAction} label={e.accessSuspended ? "Restore course access" : "Suspend course access"}><input type="hidden" name="id" value={e.id} /><input type="hidden" name="suspended" value={String(!e.accessSuspended)} /></ActionForm>
               </div>
             ))
           )}

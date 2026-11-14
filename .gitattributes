@@ -1,1 +1,2 @@
 prisma/migrations/20261113120000_auth_account_lifecycle/migration.sql text eol=lf
+prisma/migrations/20261114120000_student_admissions/migration.sql text eol=lf

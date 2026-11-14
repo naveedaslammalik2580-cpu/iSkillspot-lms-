@@ -26,7 +26,7 @@ export async function setLessonCompleted(lessonId: string, completed: boolean): 
 
   const courseId = lesson.module.courseId;
   const enrollment = await db.enrollment.findFirst({
-    where: { studentId: student.id, courseId, status: { in: ["ACTIVE", "COMPLETED"] } },
+    where: { studentId: student.id, courseId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } },
     select: { id: true },
   });
   if (!enrollment) return { ok: false, error: "You are not enrolled in this course." };
@@ -95,7 +95,7 @@ export async function getLessonResourceAccess(
       });
       if (!student || !resource.lesson.isPublished) return { ok: false };
       const enrollment = await db.enrollment.findFirst({
-        where: { studentId: student.id, courseId, status: { in: ["ACTIVE", "COMPLETED"] } },
+        where: { studentId: student.id, courseId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } },
         select: { id: true },
       });
       if (!enrollment) return { ok: false };

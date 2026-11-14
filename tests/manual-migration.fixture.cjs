@@ -24,14 +24,18 @@ exports.prepare = async function prepare(connection) {
     }
     await db.teacher.create({data:{userId:'legacy-teacher',fullName:'Legacy Fixture Teacher'}});
     const student=await db.student.create({data:{userId:'legacy-student',studentId:'LEGACY-TEST-1',fullName:'Legacy Fixture Student'}});
-    const course=await db.course.create({data:{title:'Legacy Fixture Course',slug:'legacy-fixture'}});
+    const course={id:'legacy-fixture-course'};
+    await db.$executeRaw`INSERT INTO "Course" (id,title,slug,"updatedAt") VALUES (${course.id},'Legacy Fixture Course','legacy-fixture',CURRENT_TIMESTAMP)`;
+    const batch=await db.batch.create({data:{courseId:course.id,name:'Legacy Fixture Batch',code:'LEGACY-FIXTURE'},select:{id:true}});
+    await db.$executeRaw`INSERT INTO "Enrollment" (id,"studentId","courseId","batchId") VALUES ('legacy-fixture-enrollment',${student.id},${course.id},${batch.id})`;
     const fee=await db.fee.create({data:{studentId:student.id,courseId:course.id,totalFee:100,finalFee:100,amountPaid:25,remainingBalance:75,status:'PARTIAL'}});
-    await db.payment.create({data:{studentId:student.id,feeId:fee.id,amount:25}});
+    await db.$executeRaw`INSERT INTO "Payment" (id,"studentId","feeId",amount) VALUES ('legacy-fixture-payment',${student.id},${fee.id},25)`;
     await db.certificate.create({data:{studentId:student.id,courseId:course.id,certificateNumber:'LEGACY-FIXTURE-CERT',verificationCode:'LEGACY-FIXTURE-VERIFY'}});
     return async function verify() {
       try {
         assert.equal(await db.user.count(),3); assert.equal(await db.teacher.count(),1); assert.equal(await db.student.count(),1);
         assert.equal(await db.fee.count(),1); assert.equal(await db.payment.count(),1); assert.equal(await db.certificate.count(),1);
+        assert.equal(await db.enrollment.count(),1);
         const users=await db.user.findMany();
         assert.ok(users.every(user=>user.passwordHash===hash && user.status==='ACTIVE' && user.sessionVersion===0));
         const superAdmin=users.find(user=>user.id==='legacy-super');
