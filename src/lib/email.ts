@@ -1,1 +1,131 @@
-aW1wb3J0IG5vZGVtYWlsZXIgZnJvbSAibm9kZW1haWxlciI7CgovKioKICogVHJhbnNhY3Rpb25hbCBlbWFpbCBkZWxpdmVyeS4KICoKICogQ29uZmlndXJhdGlvbiAoc2VlIC5lbnYuZXhhbXBsZSk6CiAqIC0gU01UUCAocHJlZmVycmVkLCBwcm92aWRlci1hZ25vc3RpYyk6IFNNVFBfSE9TVCwgU01UUF9QT1JULAogKiAgIFNNVFBfVVNFUiwgU01UUF9QQVNTLCBFTUFJTF9GUk9NLiBQb3J0IDQ2NSB1c2VzIGltcGxpY2l0IFRMUzsKICogICBvdGhlciBwb3J0cyB1c2UgU1RBUlRUTFMgKHJlcXVpcmVkLCBuZXZlciBzaWxlbnRseSBkb3duZ3JhZGVkKS4KICogLSBPciBSZXNlbmQ6IFJFU0VORF9BUElfS0VZICsgRU1BSUxfRlJPTS4KICoKICogSWYgbmVpdGhlciBpcyBjb25maWd1cmVkLCBzZW5kaW5nIHJlcG9ydHMgYG5vdC1jb25maWd1cmVkYCBhbmQgdGhlCiAqIGNhbGxlciBkZWNpZGVzIGhvdyB0byBzdXJmYWNlIHRoYXQg4oCUIHRoaXMgbW9kdWxlIE5FVkVSIHByZXRlbmRzIGFuCiAqIGVtYWlsIHdhcyBkZWxpdmVyZWQuIFByb3ZpZGVyIGVycm9ycyBhcmUgcmVwb3J0ZWQgYXMgYGZhaWxlZGAgd2l0aCBhCiAqIGdlbmVyaWMgcmVhc29uOyBjcmVkZW50aWFscyBhbmQgbWVzc2FnZSBib2RpZXMgYXJlIG5ldmVyIGxvZ2dlZC4KICovCmV4cG9ydCB0eXBlIEVtYWlsUmVzdWx0ID0KICB8IHsgZGVsaXZlcmVkOiB0cnVlOyBwcm92aWRlcjogInNtdHAiIHwgInJlc2VuZCIgfQogIHwgeyBkZWxpdmVyZWQ6IGZhbHNlOyByZWFzb246ICJub3QtY29uZmlndXJlZCIgfCAiZmFpbGVkIiB9OwoKZXhwb3J0IGludGVyZmFjZSBFbWFpbE1lc3NhZ2UgewogIHRvOiBzdHJpbmc7CiAgc3ViamVjdDogc3RyaW5nOwogIHRleHQ6IHN0cmluZzsKICBodG1sOiBzdHJpbmc7Cn0KCmZ1bmN0aW9uIGVtYWlsRnJvbSgpOiBzdHJpbmcgfCBudWxsIHsKICBjb25zdCBmcm9tID0gcHJvY2Vzcy5lbnYuRU1BSUxfRlJPTT8udHJpbSgpOwogIHJldHVybiBmcm9tICYmIC8uK0AuK1wuLisvLnRlc3QoZnJvbSkgPyBmcm9tIDogbnVsbDsKfQoKZXhwb3J0IGZ1bmN0aW9uIGVtYWlsUHJvdmlkZXJDb25maWd1cmVkKCk6IGJvb2xlYW4gewogIGlmICghZW1haWxGcm9tKCkpIHJldHVybiBmYWxzZTsKICByZXR1cm4gQm9vbGVhbihwcm9jZXNzLmVudi5TTVRQX0hPU1Q/LnRyaW0oKSB8fCBwcm9jZXNzLmVudi5SRVNFTkRfQVBJX0tFWT8udHJpbSgpKTsKfQoKYXN5bmMgZnVuY3Rpb24gc2VuZFZpYVNtdHAobWVzc2FnZTogRW1haWxNZXNzYWdlKTogUHJvbWlzZTxib29sZWFuPiB7CiAgY29uc3QgaG9zdCA9IHByb2Nlc3MuZW52LlNNVFBfSE9TVCEudHJpbSgpOwogIGNvbnN0IHBvcnQgPSBOdW1iZXIocHJvY2Vzcy5lbnYuU01UUF9QT1JUID8/IChwcm9jZXNzLmVudi5TTVRQX1NFQ1VSRSA9PT0gInRydWUiID8gNDY1IDogNTg3KSk7CiAgY29uc3Qgc2VjdXJlID0gcHJvY2Vzcy5lbnYuU01UUF9TRUNVUkUgPyBwcm9jZXNzLmVudi5TTVRQX1NFQ1VSRSA9PT0gInRydWUiIDogcG9ydCA9PT0gNDY1OwogIGNvbnN0IHVzZXIgPSBwcm9jZXNzLmVudi5TTVRQX1VTRVI/LnRyaW0oKTsKICBjb25zdCBwYXNzID0gcHJvY2Vzcy5lbnYuU01UUF9QQVNTOwogIC8vIFNUQVJUVExTIGlzIG1hbmRhdG9yeSBvbiBub24taW1wbGljaXQtVExTIHBvcnRzIGJ5IGRlZmF1bHQ7IHRoZQogIC8vIGV4cGxpY2l0IFNNVFBfUkVRVUlSRV9UTFM9ZmFsc2UgZXNjYXBlIGhhdGNoIGV4aXN0cyBvbmx5IGZvcgogIC8vIHRydXN0ZWQgcHJpdmF0ZSByZWxheXMgdGhhdCBkbyBub3Qgb2ZmZXIgaXQuIFRpbWVvdXRzIGtlZXAgYSBkZWFkCiAgLy8gb3IgbWlzYmVoYXZpbmcgbWFpbCBzZXJ2ZXIgZnJvbSBoYW5naW5nIHRoZSByZXF1ZXN0LgogIGNvbnN0IHJlcXVpcmVUTFMgPSBwcm9jZXNzLmVudi5TTVRQX1JFUVVJUkVfVExTCiAgICA/IHByb2Nlc3MuZW52LlNNVFBfUkVRVUlSRV9UTFMgPT09ICJ0cnVlIgogICAgOiAhc2VjdXJlOwogIGNvbnN0IHRyYW5zcG9ydCA9IG5vZGVtYWlsZXIuY3JlYXRlVHJhbnNwb3J0KHsKICAgIGhvc3QsCiAgICBwb3J0LAogICAgc2VjdXJlLAogICAgcmVxdWlyZVRMUywKICAgIGNvbm5lY3Rpb25UaW1lb3V0OiAxMF8wMDAsCiAgICBncmVldGluZ1RpbWVvdXQ6IDEwXzAwMCwKICAgIHNvY2tldFRpbWVvdXQ6IDIwXzAwMCwKICAgIGF1dGg6IHVzZXIgPyB7IHVzZXIsIHBhc3MgfSA6IHVuZGVmaW5lZCwKICB9KTsKICBhd2FpdCB0cmFuc3BvcnQuc2VuZE1haWwoewogICAgZnJvbTogZW1haWxGcm9tKCkhLAogICAgdG86IG1lc3NhZ2UudG8sCiAgICBzdWJqZWN0OiBtZXNzYWdlLnN1YmplY3QsCiAgICB0ZXh0OiBtZXNzYWdlLnRleHQsCiAgICBodG1sOiBtZXNzYWdlLmh0bWwsCiAgfSk7CiAgcmV0dXJuIHRydWU7Cn0KCmFzeW5jIGZ1bmN0aW9uIHNlbmRWaWFSZXNlbmQobWVzc2FnZTogRW1haWxNZXNzYWdlKTogUHJvbWlzZTxib29sZWFuPiB7CiAgY29uc3QgcmVzID0gYXdhaXQgZmV0Y2goImh0dHBzOi8vYXBpLnJlc2VuZC5jb20vZW1haWxzIiwgewogICAgbWV0aG9kOiAiUE9TVCIsCiAgICBoZWFkZXJzOiB7CiAgICAgIEF1dGhvcml6YXRpb246IGBCZWFyZXIgJHtwcm9jZXNzLmVudi5SRVNFTkRfQVBJX0tFWX1gLAogICAgICAiQ29udGVudC1UeXBlIjogImFwcGxpY2F0aW9uL2pzb24iLAogICAgfSwKICAgIGJvZHk6IEpTT04uc3RyaW5naWZ5KHsKICAgICAgZnJvbTogZW1haWxGcm9tKCkhLAogICAgICB0bzogW21lc3NhZ2UudG9dLAogICAgICBzdWJqZWN0OiBtZXNzYWdlLnN1YmplY3QsCiAgICAgIHRleHQ6IG1lc3NhZ2UudGV4dCwKICAgICAgaHRtbDogbWVzc2FnZS5odG1sLAogICAgfSksCiAgfSk7CiAgcmV0dXJuIHJlcy5vazsKfQoKZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIHNlbmRFbWFpbChtZXNzYWdlOiBFbWFpbE1lc3NhZ2UpOiBQcm9taXNlPEVtYWlsUmVzdWx0PiB7CiAgaWYgKCFlbWFpbEZyb20oKSkgcmV0dXJuIHsgZGVsaXZlcmVkOiBmYWxzZSwgcmVhc29uOiAibm90LWNvbmZpZ3VyZWQiIH07CiAgdHJ5IHsKICAgIGlmIChwcm9jZXNzLmVudi5TTVRQX0hPU1Q/LnRyaW0oKSkgewogICAgICBhd2FpdCBzZW5kVmlhU210cChtZXNzYWdlKTsKICAgICAgcmV0dXJuIHsgZGVsaXZlcmVkOiB0cnVlLCBwcm92aWRlcjogInNtdHAiIH07CiAgICB9CiAgICBpZiAocHJvY2Vzcy5lbnYuUkVTRU5EX0FQSV9LRVk/LnRyaW0oKSkgewogICAgICBjb25zdCBvayA9IGF3YWl0IHNlbmRWaWFSZXNlbmQobWVzc2FnZSk7CiAgICAgIHJldHVybiBvayA/IHsgZGVsaXZlcmVkOiB0cnVlLCBwcm92aWRlcjogInJlc2VuZCIgfSA6IHsgZGVsaXZlcmVkOiBmYWxzZSwgcmVhc29uOiAiZmFpbGVkIiB9OwogICAgfQogIH0gY2F0Y2ggewogICAgcmV0dXJuIHsgZGVsaXZlcmVkOiBmYWxzZSwgcmVhc29uOiAiZmFpbGVkIiB9OwogIH0KICByZXR1cm4geyBkZWxpdmVyZWQ6IGZhbHNlLCByZWFzb246ICJub3QtY29uZmlndXJlZCIgfTsKfQoKLyoqIFBhc3N3b3JkLXJlc2V0IGVtYWlsIGJvZHkuIFRoZSByZXNldCBVUkwgY2FycmllcyB0aGUgb25seSBjb3B5IG9mIHRoZSBwbGFpbnRleHQgdG9rZW4uICovCmV4cG9ydCBmdW5jdGlvbiBwYXNzd29yZFJlc2V0RW1haWwocGFyYW1zOiB7CiAgaW5zdGl0dXRlTmFtZTogc3RyaW5nOwogIHJlc2V0VXJsOiBzdHJpbmc7CiAgZXhwaXJlc01pbnV0ZXM6IG51bWJlcjsKfSk6IE9taXQ8RW1haWxNZXNzYWdlLCAidG8iPiB7CiAgY29uc3QgeyBpbnN0aXR1dGVOYW1lLCByZXNldFVybCwgZXhwaXJlc01pbnV0ZXMgfSA9IHBhcmFtczsKICBjb25zdCBzdWJqZWN0ID0gYFJlc2V0IHlvdXIgJHtpbnN0aXR1dGVOYW1lfSBwYXNzd29yZGA7CiAgY29uc3QgdGV4dCA9IFsKICAgIGBXZSByZWNlaXZlZCBhIHJlcXVlc3QgdG8gcmVzZXQgdGhlIHBhc3N3b3JkIGZvciB5b3VyICR7aW5zdGl0dXRlTmFtZX0gYWNjb3VudC5gLAogICAgIiIsCiAgICBgT3BlbiB0aGlzIGxpbmsgd2l0aGluICR7ZXhwaXJlc01pbnV0ZXN9IG1pbnV0ZXMgdG8gY2hvb3NlIGEgbmV3IHBhc3N3b3JkOmAsCiAgICByZXNldFVybCwKICAgICIiLAogICAgIklmIHlvdSBkaWQgbm90IHJlcXVlc3QgdGhpcywgeW91IGNhbiBpZ25vcmUgdGhpcyBlbWFpbCDigJQgeW91ciBwYXNzd29yZCB3aWxsIG5vdCBjaGFuZ2UuIiwKICAgICJGb3IgeW91ciBzZWN1cml0eSwgbmV2ZXIgc2hhcmUgdGhpcyBsaW5rIHdpdGggYW55b25lLiIsCiAgXS5qb2luKCJcbiIpOwogIGNvbnN0IGh0bWwgPSBgPGRpdiBzdHlsZT0iZm9udC1mYW1pbHk6c3lzdGVtLXVpLFNlZ29lIFVJLEFyaWFsLHNhbnMtc2VyaWY7bWF4LXdpZHRoOjU2MHB4O21hcmdpbjowIGF1dG87cGFkZGluZzoyNHB4O2NvbG9yOiMwZjE3MmEiPgogIDxoMSBzdHlsZT0iZm9udC1zaXplOjIwcHg7bWFyZ2luOjAgMCAxMnB4Ij5SZXNldCB5b3VyIHBhc3N3b3JkPC9oMT4KICA8cCBzdHlsZT0iZm9udC1zaXplOjE0cHg7bGluZS1oZWlnaHQ6MS42Ij5XZSByZWNlaXZlZCBhIHJlcXVlc3QgdG8gcmVzZXQgdGhlIHBhc3N3b3JkIGZvciB5b3VyICR7aW5zdGl0dXRlTmFtZX0gYWNjb3VudC48L3A+CiAgPHAgc3R5bGU9Im1hcmdpbjoyNHB4IDAiPjxhIGhyZWY9IiR7cmVzZXRVcmx9IiBzdHlsZT0iYmFja2dyb3VuZDojMTQ1MGQyO2NvbG9yOiNmZmY7cGFkZGluZzoxMnB4IDIwcHg7Ym9yZGVyLXJhZGl1czo4cHg7dGV4dC1kZWNvcmF0aW9uOm5vbmU7Zm9udC1zaXplOjE0cHgiPkNob29zZSBhIG5ldyBwYXNzd29yZDwvYT48L3A+CiAgPHAgc3R5bGU9ImZvbnQtc2l6ZToxM3B4O2xpbmUtaGVpZ2h0OjEuNjtjb2xvcjojNDc1NTY5Ij5UaGlzIGxpbmsgZXhwaXJlcyBpbiAke2V4cGlyZXNNaW51dGVzfSBtaW51dGVzIGFuZCBjYW4gYmUgdXNlZCBvbmNlLiBJZiB0aGUgYnV0dG9uIGRvZXMgbm90IHdvcmssIGNvcHkgdGhpcyBhZGRyZXNzIGludG8geW91ciBicm93c2VyOjxicj4ke3Jlc2V0VXJsfTwvcD4KICA8cCBzdHlsZT0iZm9udC1zaXplOjEzcHg7bGluZS1oZWlnaHQ6MS42O2NvbG9yOiM0NzU1NjkiPklmIHlvdSBkaWQgbm90IHJlcXVlc3QgdGhpcywgaWdub3JlIHRoaXMgZW1haWwg4oCUIHlvdXIgcGFzc3dvcmQgd2lsbCBub3QgY2hhbmdlLiBOZXZlciBzaGFyZSB0aGlzIGxpbmsgd2l0aCBhbnlvbmUuPC9wPgo8L2Rpdj5gOwogIHJldHVybiB7IHN1YmplY3QsIHRleHQsIGh0bWwgfTsKfQo=
+import nodemailer from "nodemailer";
+
+/**
+ * Transactional email delivery.
+ *
+ * Configuration (see .env.example):
+ * - SMTP (preferred, provider-agnostic): SMTP_HOST, SMTP_PORT,
+ *   SMTP_USER, SMTP_PASS, EMAIL_FROM. Port 465 uses implicit TLS;
+ *   other ports use STARTTLS (required, never silently downgraded).
+ * - Or Resend: RESEND_API_KEY + EMAIL_FROM.
+ *
+ * If neither is configured, sending reports `not-configured` and the
+ * caller decides how to surface that — this module NEVER pretends an
+ * email was delivered. Provider errors are reported as `failed` with a
+ * generic reason; credentials and message bodies are never logged.
+ */
+export type EmailResult =
+  | { delivered: true; provider: "smtp" | "resend" }
+  | { delivered: false; reason: "not-configured" | "failed" };
+
+export interface EmailMessage {
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+}
+
+function emailFrom(): string | null {
+  const from = process.env.EMAIL_FROM?.trim();
+  return from && /.+@.+\..+/.test(from) ? from : null;
+}
+
+export function emailProviderConfigured(): boolean {
+  if (!emailFrom()) return false;
+  return Boolean(process.env.SMTP_HOST?.trim() || process.env.RESEND_API_KEY?.trim());
+}
+
+async function sendViaSmtp(message: EmailMessage): Promise<boolean> {
+  const host = process.env.SMTP_HOST!.trim();
+  const port = Number(process.env.SMTP_PORT ?? (process.env.SMTP_SECURE === "true" ? 465 : 587));
+  const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : port === 465;
+  const user = process.env.SMTP_USER?.trim();
+  const pass = process.env.SMTP_PASS;
+  // STARTTLS is mandatory on non-implicit-TLS ports by default; the
+  // explicit SMTP_REQUIRE_TLS=false escape hatch exists only for
+  // trusted private relays that do not offer it. Timeouts keep a dead
+  // or misbehaving mail server from hanging the request.
+  const requireTLS = process.env.SMTP_REQUIRE_TLS
+    ? process.env.SMTP_REQUIRE_TLS === "true"
+    : !secure;
+  const transport = nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    requireTLS,
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 20_000,
+    auth: user ? { user, pass } : undefined,
+  });
+  await transport.sendMail({
+    from: emailFrom()!,
+    to: message.to,
+    subject: message.subject,
+    text: message.text,
+    html: message.html,
+  });
+  return true;
+}
+
+async function sendViaResend(message: EmailMessage): Promise<boolean> {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: emailFrom()!,
+      to: [message.to],
+      subject: message.subject,
+      text: message.text,
+      html: message.html,
+    }),
+  });
+  return res.ok;
+}
+
+export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
+  if (!emailFrom()) return { delivered: false, reason: "not-configured" };
+  try {
+    if (process.env.SMTP_HOST?.trim()) {
+      await sendViaSmtp(message);
+      return { delivered: true, provider: "smtp" };
+    }
+    if (process.env.RESEND_API_KEY?.trim()) {
+      const ok = await sendViaResend(message);
+      return ok ? { delivered: true, provider: "resend" } : { delivered: false, reason: "failed" };
+    }
+  } catch {
+    return { delivered: false, reason: "failed" };
+  }
+  return { delivered: false, reason: "not-configured" };
+}
+
+/** Password-reset email body. The reset URL carries the only copy of the plaintext token. */
+export function passwordResetEmail(params: {
+  instituteName: string;
+  resetUrl: string;
+  expiresMinutes: number;
+}): Omit<EmailMessage, "to"> {
+  const { instituteName, resetUrl, expiresMinutes } = params;
+  const subject = `Reset your ${instituteName} password`;
+  const text = [
+    `We received a request to reset the password for your ${instituteName} account.`,
+    "",
+    `Open this link within ${expiresMinutes} minutes to choose a new password:`,
+    resetUrl,
+    "",
+    "If you did not request this, you can ignore this email — your password will not change.",
+    "For your security, never share this link with anyone.",
+  ].join("\n");
+  const html = `<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0f172a">
+  <h1 style="font-size:20px;margin:0 0 12px">Reset your password</h1>
+  <p style="font-size:14px;line-height:1.6">We received a request to reset the password for your ${instituteName} account.</p>
+  <p style="margin:24px 0"><a href="${resetUrl}" style="background:#1450d2;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-size:14px">Choose a new password</a></p>
+  <p style="font-size:13px;line-height:1.6;color:#475569">This link expires in ${expiresMinutes} minutes and can be used once. If the button does not work, copy this address into your browser:<br>${resetUrl}</p>
+  <p style="font-size:13px;line-height:1.6;color:#475569">If you did not request this, ignore this email — your password will not change. Never share this link with anyone.</p>
+</div>`;
+  return { subject, text, html };
+}

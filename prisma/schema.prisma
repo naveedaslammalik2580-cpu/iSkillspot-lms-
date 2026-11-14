@@ -1,1 +1,645 @@
-Z2VuZXJhdG9yIGNsaWVudCB7CiAgcHJvdmlkZXIgPSAicHJpc21hLWNsaWVudC1qcyIKfQoKZGF0YXNvdXJjZSBkYiB7CiAgcHJvdmlkZXIgID0gInBvc3RncmVzcWwiCiAgdXJsICAgICAgID0gZW52KCJEQVRBQkFTRV9VUkwiKQogIGRpcmVjdFVybCA9IGVudigiRElSRUNUX1VSTCIpCn0KCm1vZGVsIFVzZXIgewogIGlkICAgICAgICAgICAgICAgICBTdHJpbmcgICAgICAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIHVzZXJuYW1lICAgICAgICAgICBTdHJpbmcgICAgICAgICBAdW5pcXVlCiAgZW1haWwgICAgICAgICAgICAgIFN0cmluZyAgICAgICAgIEB1bmlxdWUKICBwYXNzd29yZEhhc2ggICAgICAgU3RyaW5nCiAgcm9sZSAgICAgICAgICAgICAgIFJvbGUKICBzdGF0dXMgICAgICAgICAgICAgQWNjb3VudFN0YXR1cyAgQGRlZmF1bHQoQUNUSVZFKQogIG11c3RDaGFuZ2VQYXNzd29yZCBCb29sZWFuICAgICAgICBAZGVmYXVsdChmYWxzZSkKICBzZXNzaW9uVmVyc2lvbiAgICAgSW50ICAgICAgICAgICAgQGRlZmF1bHQoMCkKICBwYXNzd29yZEV4cGlyZXNBdCAgRGF0ZVRpbWU/CiAgbGFzdExvZ2luICAgICAgICAgIERhdGVUaW1lPwogIGNyZWF0ZWRBdCAgICAgICAgICBEYXRlVGltZSAgICAgICBAZGVmYXVsdChub3coKSkKICB1cGRhdGVkQXQgICAgICAgICAgRGF0ZVRpbWUgICAgICAgQHVwZGF0ZWRBdAogIGFubm91bmNlbWVudHMgICAgICBBbm5vdW5jZW1lbnRbXSBAcmVsYXRpb24oIkFubm91bmNlbWVudEF1dGhvciIpCiAgYXVkaXRMb2dzICAgICAgICAgIEF1ZGl0TG9nW10KICBub3RpZmljYXRpb25zICAgICAgTm90aWZpY2F0aW9uW10KICBub3RpZmljYXRpb25QcmVmZXJlbmNlcyBOb3RpZmljYXRpb25QcmVmZXJlbmNlW10KICBwdXNoU3Vic2NyaXB0aW9ucyAgUHVzaFN1YnNjcmlwdGlvbltdCiAgcGFzc3dvcmRSZXNldFRva2VucyBQYXNzd29yZFJlc2V0VG9rZW5bXQogIHN0dWRlbnQgICAgICAgICAgICBTdHVkZW50PwogIHRlYWNoZXIgICAgICAgICAgICBUZWFjaGVyPwoKICBAQGluZGV4KFtyb2xlXSkKICBAQGluZGV4KFtzdGF0dXNdKQp9CgovLyBITUFDIGtleXMgY29udGFpbiBubyBwbGFpbnRleHQgbG9naW4gaWRlbnRpZmllcnMuIFNoYXJlZCBhY3Jvc3MgYXBwIGluc3RhbmNlcy4KbW9kZWwgQXV0aFRocm90dGxlIHsKICBrZXkgICAgICAgU3RyaW5nICAgQGlkCiAgY291bnQgICAgIEludAogIGV4cGlyZXNBdCBEYXRlVGltZQoKICBAQGluZGV4KFtleHBpcmVzQXRdKQp9CgovLyBTZWxmLXNlcnZpY2UgYW5kIHN0YWZmLWluaXRpYXRlZCBwYXNzd29yZCByZWNvdmVyeS4gT25seSB0aGUgU0hBLTI1NgovLyBoYXNoIG9mIGVhY2ggdG9rZW4gaXMgc3RvcmVkOyB0aGUgcGxhaW50ZXh0IHRva2VuIGV4aXN0cyBzb2xlbHkgaW4KLy8gdGhlIGVtYWlsZWQgbGluay4gVG9rZW5zIGFyZSBzaW5nbGUtdXNlLCBleHBpcmUgcXVpY2tseSwgYW5kIGlzc3VpbmcKLy8gYSBuZXcgdG9rZW4gc3VwZXJzZWRlcyB0aGUgdXNlcidzIHByZXZpb3VzIHVudXNlZCB0b2tlbnMuCm1vZGVsIFBhc3N3b3JkUmVzZXRUb2tlbiB7CiAgaWQgICAgICAgICAgICBTdHJpbmcgICAgQGlkIEBkZWZhdWx0KGN1aWQoKSkKICB1c2VySWQgICAgICAgIFN0cmluZwogIHRva2VuSGFzaCAgICAgU3RyaW5nICAgIEB1bmlxdWUKICBleHBpcmVzQXQgICAgIERhdGVUaW1lCiAgdXNlZEF0ICAgICAgICBEYXRlVGltZT8KICByZXF1ZXN0ZWRCeUlkIFN0cmluZz8KICBjcmVhdGVkQXQgICAgIERhdGVUaW1lICBAZGVmYXVsdChub3coKSkKICB1c2VyICAgICAgICAgIFVzZXIgICAgICBAcmVsYXRpb24oZmllbGRzOiBbdXNlcklkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAaW5kZXgoW3VzZXJJZF0pCiAgQEBpbmRleChbZXhwaXJlc0F0XSkKfQoKLy8gRHVyYWJsZSBtYXJrZXIsIHJldGFpbmVkIGluZGVwZW5kZW50bHkgb2YgVXNlciByZWNvcmRzLgptb2RlbCBBY2NvdW50Qm9vdHN0cmFwIHsKICBpZCAgICAgICAgU3RyaW5nICAgQGlkCiAgdXNlcklkICAgIFN0cmluZyAgIEB1bmlxdWUKICBjcmVhdGVkQXQgRGF0ZVRpbWUgQGRlZmF1bHQobm93KCkpCn0KCm1vZGVsIFN0dWRlbnQgewogIGlkICAgICAgICAgICAgICAgU3RyaW5nICAgICAgICAgICAgICAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIHVzZXJJZCAgICAgICAgICAgU3RyaW5nICAgICAgICAgICAgICAgICBAdW5pcXVlCiAgc3R1ZGVudElkICAgICAgICBTdHJpbmcgICAgICAgICAgICAgICAgIEB1bmlxdWUKICBmdWxsTmFtZSAgICAgICAgIFN0cmluZwogIGZhdGhlck5hbWUgICAgICAgU3RyaW5nPwogIGRhdGVPZkJpcnRoICAgICAgRGF0ZVRpbWU/CiAgZ2VuZGVyICAgICAgICAgICBHZW5kZXI/CiAgcGhvbmUgICAgICAgICAgICBTdHJpbmc/CiAgd2hhdHNhcHAgICAgICAgICBTdHJpbmc/CiAgZW1haWwgICAgICAgICAgICBTdHJpbmc/CiAgYWRkcmVzcyAgICAgICAgICBTdHJpbmc/CiAgY2l0eSAgICAgICAgICAgICBTdHJpbmc/CiAgcHJvZmlsZUltYWdlICAgICBTdHJpbmc/CiAgZW1lcmdlbmN5Q29udGFjdCBTdHJpbmc/CiAgYWRtaXNzaW9uRGF0ZSAgICBEYXRlVGltZSAgICAgICAgICAgICAgIEBkZWZhdWx0KG5vdygpKQogIHN0YXR1cyAgICAgICAgICAgU3R1ZGVudFN0YXR1cyAgICAgICAgICBAZGVmYXVsdChBQ1RJVkUpCiAgbm90ZXMgICAgICAgICAgICBTdHJpbmc/CiAgY3JlYXRlZEF0ICAgICAgICBEYXRlVGltZSAgICAgICAgICAgICAgIEBkZWZhdWx0KG5vdygpKQogIHVwZGF0ZWRBdCAgICAgICAgRGF0ZVRpbWUgICAgICAgICAgICAgICBAdXBkYXRlZEF0CiAgc3VibWlzc2lvbnMgICAgICBBc3NpZ25tZW50U3VibWlzc2lvbltdCiAgYXR0ZW5kYW5jZSAgICAgICBBdHRlbmRhbmNlW10KICBjZXJ0aWZpY2F0ZXMgICAgIENlcnRpZmljYXRlW10KICBlbnJvbGxtZW50cyAgICAgIEVucm9sbG1lbnRbXQogIGZlZXMgICAgICAgICAgICAgRmVlW10KICBncmFkZXMgICAgICAgICAgIEdyYWRlW10KICBsZXNzb25Qcm9ncmVzcyAgIExlc3NvblByb2dyZXNzW10KICBwYXltZW50cyAgICAgICAgIFBheW1lbnRbXQogIHF1aXpBdHRlbXB0cyAgICAgUXVpekF0dGVtcHRbXQogIHVzZXIgICAgICAgICAgICAgVXNlciAgICAgICAgICAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbdXNlcklkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAaW5kZXgoW3N0YXR1c10pCiAgQEBpbmRleChbZnVsbE5hbWVdKQp9Cgptb2RlbCBUZWFjaGVyIHsKICBpZCAgICAgICAgICAgICBTdHJpbmcgICAgICAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIHVzZXJJZCAgICAgICAgIFN0cmluZyAgICAgICAgIEB1bmlxdWUKICBmdWxsTmFtZSAgICAgICBTdHJpbmcKICBwaG9uZSAgICAgICAgICBTdHJpbmc/CiAgZW1haWwgICAgICAgICAgU3RyaW5nPwogIHNwZWNpYWxpemF0aW9uIFN0cmluZz8KICBwcm9maWxlSW1hZ2UgICBTdHJpbmc/CiAgc3RhdHVzICAgICAgICAgQWNjb3VudFN0YXR1cyAgQGRlZmF1bHQoQUNUSVZFKQogIGpvaW5pbmdEYXRlICAgIERhdGVUaW1lICAgICAgIEBkZWZhdWx0KG5vdygpKQogIGNyZWF0ZWRBdCAgICAgIERhdGVUaW1lICAgICAgIEBkZWZhdWx0KG5vdygpKQogIHVwZGF0ZWRBdCAgICAgIERhdGVUaW1lICAgICAgIEB1cGRhdGVkQXQKICBhbm5vdW5jZW1lbnRzICBBbm5vdW5jZW1lbnRbXSBAcmVsYXRpb24oIlRlYWNoZXJBbm5vdW5jZW1lbnRzIikKICBiYXRjaGVzICAgICAgICBCYXRjaFtdCiAgdXNlciAgICAgICAgICAgVXNlciAgICAgICAgICAgQHJlbGF0aW9uKGZpZWxkczogW3VzZXJJZF0sIHJlZmVyZW5jZXM6IFtpZF0sIG9uRGVsZXRlOiBDYXNjYWRlKQoKICBAQGluZGV4KFtzdGF0dXNdKQp9Cgptb2RlbCBDb3Vyc2UgewogIGlkICAgICAgICAgICBTdHJpbmcgICAgICAgIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAgdGl0bGUgICAgICAgIFN0cmluZwogIHNsdWcgICAgICAgICBTdHJpbmcgICAgICAgIEB1bmlxdWUKICBkZXNjcmlwdGlvbiAgU3RyaW5nPwogIHRodW1ibmFpbCAgICBTdHJpbmc/CiAgZHVyYXRpb24gICAgIFN0cmluZz8KICBsZXZlbCAgICAgICAgQ291cnNlTGV2ZWwgICBAZGVmYXVsdChCRUdJTk5FUikKICBzdGF0dXMgICAgICAgUHVibGlzaFN0YXR1cyBAZGVmYXVsdChEUkFGVCkKICBjcmVhdGVkQXQgICAgRGF0ZVRpbWUgICAgICBAZGVmYXVsdChub3coKSkKICB1cGRhdGVkQXQgICAgRGF0ZVRpbWUgICAgICBAdXBkYXRlZEF0CiAgZGVmYXVsdEZlZSAgIEZsb2F0PwogIGFzc2lnbm1lbnRzICBBc3NpZ25tZW50W10KICBiYXRjaGVzICAgICAgQmF0Y2hbXQogIGNlcnRpZmljYXRlcyBDZXJ0aWZpY2F0ZVtdCiAgZW5yb2xsbWVudHMgIEVucm9sbG1lbnRbXQogIGZlZXMgICAgICAgICBGZWVbXQogIGdyYWRlcyAgICAgICBHcmFkZVtdCiAgbW9kdWxlcyAgICAgIE1vZHVsZVtdCiAgcXVpenplcyAgICAgIFF1aXpbXQoKICBAQGluZGV4KFtzdGF0dXNdKQp9Cgptb2RlbCBNb2R1bGUgewogIGlkICAgICAgICAgIFN0cmluZyAgICAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIGNvdXJzZUlkICAgIFN0cmluZwogIHRpdGxlICAgICAgIFN0cmluZwogIGRlc2NyaXB0aW9uIFN0cmluZz8KICBvcmRlciAgICAgICBJbnQgICAgICAgICAgQGRlZmF1bHQoMCkKICBjcmVhdGVkQXQgICBEYXRlVGltZSAgICAgQGRlZmF1bHQobm93KCkpCiAgdXBkYXRlZEF0ICAgRGF0ZVRpbWUgICAgIEB1cGRhdGVkQXQKICBhc3NpZ25tZW50cyBBc3NpZ25tZW50W10KICBsZXNzb25zICAgICBMZXNzb25bXQogIGNvdXJzZSAgICAgIENvdXJzZSAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbY291cnNlSWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKICBxdWl6emVzICAgICBRdWl6W10KCiAgQEBpbmRleChbY291cnNlSWRdKQp9Cgptb2RlbCBMZXNzb24gewogIGlkICAgICAgICAgIFN0cmluZyAgICAgICAgICAgQGlkIEBkZWZhdWx0KGN1aWQoKSkKICBtb2R1bGVJZCAgICBTdHJpbmcKICB0aXRsZSAgICAgICBTdHJpbmcKICBkZXNjcmlwdGlvbiBTdHJpbmc/CiAgY29udGVudCAgICAgU3RyaW5nPwogIHZpZGVvVXJsICAgIFN0cmluZz8KICB0aHVtYm5haWwgICBTdHJpbmc/CiAgZHVyYXRpb24gICAgU3RyaW5nPwogIG9yZGVyICAgICAgIEludCAgICAgICAgICAgICAgQGRlZmF1bHQoMCkKICBpc1B1Ymxpc2hlZCBCb29sZWFuICAgICAgICAgIEBkZWZhdWx0KGZhbHNlKQogIGNyZWF0ZWRBdCAgIERhdGVUaW1lICAgICAgICAgQGRlZmF1bHQobm93KCkpCiAgdXBkYXRlZEF0ICAgRGF0ZVRpbWUgICAgICAgICBAdXBkYXRlZEF0CiAgbW9kdWxlICAgICAgTW9kdWxlICAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbbW9kdWxlSWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKICBwcm9ncmVzcyAgICBMZXNzb25Qcm9ncmVzc1tdCiAgcmVzb3VyY2VzICAgTGVzc29uUmVzb3VyY2VbXQoKICBAQGluZGV4KFttb2R1bGVJZF0pCn0KCm1vZGVsIExlc3NvblJlc291cmNlIHsKICBpZCAgICAgICAgU3RyaW5nICAgQGlkIEBkZWZhdWx0KGN1aWQoKSkKICBsZXNzb25JZCAgU3RyaW5nCiAgdGl0bGUgICAgIFN0cmluZwogIGZpbGVVcmwgICBTdHJpbmcKICBmaWxlVHlwZSAgU3RyaW5nPwogIGNyZWF0ZWRBdCBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKICBsZXNzb24gICAgTGVzc29uICAgQHJlbGF0aW9uKGZpZWxkczogW2xlc3NvbklkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAaW5kZXgoW2xlc3NvbklkXSkKfQoKbW9kZWwgTGVzc29uUHJvZ3Jlc3MgewogIGlkICAgICAgICAgIFN0cmluZyAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIHN0dWRlbnRJZCAgIFN0cmluZwogIGxlc3NvbklkICAgIFN0cmluZwogIGNvbXBsZXRlZCAgIEJvb2xlYW4gICBAZGVmYXVsdChmYWxzZSkKICBjb21wbGV0ZWRBdCBEYXRlVGltZT8KICBjcmVhdGVkQXQgICBEYXRlVGltZSAgQGRlZmF1bHQobm93KCkpCiAgdXBkYXRlZEF0ICAgRGF0ZVRpbWUgIEB1cGRhdGVkQXQKICBsZXNzb24gICAgICBMZXNzb24gICAgQHJlbGF0aW9uKGZpZWxkczogW2xlc3NvbklkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCiAgc3R1ZGVudCAgICAgU3R1ZGVudCAgIEByZWxhdGlvbihmaWVsZHM6IFtzdHVkZW50SWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKCiAgQEB1bmlxdWUoW3N0dWRlbnRJZCwgbGVzc29uSWRdKQogIEBAaW5kZXgoW3N0dWRlbnRJZF0pCn0KCm1vZGVsIEJhdGNoIHsKICBpZCAgICAgICAgICAgIFN0cmluZyAgICAgICAgIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAgbmFtZSAgICAgICAgICBTdHJpbmcKICBjb2RlICAgICAgICAgIFN0cmluZyAgICAgICAgIEB1bmlxdWUKICBjb3Vyc2VJZCAgICAgIFN0cmluZwogIHRlYWNoZXJJZCAgICAgU3RyaW5nPwogIHN0YXJ0RGF0ZSAgICAgRGF0ZVRpbWU/CiAgZW5kRGF0ZSAgICAgICBEYXRlVGltZT8KICBzY2hlZHVsZSAgICAgIFN0cmluZz8KICBzdGFydFRpbWUgICAgIFN0cmluZz8KICBlbmRUaW1lICAgICAgIFN0cmluZz8KICBzdGF0dXMgICAgICAgIEJhdGNoU3RhdHVzICAgIEBkZWZhdWx0KFVQQ09NSU5HKQogIGNyZWF0ZWRBdCAgICAgRGF0ZVRpbWUgICAgICAgQGRlZmF1bHQobm93KCkpCiAgdXBkYXRlZEF0ICAgICBEYXRlVGltZSAgICAgICBAdXBkYXRlZEF0CiAgYW5ub3VuY2VtZW50cyBBbm5vdW5jZW1lbnRbXQogIGF0dGVuZGFuY2UgICAgQXR0ZW5kYW5jZVtdCiAgY291cnNlICAgICAgICBDb3Vyc2UgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbY291cnNlSWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKICB0ZWFjaGVyICAgICAgIFRlYWNoZXI/ICAgICAgIEByZWxhdGlvbihmaWVsZHM6IFt0ZWFjaGVySWRdLCByZWZlcmVuY2VzOiBbaWRdKQogIGVucm9sbG1lbnRzICAgRW5yb2xsbWVudFtdCgogIEBAaW5kZXgoW2NvdXJzZUlkXSkKICBAQGluZGV4KFt0ZWFjaGVySWRdKQp9Cgptb2RlbCBFbnJvbGxtZW50IHsKICBpZCAgICAgICAgICAgICBTdHJpbmcgICAgICAgICAgIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAgc3R1ZGVudElkICAgICAgU3RyaW5nCiAgY291cnNlSWQgICAgICAgU3RyaW5nCiAgYmF0Y2hJZCAgICAgICAgU3RyaW5nCiAgZW5yb2xsbWVudERhdGUgRGF0ZVRpbWUgICAgICAgICBAZGVmYXVsdChub3coKSkKICBzdGF0dXMgICAgICAgICBFbnJvbGxtZW50U3RhdHVzIEBkZWZhdWx0KEFDVElWRSkKICBjb21wbGV0aW9uRGF0ZSBEYXRlVGltZT8KICBwcm9ncmVzcyAgICAgICBGbG9hdCAgICAgICAgICAgIEBkZWZhdWx0KDApCiAgYmF0Y2ggICAgICAgICAgQmF0Y2ggICAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbYmF0Y2hJZF0sIHJlZmVyZW5jZXM6IFtpZF0sIG9uRGVsZXRlOiBDYXNjYWRlKQogIGNvdXJzZSAgICAgICAgIENvdXJzZSAgICAgICAgICAgQHJlbGF0aW9uKGZpZWxkczogW2NvdXJzZUlkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCiAgc3R1ZGVudCAgICAgICAgU3R1ZGVudCAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbc3R1ZGVudElkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAdW5pcXVlKFtzdHVkZW50SWQsIGJhdGNoSWRdKQogIEBAaW5kZXgoW2NvdXJzZUlkXSkKICBAQGluZGV4KFtiYXRjaElkXSkKfQoKbW9kZWwgQXR0ZW5kYW5jZSB7CiAgaWQgICAgICAgIFN0cmluZyAgICAgICAgICAgQGlkIEBkZWZhdWx0KGN1aWQoKSkKICBzdHVkZW50SWQgU3RyaW5nCiAgYmF0Y2hJZCAgIFN0cmluZwogIGRhdGUgICAgICBEYXRlVGltZSAgICAgICAgIEBkYi5EYXRlCiAgc3RhdHVzICAgIEF0dGVuZGFuY2VTdGF0dXMKICByZW1hcmtzICAgU3RyaW5nPwogIG1hcmtlZEJ5ICBTdHJpbmc/CiAgY3JlYXRlZEF0IERhdGVUaW1lICAgICAgICAgQGRlZmF1bHQobm93KCkpCiAgYmF0Y2ggICAgIEJhdGNoICAgICAgICAgICAgQHJlbGF0aW9uKGZpZWxkczogW2JhdGNoSWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKICBzdHVkZW50ICAgU3R1ZGVudCAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbc3R1ZGVudElkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAdW5pcXVlKFtzdHVkZW50SWQsIGJhdGNoSWQsIGRhdGVdKQogIEBAaW5kZXgoW2JhdGNoSWQsIGRhdGVdKQp9Cgptb2RlbCBBc3NpZ25tZW50IHsKICBpZCAgICAgICAgICAgU3RyaW5nICAgICAgICAgICAgICAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIGNvdXJzZUlkICAgICBTdHJpbmcKICBtb2R1bGVJZCAgICAgU3RyaW5nPwogIHRpdGxlICAgICAgICBTdHJpbmcKICBkZXNjcmlwdGlvbiAgU3RyaW5nPwogIGluc3RydWN0aW9ucyBTdHJpbmc/CiAgZHVlRGF0ZSAgICAgIERhdGVUaW1lPwogIG1heFNjb3JlICAgICBJbnQgICAgICAgICAgICAgICAgICAgIEBkZWZhdWx0KDEwMCkKICBhdHRhY2htZW50cyAgU3RyaW5nPwogIGNyZWF0ZWRCeSAgICBTdHJpbmc/CiAgY3JlYXRlZEF0ICAgIERhdGVUaW1lICAgICAgICAgICAgICAgQGRlZmF1bHQobm93KCkpCiAgdXBkYXRlZEF0ICAgIERhdGVUaW1lICAgICAgICAgICAgICAgQHVwZGF0ZWRBdAogIGNvdXJzZSAgICAgICBDb3Vyc2UgICAgICAgICAgICAgICAgIEByZWxhdGlvbihmaWVsZHM6IFtjb3Vyc2VJZF0sIHJlZmVyZW5jZXM6IFtpZF0sIG9uRGVsZXRlOiBDYXNjYWRlKQogIG1vZHVsZSAgICAgICBNb2R1bGU/ICAgICAgICAgICAgICAgIEByZWxhdGlvbihmaWVsZHM6IFttb2R1bGVJZF0sIHJlZmVyZW5jZXM6IFtpZF0pCiAgc3VibWlzc2lvbnMgIEFzc2lnbm1lbnRTdWJtaXNzaW9uW10KCiAgQEBpbmRleChbY291cnNlSWRdKQp9Cgptb2RlbCBBc3NpZ25tZW50U3VibWlzc2lvbiB7CiAgaWQgICAgICAgICAgICAgU3RyaW5nICAgICAgICAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIGFzc2lnbm1lbnRJZCAgIFN0cmluZwogIHN0dWRlbnRJZCAgICAgIFN0cmluZwogIGZpbGVVcmwgICAgICAgIFN0cmluZz8KICBzdWJtaXNzaW9uVGV4dCBTdHJpbmc/CiAgc3VibWl0dGVkQXQgICAgRGF0ZVRpbWU/CiAgc2NvcmUgICAgICAgICAgRmxvYXQ/CiAgZmVlZGJhY2sgICAgICAgU3RyaW5nPwogIGdyYWRlZEJ5ICAgICAgIFN0cmluZz8KICBncmFkZWRBdCAgICAgICBEYXRlVGltZT8KICBzdGF0dXMgICAgICAgICBTdWJtaXNzaW9uU3RhdHVzIEBkZWZhdWx0KFBFTkRJTkcpCiAgYXNzaWdubWVudCAgICAgQXNzaWdubWVudCAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbYXNzaWdubWVudElkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCiAgc3R1ZGVudCAgICAgICAgU3R1ZGVudCAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbc3R1ZGVudElkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAdW5pcXVlKFthc3NpZ25tZW50SWQsIHN0dWRlbnRJZF0pCiAgQEBpbmRleChbc3R1ZGVudElkXSkKfQoKbW9kZWwgUXVpeiB7CiAgaWQgICAgICAgICAgICAgIFN0cmluZyAgICAgICAgIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAgY291cnNlSWQgICAgICAgIFN0cmluZwogIG1vZHVsZUlkICAgICAgICBTdHJpbmc/CiAgdGl0bGUgICAgICAgICAgIFN0cmluZwogIGRlc2NyaXB0aW9uICAgICBTdHJpbmc/CiAgcGFzc2luZ1Njb3JlICAgIEludCAgICAgICAgICAgIEBkZWZhdWx0KDcwKQogIHRpbWVMaW1pdCAgICAgICBJbnQ/CiAgYXR0ZW1wdHNBbGxvd2VkIEludCAgICAgICAgICAgIEBkZWZhdWx0KDEpCiAgc3RhdHVzICAgICAgICAgIFB1Ymxpc2hTdGF0dXMgIEBkZWZhdWx0KERSQUZUKQogIGNyZWF0ZWRBdCAgICAgICBEYXRlVGltZSAgICAgICBAZGVmYXVsdChub3coKSkKICB1cGRhdGVkQXQgICAgICAgRGF0ZVRpbWUgICAgICAgQHVwZGF0ZWRBdAogIGNvdXJzZSAgICAgICAgICBDb3Vyc2UgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbY291cnNlSWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKICBtb2R1bGUgICAgICAgICAgTW9kdWxlPyAgICAgICAgQHJlbGF0aW9uKGZpZWxkczogW21vZHVsZUlkXSwgcmVmZXJlbmNlczogW2lkXSkKICBhdHRlbXB0cyAgICAgICAgUXVpekF0dGVtcHRbXQogIHF1ZXN0aW9ucyAgICAgICBRdWl6UXVlc3Rpb25bXQoKICBAQGluZGV4KFtjb3Vyc2VJZF0pCn0KCm1vZGVsIFF1aXpRdWVzdGlvbiB7CiAgaWQgICAgICAgICAgICBTdHJpbmcgICAgICAgICAgIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAgcXVpeklkICAgICAgICBTdHJpbmcKICBxdWVzdGlvbiAgICAgIFN0cmluZwogIHR5cGUgICAgICAgICAgUXVpelF1ZXN0aW9uVHlwZQogIG9wdGlvbnMgICAgICAgU3RyaW5nPwogIGNvcnJlY3RBbnN3ZXIgU3RyaW5nPwogIHBvaW50cyAgICAgICAgSW50ICAgICAgICAgICAgICBAZGVmYXVsdCgxKQogIG9yZGVyICAgICAgICAgSW50ICAgICAgICAgICAgICBAZGVmYXVsdCgwKQogIHF1aXogICAgICAgICAgUXVpeiAgICAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbcXVpeklkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAaW5kZXgoW3F1aXpJZF0pCn0KCm1vZGVsIFF1aXpBdHRlbXB0IHsKICBpZCAgICAgICAgICAgIFN0cmluZyAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIHF1aXpJZCAgICAgICAgU3RyaW5nCiAgc3R1ZGVudElkICAgICBTdHJpbmcKICBhbnN3ZXJzICAgICAgIFN0cmluZz8KICBzY29yZSAgICAgICAgIEZsb2F0ICAgICBAZGVmYXVsdCgwKQogIHBlcmNlbnRhZ2UgICAgRmxvYXQgICAgIEBkZWZhdWx0KDApCiAgcGFzc2VkICAgICAgICBCb29sZWFuICAgQGRlZmF1bHQoZmFsc2UpCiAgc3RhcnRlZEF0ICAgICBEYXRlVGltZSAgQGRlZmF1bHQobm93KCkpCiAgY29tcGxldGVkQXQgICBEYXRlVGltZT8KICBhdHRlbXB0TnVtYmVyIEludCAgICAgICBAZGVmYXVsdCgxKQogIHF1aXogICAgICAgICAgUXVpeiAgICAgIEByZWxhdGlvbihmaWVsZHM6IFtxdWl6SWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKICBzdHVkZW50ICAgICAgIFN0dWRlbnQgICBAcmVsYXRpb24oZmllbGRzOiBbc3R1ZGVudElkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAaW5kZXgoW3F1aXpJZF0pCiAgQEBpbmRleChbc3R1ZGVudElkXSkKfQoKbW9kZWwgR3JhZGUgewogIGlkICAgICAgICAgU3RyaW5nICAgQGlkIEBkZWZhdWx0KGN1aWQoKSkKICBzdHVkZW50SWQgIFN0cmluZwogIGNvdXJzZUlkICAgU3RyaW5nCiAgdHlwZSAgICAgICBTdHJpbmcKICByZWZJZCAgICAgIFN0cmluZz8KICB0aXRsZSAgICAgIFN0cmluZwogIHNjb3JlICAgICAgRmxvYXQKICBtYXhTY29yZSAgIEZsb2F0ICAgIEBkZWZhdWx0KDEwMCkKICBwZXJjZW50YWdlIEZsb2F0ICAgIEBkZWZhdWx0KDApCiAgZmVlZGJhY2sgICBTdHJpbmc/CiAgY3JlYXRlZEF0ICBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKICBjb3Vyc2UgICAgIENvdXJzZSAgIEByZWxhdGlvbihmaWVsZHM6IFtjb3Vyc2VJZF0sIHJlZmVyZW5jZXM6IFtpZF0sIG9uRGVsZXRlOiBDYXNjYWRlKQogIHN0dWRlbnQgICAgU3R1ZGVudCAgQHJlbGF0aW9uKGZpZWxkczogW3N0dWRlbnRJZF0sIHJlZmVyZW5jZXM6IFtpZF0sIG9uRGVsZXRlOiBDYXNjYWRlKQoKICBAQGluZGV4KFtzdHVkZW50SWRdKQogIEBAaW5kZXgoW2NvdXJzZUlkXSkKfQoKbW9kZWwgRmVlIHsKICBpZCAgICAgICAgICAgICAgIFN0cmluZyAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIHN0dWRlbnRJZCAgICAgICAgU3RyaW5nCiAgY291cnNlSWQgICAgICAgICBTdHJpbmcKICB0b3RhbEZlZSAgICAgICAgIEZsb2F0ICAgICBAZGVmYXVsdCgwKQogIGRpc2NvdW50ICAgICAgICAgRmxvYXQgICAgIEBkZWZhdWx0KDApCiAgZmluYWxGZWUgICAgICAgICBGbG9hdCAgICAgQGRlZmF1bHQoMCkKICBhbW91bnRQYWlkICAgICAgIEZsb2F0ICAgICBAZGVmYXVsdCgwKQogIHJlbWFpbmluZ0JhbGFuY2UgRmxvYXQgICAgIEBkZWZhdWx0KDApCiAgZHVlRGF0ZSAgICAgICAgICBEYXRlVGltZT8KICBzdGF0dXMgICAgICAgICAgIEZlZVN0YXR1cyBAZGVmYXVsdChVTlBBSUQpCiAgY3JlYXRlZEF0ICAgICAgICBEYXRlVGltZSAgQGRlZmF1bHQobm93KCkpCiAgdXBkYXRlZEF0ICAgICAgICBEYXRlVGltZSAgQHVwZGF0ZWRBdAogIGRlc2NyaXB0aW9uICAgICAgU3RyaW5nPwogIGNvdXJzZSAgICAgICAgICAgQ291cnNlICAgIEByZWxhdGlvbihmaWVsZHM6IFtjb3Vyc2VJZF0sIHJlZmVyZW5jZXM6IFtpZF0sIG9uRGVsZXRlOiBDYXNjYWRlKQogIHN0dWRlbnQgICAgICAgICAgU3R1ZGVudCAgIEByZWxhdGlvbihmaWVsZHM6IFtzdHVkZW50SWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKICBwYXltZW50cyAgICAgICAgIFBheW1lbnRbXQoKICBAQGluZGV4KFtzdHVkZW50SWRdKQogIEBAaW5kZXgoW3N0YXR1c10pCn0KCm1vZGVsIFBheW1lbnQgewogIGlkICAgICAgICAgICAgICAgICAgIFN0cmluZyAgICAgICAgIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAgc3R1ZGVudElkICAgICAgICAgICAgU3RyaW5nCiAgZmVlSWQgICAgICAgICAgICAgICAgU3RyaW5nCiAgYW1vdW50ICAgICAgICAgICAgICAgRmxvYXQKICBwYXltZW50RGF0ZSAgICAgICAgICBEYXRlVGltZSAgICAgICBAZGVmYXVsdChub3coKSkKICB0cmFuc2FjdGlvblJlZmVyZW5jZSBTdHJpbmc/CiAgbm90ZXMgICAgICAgICAgICAgICAgU3RyaW5nPwogIHJlY29yZGVkQnkgICAgICAgICAgIFN0cmluZz8KICBjcmVhdGVkQXQgICAgICAgICAgICBEYXRlVGltZSAgICAgICBAZGVmYXVsdChub3coKSkKICB2b2lkUmVhc29uICAgICAgICAgICBTdHJpbmc/CiAgdm9pZGVkQXQgICAgICAgICAgICAgRGF0ZVRpbWU/CiAgdm9pZGVkQnkgICAgICAgICAgICAgU3RyaW5nPwogIHBheW1lbnRNZXRob2QgICAgICAgIFBheW1lbnRNZXRob2Q/CiAgZmVlICAgICAgICAgICAgICAgICAgRmVlICAgICAgICAgICAgQHJlbGF0aW9uKGZpZWxkczogW2ZlZUlkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCiAgc3R1ZGVudCAgICAgICAgICAgICAgU3R1ZGVudCAgICAgICAgQHJlbGF0aW9uKGZpZWxkczogW3N0dWRlbnRJZF0sIHJlZmVyZW5jZXM6IFtpZF0sIG9uRGVsZXRlOiBDYXNjYWRlKQoKICBAQGluZGV4KFtzdHVkZW50SWRdKQogIEBAaW5kZXgoW2ZlZUlkXSkKfQoKbW9kZWwgQ2VydGlmaWNhdGUgewogIGlkICAgICAgICAgICAgICAgIFN0cmluZyAgICAgICAgICAgIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAgc3R1ZGVudElkICAgICAgICAgU3RyaW5nCiAgY291cnNlSWQgICAgICAgICAgU3RyaW5nCiAgY2VydGlmaWNhdGVOdW1iZXIgU3RyaW5nICAgICAgICAgICAgQHVuaXF1ZQogIHZlcmlmaWNhdGlvbkNvZGUgIFN0cmluZyAgICAgICAgICAgIEB1bmlxdWUKICBpc3N1ZURhdGUgICAgICAgICBEYXRlVGltZSAgICAgICAgICBAZGVmYXVsdChub3coKSkKICBjb21wbGV0aW9uRGF0ZSAgICBEYXRlVGltZT8KICBjZXJ0aWZpY2F0ZVVybCAgICBTdHJpbmc/CiAgc3RhdHVzICAgICAgICAgICAgQ2VydGlmaWNhdGVTdGF0dXMgQGRlZmF1bHQoSVNTVUVEKQogIGlzc3VlZEJ5ICAgICAgICAgIFN0cmluZz8KICBub3RlcyAgICAgICAgICAgICBTdHJpbmc/CiAgcmV2b2tlUmVhc29uICAgICAgU3RyaW5nPwogIHJldm9rZWRBdCAgICAgICAgIERhdGVUaW1lPwogIHJldm9rZWRCeSAgICAgICAgIFN0cmluZz8KICBjb3Vyc2UgICAgICAgICAgICBDb3Vyc2UgICAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbY291cnNlSWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKICBzdHVkZW50ICAgICAgICAgICBTdHVkZW50ICAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbc3R1ZGVudElkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAaW5kZXgoW3N0dWRlbnRJZF0pCn0KCm1vZGVsIEFubm91bmNlbWVudCB7CiAgaWQgICAgICAgICAgICAgU3RyaW5nICAgICAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIHRpdGxlICAgICAgICAgIFN0cmluZwogIGNvbnRlbnQgICAgICAgIFN0cmluZwogIGNyZWF0ZWRCeSAgICAgIFN0cmluZwogIHRhcmdldFJvbGUgICAgIFJvbGU/CiAgdGFyZ2V0QmF0Y2hJZCAgU3RyaW5nPwogIHRhcmdldENvdXJzZUlkIFN0cmluZz8KICB0ZWFjaGVySWQgICAgICBTdHJpbmc/CiAgYXVkaWVuY2UgICAgICAgQW5ub3VuY2VtZW50QXVkaWVuY2UgQGRlZmF1bHQoQUxMKQogIGNyZWF0ZWRBdCAgICAgIERhdGVUaW1lICAgICAgQGRlZmF1bHQobm93KCkpCiAgcHVibGlzaGVkQXQgICAgRGF0ZVRpbWU/CiAgc3RhdHVzICAgICAgICAgUHVibGlzaFN0YXR1cyBAZGVmYXVsdChEUkFGVCkKICB1cGRhdGVkQXQgICAgICBEYXRlVGltZSAgICAgIEB1cGRhdGVkQXQKICBhdXRob3IgICAgICAgICBVc2VyICAgICAgICAgIEByZWxhdGlvbigiQW5ub3VuY2VtZW50QXV0aG9yIiwgZmllbGRzOiBbY3JlYXRlZEJ5XSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCiAgYmF0Y2ggICAgICAgICAgQmF0Y2g/ICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbdGFyZ2V0QmF0Y2hJZF0sIHJlZmVyZW5jZXM6IFtpZF0pCiAgdGVhY2hlciAgICAgICAgVGVhY2hlcj8gICAgICBAcmVsYXRpb24oIlRlYWNoZXJBbm5vdW5jZW1lbnRzIiwgZmllbGRzOiBbdGVhY2hlcklkXSwgcmVmZXJlbmNlczogW2lkXSkKCiAgQEBpbmRleChbdGFyZ2V0Um9sZV0pCiAgQEBpbmRleChbdGFyZ2V0QmF0Y2hJZF0pCn0KCm1vZGVsIE5vdGlmaWNhdGlvbiB7CiAgaWQgICAgICAgIFN0cmluZyAgICAgICAgICAgQGlkIEBkZWZhdWx0KGN1aWQoKSkKICB1c2VySWQgICAgU3RyaW5nCiAgdGl0bGUgICAgIFN0cmluZwogIG1lc3NhZ2UgICBTdHJpbmcKICB0eXBlICAgICAgTm90aWZpY2F0aW9uVHlwZSBAZGVmYXVsdChTWVNURU0pCiAgcmVhZCAgICAgIEJvb2xlYW4gICAgICAgICAgQGRlZmF1bHQoZmFsc2UpCiAgcmVhZEF0ICAgIERhdGVUaW1lPwogIGNyZWF0ZWRBdCBEYXRlVGltZSAgICAgICAgIEBkZWZhdWx0KG5vdygpKQogIGxpbmtVcmwgICBTdHJpbmc/CiAgZGVkdXBlS2V5IFN0cmluZz8KICB1c2VyICAgICAgVXNlciAgICAgICAgICAgICBAcmVsYXRpb24oZmllbGRzOiBbdXNlcklkXSwgcmVmZXJlbmNlczogW2lkXSwgb25EZWxldGU6IENhc2NhZGUpCgogIEBAdW5pcXVlKFt1c2VySWQsIGRlZHVwZUtleV0pCiAgQEBpbmRleChbdXNlcklkLCByZWFkXSkKfQoKbW9kZWwgTm90aWZpY2F0aW9uUHJlZmVyZW5jZSB7CiAgaWQgICAgICAgIFN0cmluZyAgICAgICAgICAgQGlkIEBkZWZhdWx0KGN1aWQoKSkKICB1c2VySWQgICAgU3RyaW5nCiAgdHlwZSAgICAgIE5vdGlmaWNhdGlvblR5cGUKICBpbkFwcCAgICAgQm9vbGVhbiAgICAgICAgICBAZGVmYXVsdCh0cnVlKQogIHB1c2ggICAgICBCb29sZWFuICAgICAgICAgIEBkZWZhdWx0KHRydWUpCiAgdXBkYXRlZEF0IERhdGVUaW1lICAgICAgICAgQHVwZGF0ZWRBdAogIHVzZXIgICAgICBVc2VyICAgICAgICAgICAgIEByZWxhdGlvbihmaWVsZHM6IFt1c2VySWRdLCByZWZlcmVuY2VzOiBbaWRdLCBvbkRlbGV0ZTogQ2FzY2FkZSkKCiAgQEB1bmlxdWUoW3VzZXJJZCwgdHlwZV0pCiAgQEBpbmRleChbdXNlcklkXSkKfQoKbW9kZWwgUHVzaFN1YnNjcmlwdGlvbiB7CiAgaWQgICAgICAgICAgIFN0cmluZyAgICBAaWQgQGRlZmF1bHQoY3VpZCgpKQogIHVzZXJJZCAgICAgICBTdHJpbmcKICBlbmRwb2ludCAgICAgU3RyaW5nICAgIEB1bmlxdWUKICBwMjU2ZGhLZXkgICAgU3RyaW5nCiAgYXV0aEtleSAgICAgIFN0cmluZwogIHVzZXJBZ2VudCAgICBTdHJpbmc/CiAgY3JlYXRlZEF0ICAgIERhdGVUaW1lICBAZGVmYXVsdChub3coKSkKICBsYXN0VXNlZEF0ICAgRGF0ZVRpbWU/CiAgZmFpbHVyZUNvdW50IEludCAgICAgICBAZGVmYXVsdCgwKQogIHVzZXIgICAgICAgICBVc2VyICAgICAgQHJlbGF0aW9uKGZpZWxkczogW3VzZXJJZF0sIHJlZmVyZW5jZXM6IFtpZF0sIG9uRGVsZXRlOiBDYXNjYWRlKQoKICBAQGluZGV4KFt1c2VySWRdKQp9Cgptb2RlbCBBdWRpdExvZyB7CiAgaWQgICAgICAgIFN0cmluZyAgIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAgdXNlcklkICAgIFN0cmluZz8KICBhY3Rpb24gICAgU3RyaW5nCiAgZW50aXR5ICAgIFN0cmluZz8KICBlbnRpdHlJZCAgU3RyaW5nPwogIGlwQWRkcmVzcyBTdHJpbmc/CiAgbWV0YWRhdGEgIFN0cmluZz8KICB0aW1lc3RhbXAgRGF0ZVRpbWUgQGRlZmF1bHQobm93KCkpCiAgdXNlciAgICAgIFVzZXI/ICAgIEByZWxhdGlvbihmaWVsZHM6IFt1c2VySWRdLCByZWZlcmVuY2VzOiBbaWRdKQoKICBAQGluZGV4KFt1c2VySWRdKQogIEBAaW5kZXgoW2VudGl0eV0pCiAgQEBpbmRleChbdGltZXN0YW1wXSkKfQoKbW9kZWwgU2V0dGluZyB7CiAgaWQgICAgU3RyaW5nIEBpZCBAZGVmYXVsdChjdWlkKCkpCiAga2V5ICAgU3RyaW5nIEB1bmlxdWUKICB2YWx1ZSBTdHJpbmcKfQoKZW51bSBSb2xlIHsKICBTVVBFUl9BRE1JTgogIEFETUlOCiAgVEVBQ0hFUgogIFNUVURFTlQKfQoKZW51bSBBY2NvdW50U3RhdHVzIHsKICBBQ1RJVkUKICBJTkFDVElWRQogIFNVU1BFTkRFRAp9CgplbnVtIFN0dWRlbnRTdGF0dXMgewogIEFDVElWRQogIENPTVBMRVRFRAogIE9OX0hPTEQKICBEUk9QUEVECiAgU1VTUEVOREVECn0KCmVudW0gQ291cnNlTGV2ZWwgewogIEJFR0lOTkVSCiAgSU5URVJNRURJQVRFCiAgQURWQU5DRUQKfQoKZW51bSBQdWJsaXNoU3RhdHVzIHsKICBEUkFGVAogIFBVQkxJU0hFRAogIEFSQ0hJVkVECn0KCmVudW0gQW5ub3VuY2VtZW50QXVkaWVuY2UgewogIEFMTAogIFNUVURFTlRTCiAgVEVBQ0hFUlMKICBCQVRDSAogIENPVVJTRQp9CgplbnVtIEJhdGNoU3RhdHVzIHsKICBVUENPTUlORwogIE9OR09JTkcKICBDT01QTEVURUQKICBDQU5DRUxMRUQKfQoKZW51bSBFbnJvbGxtZW50U3RhdHVzIHsKICBBQ1RJVkUKICBDT01QTEVURUQKICBEUk9QUEVECn0KCmVudW0gQXR0ZW5kYW5jZVN0YXR1cyB7CiAgUFJFU0VOVAogIEFCU0VOVAogIExBVEUKICBFWENVU0VECn0KCmVudW0gU3VibWlzc2lvblN0YXR1cyB7CiAgUEVORElORwogIFNVQk1JVFRFRAogIEdSQURFRAogIExBVEUKfQoKZW51bSBRdWl6UXVlc3Rpb25UeXBlIHsKICBNVUxUSVBMRV9DSE9JQ0UKICBUUlVFX0ZBTFNFCiAgTVVMVElQTEVfQU5TV0VSCiAgU0hPUlRfQU5TV0VSCn0KCmVudW0gRmVlU3RhdHVzIHsKICBQQUlECiAgUEFSVElBTAogIFVOUEFJRAogIE9WRVJEVUUKICBXQUlWRUQKfQoKZW51bSBQYXltZW50TWV0aG9kIHsKICBDQVNICiAgQkFOS19UUkFOU0ZFUgogIENIRVFVRQogIENBUkQKICBPTkxJTkUKICBPVEhFUgp9CgplbnVtIENlcnRpZmljYXRlU3RhdHVzIHsKICBJU1NVRUQKICBSRVZPS0VECn0KCmVudW0gTm90aWZpY2F0aW9uVHlwZSB7CiAgTEVTU09OCiAgQVNTSUdOTUVOVAogIFFVSVoKICBBVFRFTkRBTkNFCiAgQU5OT1VOQ0VNRU5UCiAgQ0VSVElGSUNBVEUKICBGRUUKICBTWVNURU0KfQoKZW51bSBHZW5kZXIgewogIE1BTEUKICBGRU1BTEUKICBPVEhFUgp9Cg==
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                 String         @id @default(cuid())
+  username           String         @unique
+  email              String         @unique
+  passwordHash       String
+  role               Role
+  status             AccountStatus  @default(ACTIVE)
+  mustChangePassword Boolean        @default(false)
+  sessionVersion     Int            @default(0)
+  passwordExpiresAt  DateTime?
+  lastLogin          DateTime?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  announcements      Announcement[] @relation("AnnouncementAuthor")
+  auditLogs          AuditLog[]
+  notifications      Notification[]
+  notificationPreferences NotificationPreference[]
+  pushSubscriptions  PushSubscription[]
+  passwordResetTokens PasswordResetToken[]
+  student            Student?
+  teacher            Teacher?
+
+  @@index([role])
+  @@index([status])
+}
+
+// HMAC keys contain no plaintext login identifiers. Shared across app instances.
+model AuthThrottle {
+  key       String   @id
+  count     Int
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+// Self-service and staff-initiated password recovery. Only the SHA-256
+// hash of each token is stored; the plaintext token exists solely in
+// the emailed link. Tokens are single-use, expire quickly, and issuing
+// a new token supersedes the user's previous unused tokens.
+model PasswordResetToken {
+  id            String    @id @default(cuid())
+  userId        String
+  tokenHash     String    @unique
+  expiresAt     DateTime
+  usedAt        DateTime?
+  requestedById String?
+  createdAt     DateTime  @default(now())
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Durable marker, retained independently of User records.
+model AccountBootstrap {
+  id        String   @id
+  userId    String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Student {
+  id               String                 @id @default(cuid())
+  userId           String                 @unique
+  studentId        String                 @unique
+  fullName         String
+  fatherName       String?
+  dateOfBirth      DateTime?
+  gender           Gender?
+  phone            String?
+  whatsapp         String?
+  email            String?
+  address          String?
+  city             String?
+  profileImage     String?
+  emergencyContact String?
+  admissionDate    DateTime               @default(now())
+  status           StudentStatus          @default(ACTIVE)
+  notes            String?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  submissions      AssignmentSubmission[]
+  attendance       Attendance[]
+  certificates     Certificate[]
+  enrollments      Enrollment[]
+  fees             Fee[]
+  grades           Grade[]
+  lessonProgress   LessonProgress[]
+  payments         Payment[]
+  quizAttempts     QuizAttempt[]
+  user             User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([fullName])
+}
+
+model Teacher {
+  id             String         @id @default(cuid())
+  userId         String         @unique
+  fullName       String
+  phone          String?
+  email          String?
+  specialization String?
+  profileImage   String?
+  status         AccountStatus  @default(ACTIVE)
+  joiningDate    DateTime       @default(now())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  announcements  Announcement[] @relation("TeacherAnnouncements")
+  batches        Batch[]
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
+
+model Course {
+  id           String        @id @default(cuid())
+  title        String
+  slug         String        @unique
+  description  String?
+  thumbnail    String?
+  duration     String?
+  level        CourseLevel   @default(BEGINNER)
+  status       PublishStatus @default(DRAFT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  defaultFee   Float?
+  assignments  Assignment[]
+  batches      Batch[]
+  certificates Certificate[]
+  enrollments  Enrollment[]
+  fees         Fee[]
+  grades       Grade[]
+  modules      Module[]
+  quizzes      Quiz[]
+
+  @@index([status])
+}
+
+model Module {
+  id          String       @id @default(cuid())
+  courseId    String
+  title       String
+  description String?
+  order       Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  assignments Assignment[]
+  lessons     Lesson[]
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  quizzes     Quiz[]
+
+  @@index([courseId])
+}
+
+model Lesson {
+  id          String           @id @default(cuid())
+  moduleId    String
+  title       String
+  description String?
+  content     String?
+  videoUrl    String?
+  thumbnail   String?
+  duration    String?
+  order       Int              @default(0)
+  isPublished Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  module      Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress    LessonProgress[]
+  resources   LessonResource[]
+
+  @@index([moduleId])
+}
+
+model LessonResource {
+  id        String   @id @default(cuid())
+  lessonId  String
+  title     String
+  fileUrl   String
+  fileType  String?
+  createdAt DateTime @default(now())
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+}
+
+model LessonProgress {
+  id          String    @id @default(cuid())
+  studentId   String
+  lessonId    String
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, lessonId])
+  @@index([studentId])
+}
+
+model Batch {
+  id            String         @id @default(cuid())
+  name          String
+  code          String         @unique
+  courseId      String
+  teacherId     String?
+  startDate     DateTime?
+  endDate       DateTime?
+  schedule      String?
+  startTime     String?
+  endTime       String?
+  status        BatchStatus    @default(UPCOMING)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  announcements Announcement[]
+  attendance    Attendance[]
+  course        Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  teacher       Teacher?       @relation(fields: [teacherId], references: [id])
+  enrollments   Enrollment[]
+
+  @@index([courseId])
+  @@index([teacherId])
+}
+
+model Enrollment {
+  id             String           @id @default(cuid())
+  studentId      String
+  courseId       String
+  batchId        String
+  enrollmentDate DateTime         @default(now())
+  status         EnrollmentStatus @default(ACTIVE)
+  completionDate DateTime?
+  progress       Float            @default(0)
+  batch          Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student        Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, batchId])
+  @@index([courseId])
+  @@index([batchId])
+}
+
+model Attendance {
+  id        String           @id @default(cuid())
+  studentId String
+  batchId   String
+  date      DateTime         @db.Date
+  status    AttendanceStatus
+  remarks   String?
+  markedBy  String?
+  createdAt DateTime         @default(now())
+  batch     Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  student   Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, batchId, date])
+  @@index([batchId, date])
+}
+
+model Assignment {
+  id           String                 @id @default(cuid())
+  courseId     String
+  moduleId     String?
+  title        String
+  description  String?
+  instructions String?
+  dueDate      DateTime?
+  maxScore     Int                    @default(100)
+  attachments  String?
+  createdBy    String?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  course       Course                 @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  module       Module?                @relation(fields: [moduleId], references: [id])
+  submissions  AssignmentSubmission[]
+
+  @@index([courseId])
+}
+
+model AssignmentSubmission {
+  id             String           @id @default(cuid())
+  assignmentId   String
+  studentId      String
+  fileUrl        String?
+  submissionText String?
+  submittedAt    DateTime?
+  score          Float?
+  feedback       String?
+  gradedBy       String?
+  gradedAt       DateTime?
+  status         SubmissionStatus @default(PENDING)
+  assignment     Assignment       @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student        Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, studentId])
+  @@index([studentId])
+}
+
+model Quiz {
+  id              String         @id @default(cuid())
+  courseId        String
+  moduleId        String?
+  title           String
+  description     String?
+  passingScore    Int            @default(70)
+  timeLimit       Int?
+  attemptsAllowed Int            @default(1)
+  status          PublishStatus  @default(DRAFT)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  course          Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  module          Module?        @relation(fields: [moduleId], references: [id])
+  attempts        QuizAttempt[]
+  questions       QuizQuestion[]
+
+  @@index([courseId])
+}
+
+model QuizQuestion {
+  id            String           @id @default(cuid())
+  quizId        String
+  question      String
+  type          QuizQuestionType
+  options       String?
+  correctAnswer String?
+  points        Int              @default(1)
+  order         Int              @default(0)
+  quiz          Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+}
+
+model QuizAttempt {
+  id            String    @id @default(cuid())
+  quizId        String
+  studentId     String
+  answers       String?
+  score         Float     @default(0)
+  percentage    Float     @default(0)
+  passed        Boolean   @default(false)
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
+  attemptNumber Int       @default(1)
+  quiz          Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  student       Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@index([studentId])
+}
+
+model Grade {
+  id         String   @id @default(cuid())
+  studentId  String
+  courseId   String
+  type       String
+  refId      String?
+  title      String
+  score      Float
+  maxScore   Float    @default(100)
+  percentage Float    @default(0)
+  feedback   String?
+  createdAt  DateTime @default(now())
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([courseId])
+}
+
+model Fee {
+  id               String    @id @default(cuid())
+  studentId        String
+  courseId         String
+  totalFee         Float     @default(0)
+  discount         Float     @default(0)
+  finalFee         Float     @default(0)
+  amountPaid       Float     @default(0)
+  remainingBalance Float     @default(0)
+  dueDate          DateTime?
+  status           FeeStatus @default(UNPAID)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  description      String?
+  course           Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student          Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  payments         Payment[]
+
+  @@index([studentId])
+  @@index([status])
+}
+
+model Payment {
+  id                   String         @id @default(cuid())
+  studentId            String
+  feeId                String
+  amount               Float
+  paymentDate          DateTime       @default(now())
+  transactionReference String?
+  notes                String?
+  recordedBy           String?
+  createdAt            DateTime       @default(now())
+  voidReason           String?
+  voidedAt             DateTime?
+  voidedBy             String?
+  paymentMethod        PaymentMethod?
+  fee                  Fee            @relation(fields: [feeId], references: [id], onDelete: Cascade)
+  student              Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([feeId])
+}
+
+model Certificate {
+  id                String            @id @default(cuid())
+  studentId         String
+  courseId          String
+  certificateNumber String            @unique
+  verificationCode  String            @unique
+  issueDate         DateTime          @default(now())
+  completionDate    DateTime?
+  certificateUrl    String?
+  status            CertificateStatus @default(ISSUED)
+  issuedBy          String?
+  notes             String?
+  revokeReason      String?
+  revokedAt         DateTime?
+  revokedBy         String?
+  course            Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student           Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+}
+
+model Announcement {
+  id             String        @id @default(cuid())
+  title          String
+  content        String
+  createdBy      String
+  targetRole     Role?
+  targetBatchId  String?
+  targetCourseId String?
+  teacherId      String?
+  audience       AnnouncementAudience @default(ALL)
+  createdAt      DateTime      @default(now())
+  publishedAt    DateTime?
+  status         PublishStatus @default(DRAFT)
+  updatedAt      DateTime      @updatedAt
+  author         User          @relation("AnnouncementAuthor", fields: [createdBy], references: [id], onDelete: Cascade)
+  batch          Batch?        @relation(fields: [targetBatchId], references: [id])
+  teacher        Teacher?      @relation("TeacherAnnouncements", fields: [teacherId], references: [id])
+
+  @@index([targetRole])
+  @@index([targetBatchId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(SYSTEM)
+  read      Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+  linkUrl   String?
+  dedupeKey String?
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, read])
+}
+
+model NotificationPreference {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  inApp     Boolean          @default(true)
+  push      Boolean          @default(true)
+  updatedAt DateTime         @updatedAt
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@index([userId])
+}
+
+model PushSubscription {
+  id           String    @id @default(cuid())
+  userId       String
+  endpoint     String    @unique
+  p256dhKey    String
+  authKey      String
+  userAgent    String?
+  createdAt    DateTime  @default(now())
+  lastUsedAt   DateTime?
+  failureCount Int       @default(0)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String?
+  entityId  String?
+  ipAddress String?
+  metadata  String?
+  timestamp DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity])
+  @@index([timestamp])
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum StudentStatus {
+  ACTIVE
+  COMPLETED
+  ON_HOLD
+  DROPPED
+  SUSPENDED
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AnnouncementAudience {
+  ALL
+  STUDENTS
+  TEACHERS
+  BATCH
+  COURSE
+}
+
+enum BatchStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum SubmissionStatus {
+  PENDING
+  SUBMITTED
+  GRADED
+  LATE
+}
+
+enum QuizQuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  MULTIPLE_ANSWER
+  SHORT_ANSWER
+}
+
+enum FeeStatus {
+  PAID
+  PARTIAL
+  UNPAID
+  OVERDUE
+  WAIVED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CHEQUE
+  CARD
+  ONLINE
+  OTHER
+}
+
+enum CertificateStatus {
+  ISSUED
+  REVOKED
+}
+
+enum NotificationType {
+  LESSON
+  ASSIGNMENT
+  QUIZ
+  ATTENDANCE
+  ANNOUNCEMENT
+  CERTIFICATE
+  FEE
+  SYSTEM
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
