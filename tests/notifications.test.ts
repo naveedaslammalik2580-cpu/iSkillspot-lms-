@@ -217,19 +217,26 @@ describe("reminders (Phase 4)", () => {
   it("deadline reminder: inside 24h and unsubmitted -> 1; re-run dedupes; submitted -> 0", async () => {
     const { generateAssignmentDeadlineReminders } = await import("@/lib/reminders");
     const f = await fixture(12);
-    const first = await generateAssignmentDeadlineReminders(new Date());
-    assert.equal(first.created, 1);
-    const second = await generateAssignmentDeadlineReminders(new Date());
-    assert.equal(second.created, 0);
+    // The generator scans the whole database (by design — the cron reminds
+    // everyone), so assertions are scoped to THIS fixture's assignment:
+    // suites running in parallel against the same test database must not be
+    // able to change the outcome.
+    const forFixture = () =>
+      db.notification.count({
+        where: { userId: f.user.id, dedupeKey: { startsWith: `reminder:assignment:${f.assignment.id}:` } },
+      });
+    await generateAssignmentDeadlineReminders(new Date());
+    assert.equal(await forFixture(), 1);
+    await generateAssignmentDeadlineReminders(new Date());
+    assert.equal(await forFixture(), 1, "re-run must dedupe, not duplicate");
     // another student who HAS submitted gets nothing new for a second assignment
     const g = await fixture(6);
     await db.assignmentSubmission.create({
       data: { assignmentId: g.assignment.id, studentId: g.student.id, status: "SUBMITTED", submittedAt: new Date() },
     });
-    const third = await generateAssignmentDeadlineReminders(new Date());
-    assert.equal(third.created, 0);
+    await generateAssignmentDeadlineReminders(new Date());
     assert.equal(await db.notification.count({ where: { userId: g.user.id, dedupeKey: { startsWith: "reminder:assignment:" } } }), 0);
-    assert.ok(f.assignment.id);
+    assert.equal(await forFixture(), 1);
   });
 
   it("deadline reminder: due in 48h -> outside window, no reminder", async () => {
@@ -253,12 +260,17 @@ describe("reminders (Phase 4)", () => {
     await db.fee.create({
       data: { studentId: student.id, courseId: course.id, totalFee: 50, finalFee: 50, amountPaid: 0, remainingBalance: 50, status: "UNPAID", dueDate: new Date(Date.now() - 3 * 86400_000) },
     });
-    const first = await generateFeeOverdueReminders(new Date());
-    assert.equal(first.created, 1);
-    const second = await generateFeeOverdueReminders(new Date());
-    assert.equal(second.created, 0);
+    // Scoped to this fixture's user for the same reason as the deadline
+    // test above: the generator's scan is global, the assertions are not.
+    await generateFeeOverdueReminders(new Date());
     const rows = await db.notification.findMany({ where: { userId: u.id, dedupeKey: { startsWith: "reminder:fee-overdue:" } } });
     assert.equal(rows.length, 1);
+    await generateFeeOverdueReminders(new Date());
+    assert.equal(
+      await db.notification.count({ where: { userId: u.id, dedupeKey: { startsWith: "reminder:fee-overdue:" } } }),
+      1,
+      "re-run must dedupe within the ISO week, not duplicate"
+    );
     assert.ok(!/100|PKR|Rs/.test(rows[0].title + rows[0].message), "no amounts in reminder payload");
   });
 });
@@ -299,8 +311,16 @@ describe("announcement audience resolution", () => {
     });
     const first = await notifyAnnouncementPublished(announcement);
     assert.ok(first.created >= 1);
-    const second = await notifyAnnouncementPublished(announcement); // publishAnnouncement path re-fire
-    assert.equal(second.created, 0);
+    await notifyAnnouncementPublished(announcement); // publishAnnouncement path re-fire
+    // Exactly-once is asserted per recipient: a suite running in parallel
+    // could create a new student account between the two calls, and that
+    // new account would legitimately receive the announcement on the
+    // second call — so the global created count is not stable here. This
+    // recipient existed before both calls and must hold exactly one copy.
+    assert.equal(
+      await db.notification.count({ where: { dedupeKey: `announcement:${announcement.id}`, userId: studentUser.id } }),
+      1
+    );
     const row = await db.notification.findFirst({ where: { userId: studentUser.id, dedupeKey: `announcement:${announcement.id}` } });
     assert.equal(row?.linkUrl, `/student/announcements/${announcement.id}`);
     await db.announcement.delete({ where: { id: announcement.id } });

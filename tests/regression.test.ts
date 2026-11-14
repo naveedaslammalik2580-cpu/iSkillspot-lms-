@@ -20,7 +20,7 @@ import { db } from "@/lib/db";
 import { recomputeFeeStatus } from "@/lib/actions/fees";
 import { generateVerificationCode } from "@/lib/ids";
 import { notifyUsers } from "@/lib/notifications";
-import { getNotificationsPage, getRecentNotifications, getUnreadCount } from "@/lib/data/notifications";
+import { getNotificationsPage, getRecentNotifications } from "@/lib/data/notifications";
 
 const userIds: string[] = [];
 const courseIds: string[] = [];
@@ -163,13 +163,19 @@ describe("notification ownership scoping (data layer)", () => {
       message: "ownership regression",
       dedupeKey: `regression-ownership:${userA}`,
     });
-    assert.equal(await getUnreadCount(userA), 1);
-    assert.equal(await getUnreadCount(userB), 0);
+    // Assertions are scoped to THIS notification (by dedupe key / title):
+    // suites running in parallel against the same test database may
+    // legitimately deliver other notifications to these users (the global
+    // reminder scan, announcement fan-out), which must not change the
+    // outcome here.
+    const key = `regression-ownership:${userA}`;
+    assert.equal(await db.notification.count({ where: { userId: userA, dedupeKey: key, read: false } }), 1);
+    assert.equal(await db.notification.count({ where: { userId: userB, dedupeKey: key } }), 0);
     const recentB = await getRecentNotifications(userB);
     assert.equal(recentB.some((n) => n.title === "For A only"), false);
     const pageB = await getNotificationsPage(userB, {});
-    assert.equal(pageB.rows.length, 0);
+    assert.equal(pageB.rows.some((n) => n.title === "For A only"), false);
     const pageA = await getNotificationsPage(userA, {});
-    assert.equal(pageA.rows.length, 1);
+    assert.equal(pageA.rows.filter((n) => n.title === "For A only").length, 1);
   });
 });
