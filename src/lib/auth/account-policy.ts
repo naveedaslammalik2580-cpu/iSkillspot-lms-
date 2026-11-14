@@ -11,7 +11,9 @@ export function manageableRoles(role: Role): Role[] {
 // transaction so a concurrent reset/deactivation/role change fails closed.
 export async function authorizeActor(tx: Prisma.TransactionClient, session: SessionPayload, permission: Permission) {
   await tx.$queryRaw`SELECT id FROM "User" WHERE id=${session.userId} FOR UPDATE`;
-  const actor = await tx.user.findUnique({ where: { id: session.userId } });
+  const actor = await tx.user.findUnique({ where: { id: session.userId }, select: {
+    id: true, status: true, role: true, sessionVersion: true, mustChangePassword: true,
+  } });
   if (!actor || actor.status !== "ACTIVE" || actor.role !== session.role ||
       actor.sessionVersion !== session.sessionVersion || actor.mustChangePassword || !can(actor.role, permission)) {
     throw new AccountError("Account management is not permitted.");
@@ -21,7 +23,8 @@ export async function authorizeActor(tx: Prisma.TransactionClient, session: Sess
 
 export async function manageableTarget(tx: Prisma.TransactionClient, session: SessionPayload, userId: string) {
   await tx.$queryRaw`SELECT id FROM "User" WHERE id=${userId} FOR UPDATE`;
-  const target = await tx.user.findUnique({ where: { id: userId }, include: { teacher: true, student: true } });
+  const target = await tx.user.findUnique({ where: { id: userId }, select: { id: true, role: true, status: true,
+    teacher: { select: { id: true, status: true } }, student: { select: { id: true, status: true } } } });
   if (!target || userId === session.userId || !manageableRoles(session.role).includes(target.role)) {
     throw new AccountError("Account management is not permitted.");
   }

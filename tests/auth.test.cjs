@@ -53,3 +53,10 @@ test('token verifier rejects forged, expired and malformed claims', async () => 
   const expired = await new SignJWT({userId:'test',username:'test',role:'ADMIN',mustChangePassword:false,sessionVersion:0}).setProtectedHeader({alg:'HS256'}).setIssuedAt().setExpirationTime(1).sign(tokens.getSecret());
   await assert.rejects(tokens.verifyToken(expired));
 });
+test('logout clears its cookie and redirects even when account validation is unavailable', async () => {
+  const outage=context({user:{findUnique:async()=>{throw new Error('simulated database outage');}}},env);
+  const session=outage.load('src/lib/auth/session.ts');
+  await session.createSession({userId:'test',username:'test',role:'ADMIN',mustChangePassword:false,sessionVersion:0});
+  await assert.rejects(outage.load('src/lib/actions/auth.ts').logoutAction(),error=>error.digest?.split(';')[2]==='/login');
+  assert.equal(outage.jar.size,0);
+});

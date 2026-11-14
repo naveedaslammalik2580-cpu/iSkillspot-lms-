@@ -76,6 +76,7 @@ export async function createStudentAction(
   try {
     const student = await db.$transaction(async (tx) => {
       await authorizeActor(tx, session, "student.create");
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(752091, 3)`;
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(752091, 2)`;
       const studentId = await generateStudentId(tx);
       const username = await generateUsername(d.fullName, tx);
@@ -166,34 +167,34 @@ export async function updateStudentAction(formData: FormData) {
   const d = parsed.data;
 
   await db.$transaction(async tx => {
-  await authorizeActor(tx, session, "student.edit");
-  const profile = await tx.student.findUnique({ where: { id: d.id } });
-  if (!profile) throw new Error("Student not found");
-  const target = await manageableTarget(tx, session, profile.userId);
-  if (target.role !== "STUDENT") throw new Error("Invalid linked account role");
-  await tx.student.update({
-    where: { id: d.id },
-    data: {
-      fullName: d.fullName,
-      fatherName: d.fatherName || null,
-      phone: d.phone || null,
-      whatsapp: d.whatsapp || null,
-      address: d.address || null,
-      city: d.city || null,
-      status: d.status,
-      notes: d.notes || null,
-    },
-  });
+    await authorizeActor(tx, session, "student.edit");
+    const profile = await tx.student.findUnique({ where: { id: d.id } });
+    if (!profile) throw new Error("Student not found");
+    const target = await manageableTarget(tx, session, profile.userId);
+    if (target.role !== "STUDENT") throw new Error("Invalid linked account role");
+    await tx.student.update({
+      where: { id: d.id },
+      data: {
+        fullName: d.fullName,
+        fatherName: d.fatherName || null,
+        phone: d.phone || null,
+        whatsapp: d.whatsapp || null,
+        address: d.address || null,
+        city: d.city || null,
+        status: d.status,
+        notes: d.notes || null,
+      },
+    });
 
-  // Keep account status in sync when suspended.
-  if (d.status === "SUSPENDED" || d.status === "DROPPED") {
-    const student = await tx.student.findUnique({ where: { id: d.id } });
-    if (student) {
-      await tx.user.update({ where: { id: student.userId }, data: { status: "SUSPENDED", sessionVersion: { increment: 1 } } });
+    // Keep account status in sync when suspended.
+    if (d.status === "SUSPENDED" || d.status === "DROPPED") {
+      const student = await tx.student.findUnique({ where: { id: d.id } });
+      if (student) {
+        await tx.user.update({ where: { id: student.userId }, data: { status: "SUSPENDED", sessionVersion: { increment: 1 } } });
+      }
     }
-  }
 
-  await logAction({ userId: session.userId, action: "Updated student", entity: "Student", entityId: d.id }, tx);
+    await logAction({ userId: session.userId, action: "Updated student", entity: "Student", entityId: d.id }, tx);
   });
   revalidatePath(`/admin/students/${d.id}`);
   revalidatePath("/admin/students");

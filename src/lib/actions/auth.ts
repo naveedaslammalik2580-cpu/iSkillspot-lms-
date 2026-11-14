@@ -59,6 +59,10 @@ export async function loginAction(
       (user.role === "TEACHER" && (!user.teacher || user.teacher.status !== "ACTIVE")) ||
       (user.role === "STUDENT" && (!user.student || ["SUSPENDED", "DROPPED"].includes(user.student.status))) ||
       (user.mustChangePassword && user.passwordExpiresAt && user.passwordExpiresAt.getTime() <= Date.now())) {
+    if (user) {
+      try { await logAction({ userId: user.id, action: "Login failed", entity: "User", entityId: user.id }); }
+      catch { /* Authentication still fails closed if failure auditing is unavailable. */ }
+    }
     return { error: genericError };
   }
 
@@ -94,6 +98,8 @@ export async function logoutAction(): Promise<void> {
   try {
     const session = await getSession();
     if (session) await logAction({ userId: session.userId, action: "User logged out", entity: "User", entityId: session.userId });
+  } catch {
+    // Logout remains available during a database/audit outage.
   } finally { await destroySession(); }
   redirect("/login");
 }

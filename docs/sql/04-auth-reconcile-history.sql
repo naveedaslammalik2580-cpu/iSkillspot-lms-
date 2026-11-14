@@ -5,8 +5,9 @@ BEGIN;
 DO $$
 DECLARE
   migration CONSTANT text := '20261113120000_auth_account_lifecycle';
-  expected_checksum CONSTANT text := '3b774848f014cf0906ceb3329a791539e941514f63ca7afc720d2faad0ed11e5';
+  expected_checksum CONSTANT text := '513c7b32f2e1192eb7b83d43a4f463f180f42584fb0306adc13377a6d72c5670';
 BEGIN
+  PERFORM pg_advisory_xact_lock(752091, 4);
   IF to_regclass('public."AuthThrottle"') IS NULL OR to_regclass('public."AccountBootstrap"') IS NULL
      OR (SELECT count(*) FROM information_schema.columns WHERE table_schema='public' AND table_name='User'
          AND column_name IN ('sessionVersion','passwordExpiresAt')) <> 2

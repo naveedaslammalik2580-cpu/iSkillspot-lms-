@@ -8,6 +8,7 @@ export const usernameSchema = z.string().trim().toLowerCase().min(3).max(50)
 export class AccountError extends Error {}
 
 export async function assertIdentityAvailable(tx: Prisma.TransactionClient, email: string, username: string) {
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(752091, 3)`;
   const existing = await tx.user.findFirst({ where: { OR: [
     { email: { equals: email, mode: "insensitive" } },
     { username: { equals: username, mode: "insensitive" } },

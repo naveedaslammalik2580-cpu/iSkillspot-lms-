@@ -1,5 +1,11 @@
 # Authentication and account audit — 2026-11-13
 
+Continuation: the later user instruction permits independent local work
+while Supabase is unreachable. Implementation has now proceeded; see
+[the implementation report](auth-implementation-report.md) and
+[manual SQL deployment guide](SUPABASE-AUTH-DEPLOYMENT.md). The findings and
+access failures below describe the earlier audit, not current completion status.
+
 Baseline: branch `main`, eight existing unrelated modified files in student,
 teacher, fee and payment views/data. Those edits must be preserved. The
 previous login diagnosis and isolated tests are present as untracked files.

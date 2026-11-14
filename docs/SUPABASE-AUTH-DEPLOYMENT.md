@@ -6,6 +6,12 @@ project reference is `pkytvteehphllfiwwrfo`; confirm the project in Dashboard
 before executing SQL. Do not paste database URLs, passwords or service keys
 into chat, tickets, commits or SQL Editor.
 
+The authentication implementation and SQL workflow passed isolated local
+verification on Next.js 15.5.29. Remaining dependency advisories and the
+complete test/file inventory are recorded in
+[the implementation report](auth-implementation-report.md); review those
+before production approval. A real Supabase login has not been verified.
+
 ## What changes
 
 One additive migration adds `User.sessionVersion` and `User.passwordExpiresAt`,

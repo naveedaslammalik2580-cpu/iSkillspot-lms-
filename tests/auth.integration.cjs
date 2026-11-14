@@ -54,7 +54,7 @@ async function browserChecks(accounts) {
     }
     async function browserLogout() {
       // Exercise the actual existing logout form through its server action.
-      await page.getByRole('button',{name:/log out|sign out/i}).click();
+      await page.getByRole('button',{name:'Logout',exact:true}).click();
       await page.waitForURL(origin+'/login');
       assert.ok(!(await bc.cookies()).some(c=>c.name==='isp_session'));
     }
@@ -210,13 +210,19 @@ async function browserChecks(accounts) {
     });
     await check('account creation and its audit entry roll back together on failure',async()=>{
       // Real transaction, intentionally abort after creation; no mock DB writes.
-      const count=await db.user.count();
-      await assert.rejects(db.$transaction(async tx=>{await tx.user.create({data:{username:'rollback.fixture',email:'rollback@example.invalid',passwordHash:await pw.hashPassword(password()),role:'ADMIN'}});throw new Error('intentional isolated rollback');}));
+      const count=await db.user.count(); const logCount=await db.auditLog.count();
+      await db.$executeRawUnsafe(`CREATE FUNCTION public.auth_test_reject_audit() RETURNS trigger LANGUAGE plpgsql AS $$
+        BEGIN IF NEW.action='Created administrator' AND EXISTS(SELECT 1 FROM "User" WHERE id=NEW."entityId" AND username='rollback.fixture') THEN
+          RAISE EXCEPTION 'isolated test audit failure'; END IF; RETURN NEW; END; $$`);
+      await db.$executeRawUnsafe(`CREATE TRIGGER auth_test_reject_audit BEFORE INSERT ON "AuditLog" FOR EACH ROW EXECUTE FUNCTION public.auth_test_reject_audit()`);
+      const result=await sa.load('src/lib/actions/accounts.ts').createAdminAction({username:'rollback.fixture',email:'rollback@example.invalid'});
+      assert.equal(result.ok,false);
       assert.equal(await db.user.count(),count);
+      assert.equal(await db.auditLog.count(),logCount);
     });
     await check('audit records exist for creation, resets, status and password changes without secrets',async()=>{
       const logs=await db.auditLog.findMany();
-      for(const action of ['Bootstrapped initial SUPER_ADMIN','Created administrator','Created teacher','Created student','Reset account password','Deactivated account','Password changed']) assert.ok(logs.some(l=>l.action===action));
+      for(const action of ['Bootstrapped initial SUPER_ADMIN','Created administrator','Created teacher','Created student','Reset account password','Deactivated account','Password changed','Login failed']) assert.ok(logs.some(l=>l.action===action));
       assert.ok(!logs.some(l=>/passwordHash|tempPassword|isp_session/.test(l.metadata||'')));
     });
     // Throttle test login counts are deliberately limited. Clear only expired

@@ -2,6 +2,7 @@
 BEGIN;
 SET LOCAL lock_timeout = '10s';
 SET LOCAL statement_timeout = '60s';
+SET LOCAL TIME ZONE 'UTC';
 
 -- AlterTable
 ALTER TABLE "User" ADD COLUMN     "passwordExpiresAt" TIMESTAMP(3),

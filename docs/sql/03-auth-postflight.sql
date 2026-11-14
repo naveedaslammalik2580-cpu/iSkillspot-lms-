@@ -8,6 +8,12 @@ SELECT tgname, tgenabled FROM pg_trigger
 WHERE tgrelid='public."User"'::regclass AND tgname='User_revoke_changed_credentials';
 SELECT relname, relrowsecurity FROM pg_class JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace
 WHERE nspname='public' AND relname IN ('User','AuthThrottle','AccountBootstrap');
+SELECT r.rolname, c.relname,
+       has_table_privilege(r.rolname, c.oid, 'SELECT') AS can_select,
+       has_table_privilege(r.rolname, c.oid, 'UPDATE') AS can_update
+FROM pg_roles r CROSS JOIN pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+WHERE r.rolname IN ('anon','authenticated') AND n.nspname='public'
+AND c.relname IN ('User','AuthThrottle','AccountBootstrap');
 SELECT count(*) FILTER (WHERE "mustChangePassword" AND "passwordExpiresAt" IS NULL) AS temporary_accounts_missing_expiry,
        count(*) FILTER (WHERE "sessionVersion" < 0) AS invalid_versions
 FROM public."User";

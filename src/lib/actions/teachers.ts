@@ -116,37 +116,39 @@ export async function updateTeacher(
   }
   const d = parsed.data;
 
-  await db.$transaction(async tx => {
-  await authorizeActor(tx, session, "teacher.manage");
-  const existing = await tx.teacher.findUnique({ where: { id: d.id } });
-  if (!existing) return { ok: false, error: "Teacher not found." };
-  const target = await manageableTarget(tx, session, existing.userId);
-  if (target.role !== "TEACHER") throw new Error("Invalid linked account role");
+  const updated = await db.$transaction(async tx => {
+      await authorizeActor(tx, session, "teacher.manage");
+      const existing = await tx.teacher.findUnique({ where: { id: d.id } });
+      if (!existing) return false;
+      const target = await manageableTarget(tx, session, existing.userId);
+      if (target.role !== "TEACHER") throw new Error("Invalid linked account role");
 
-  const nextPhone = d.phone || null;
-  const nextSpecialization = d.specialization || null;
+      const nextPhone = d.phone || null;
+      const nextSpecialization = d.specialization || null;
 
-  const changes: Record<string, { old: unknown; new: unknown }> = {};
-  if (existing.fullName !== d.fullName) changes.fullName = { old: existing.fullName, new: d.fullName };
-  if (existing.phone !== nextPhone) changes.phone = { old: existing.phone, new: nextPhone };
-  if (existing.specialization !== nextSpecialization)
-    changes.specialization = { old: existing.specialization, new: nextSpecialization };
+      const changes: Record<string, { old: unknown; new: unknown }> = {};
+      if (existing.fullName !== d.fullName) changes.fullName = { old: existing.fullName, new: d.fullName };
+      if (existing.phone !== nextPhone) changes.phone = { old: existing.phone, new: nextPhone };
+      if (existing.specialization !== nextSpecialization)
+        changes.specialization = { old: existing.specialization, new: nextSpecialization };
 
-  await tx.teacher.update({
-    where: { id: d.id },
-    data: { fullName: d.fullName, phone: nextPhone, specialization: nextSpecialization },
+      await tx.teacher.update({
+        where: { id: d.id },
+        data: { fullName: d.fullName, phone: nextPhone, specialization: nextSpecialization },
+      });
+
+      if (Object.keys(changes).length > 0) {
+        await logAction({
+          userId: session.userId,
+          action: "Updated teacher",
+          entity: "Teacher",
+          entityId: d.id,
+          metadata: { changes },
+        }, tx);
+      }
+      return true;
   });
-
-  if (Object.keys(changes).length > 0) {
-    await logAction({
-      userId: session.userId,
-      action: "Updated teacher",
-      entity: "Teacher",
-      entityId: d.id,
-      metadata: { changes },
-    }, tx);
-  }
-  });
+  if (!updated) return { ok: false, error: "Teacher not found." };
 
   revalidatePath("/admin/teachers");
   revalidatePath(`/admin/teachers/${d.id}`);
