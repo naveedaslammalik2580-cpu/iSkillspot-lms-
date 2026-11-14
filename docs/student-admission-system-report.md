@@ -1,3 +1,5 @@
+> Historical feature report. For the combined implementation, use [the reconciliation report](auth-admissions-reconciliation-report.md) and [the consolidated deployment guide](deployment/consolidated-supabase.md).
+
 # iSkillSpot student registration and admission system
 
 Implementation date: 14 November 2026 (Asia/Karachi).

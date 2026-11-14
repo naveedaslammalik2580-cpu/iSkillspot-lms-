@@ -1,6 +1,6 @@
-import { ActionForm, PasswordFields } from "@/components/admissions/forms";
 import { PublicShell } from "@/components/admissions/public-shell";
-import { resetPasswordAction } from "@/lib/actions/admissions";
+import { verifyPasswordResetToken } from "@/lib/auth/password-reset";
+import { ResetPasswordForm, InvalidResetLink } from "./reset-form";
 export const metadata = {
   referrer: "no-referrer",
   robots: { index: false, follow: false },
@@ -11,12 +11,10 @@ export default async function ResetPasswordPage({
   searchParams: Promise<{ token?: string }>;
 }) {
   const { token } = await searchParams;
+  const valid = token ? await verifyPasswordResetToken(token) : null;
   return (
-    <PublicShell title="Choose a new password">
-      <ActionForm action={resetPasswordAction} label="Save new password">
-        <input type="hidden" name="token" value={token || ""} />
-        <PasswordFields />
-      </ActionForm>
+    <PublicShell title="Password recovery">
+      {valid ? <ResetPasswordForm token={token!} /> : <InvalidResetLink />}
     </PublicShell>
   );
 }

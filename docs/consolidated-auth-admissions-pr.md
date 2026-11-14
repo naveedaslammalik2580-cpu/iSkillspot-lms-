@@ -1,0 +1,11 @@
+This consolidates and supersedes #5 and #6. Both feature histories are retained; main is unchanged.
+
+Students can register, verify email, select a database course, follow manual payment instructions and sign in to a restricted status page. Staff verify the actual transaction and atomically approve payment/enrollment/activation/audit/confirmation. Existing students and academic records retain access and balances.
+
+Recovery now shares one version-bound token service and one encrypted durable email queue with admissions. Preserves SMTP and Resend, staff reset links, temporary-password fallback, login notices/visibility, generic public recovery and session revocation. Registration/reset/change-password share the approved single-message, thin red/green strength indicator. Official email URLs never derive from request headers.
+
+Original migration SQL/checksums are unchanged. A new additive reconciliation migration retains legacy token history while retiring unversioned old reset links and securing their table. No shared production database was accessed.
+
+Validation: 122 passing checks (9 auth unit, 25 auth lifecycle/browser, 41 learning/notification/accounting/upload, 20 recovery, 3 email transport/template, 24 admission/browser). Production build, TypeScript and ESLint passed with zero lint warnings. Fresh/manual SQL/history deployment and upgrade from already deployed admissions passed on disposable PostgreSQL databases. Readable-source/Base64 and all 11 migration-checksum checks passed. SMTP tests used a loopback relay; Resend success was intercepted, so external mailbox delivery remains a deployment check.
+
+Deployment: follow [the ordered Supabase guide](docs/deployment/consolidated-supabase.md) and [the single email configuration guide](docs/deployment/consolidated-email.md). Configure the real sender, official origin and authenticated worker, verify a real mailbox, and open admissions last. Existing legacy PR #5 links require a new request. Main and this branch have the same 16 inherited dependency advisories (8 moderate, 8 high); reviewed major upgrades are deferred. See [the reconciliation report](docs/auth-admissions-reconciliation-report.md) for evidence and remaining limits.

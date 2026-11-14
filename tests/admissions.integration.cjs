@@ -810,7 +810,32 @@ async function freePort() {
           await page.locator("#phone").fill("+923001234567");
           const password = secret();
           browserPassword = password;
+          await page.locator("#password").fill("Password123!");
+          await page.locator('[data-password-strength="weak"]').waitFor();
+          assert.equal(
+            await page
+              .locator("[data-password-strength]")
+              .evaluate((el) => getComputedStyle(el).height),
+            "4px",
+          );
+          assert.equal(
+            await page
+              .locator("[data-password-strength]")
+              .evaluate((el) => getComputedStyle(el).backgroundColor),
+            "rgb(239, 68, 68)",
+          );
           await page.locator("#password").fill(password);
+          assert.equal(
+            await page.locator('[data-password-strength="strong"]').count(),
+            1,
+          );
+          assert.equal(
+            await page
+              .locator("[data-password-strength]")
+              .evaluate((el) => getComputedStyle(el).backgroundColor),
+            "rgb(22, 163, 74)",
+          );
+          assert.equal(await page.locator("form ul").count(), 0);
           await page.locator("#confirmPassword").fill(password);
           await page.getByRole("button", { name: "Show passwords" }).click();
           assert.equal(
@@ -891,6 +916,61 @@ async function freePort() {
           );
         },
       );
+      async function recoverInBrowser(target) {
+        await page.goto(origin + "/forgot-password");
+        await page.locator("#resend-email").fill(browserUser.email);
+        await page.getByRole("button", { name: "Send recovery link" }).click();
+        await page
+          .getByRole("status")
+          .filter({ hasText: "If this address is eligible" })
+          .waitFor();
+        const raw = await tokenFor(browserUser.id, "RESET_PASSWORD");
+        await page.goto(origin + "/reset-password?token=" + raw);
+        await page.locator("#newPassword").fill("Password123!");
+        await page.locator('[data-password-strength="weak"]').waitFor();
+        const next = secret();
+        await page.locator("#newPassword").fill(next);
+        await page.locator("#confirmPassword").fill(next);
+        assert.equal(
+          await page.locator('[data-password-strength="strong"]').count(),
+          1,
+        );
+        assert.equal(await page.locator("form ul").count(), 0);
+        await page.screenshot({
+          path: ".auth-work/admissions/reset-mobile.png",
+          fullPage: true,
+        });
+        await page
+          .getByRole("button", { name: "Reset password", exact: true })
+          .click();
+        await page.getByRole("heading", { name: "Password updated" }).waitFor();
+        await page
+          .getByRole("link", { name: "Sign in with your new password" })
+          .click();
+        await page.locator("#identifier").fill(browserUser.email);
+        await page.locator("#password").fill(next);
+        await page
+          .getByRole("button", { name: "Sign in", exact: true })
+          .click();
+        await page.waitForURL(origin + target);
+        browserPassword = next;
+        await page.goto(origin + "/reset-password?token=" + raw);
+        await page
+          .getByRole("heading", { name: "This reset link is not valid" })
+          .waitFor();
+        assert.equal(await page.locator("#newPassword").count(), 0);
+      }
+      await check(
+        "browser Forgot Password preserves pending admission and uses the minimal strength indicator",
+        async () => {
+          await recoverInBrowser("/admission");
+          assert.equal(
+            (await db.user.findUniqueOrThrow({ where: { id: browserUser.id } }))
+              .admissionRequired,
+            true,
+          );
+        },
+      );
       await check(
         "browser ADMIN review approves actual payment and student reaches enrolled dashboard",
         async () => {
@@ -948,6 +1028,29 @@ async function freePort() {
             (await page.locator("body").innerText()).match(/not found|404/i),
           );
           await ac.close();
+        },
+      );
+      await check(
+        "browser approved-student Forgot Password revokes old sessions and preserves enrollments",
+        async () => {
+          // Advance only this fixture's issuance timestamp to exercise a second request without sleeping through the cooldown.
+          await db.authToken.updateMany({
+            where: { userId: browserUser.id, purpose: "RESET_PASSWORD" },
+            data: { createdAt: new Date(Date.now() - 61000) },
+          });
+          const old = await browser.newContext();
+          await old.addCookies(await bc.cookies());
+          await recoverInBrowser("/student/dashboard");
+          const oldPage = await old.newPage();
+          await oldPage.goto(origin + "/student/dashboard");
+          await oldPage.waitForURL(origin + "/login");
+          await old.close();
+          assert.equal(
+            await db.enrollment.count({
+              where: { studentId: browserUser.student.id },
+            }),
+            1,
+          );
         },
       );
       await check("forged cross-origin server action is rejected", async () => {

@@ -1,6 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
+import { publicLimit } from "@/lib/auth/public-limit";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "node:crypto";
@@ -10,7 +10,6 @@ import { requireSession, requireStaff } from "@/lib/auth/guards";
 import { createSession } from "@/lib/auth/session";
 import { rateLimited } from "@/lib/auth/throttle";
 import { emailSchema, AccountError } from "@/lib/auth/identity";
-import { strongPassword } from "@/lib/auth/password";
 import { authorizeActor } from "@/lib/auth/account-policy";
 import { logAction } from "@/lib/audit";
 import {
@@ -47,18 +46,6 @@ const errorState = (e: unknown): AdmissionActionState => ({
         ? e.errors[0].message
         : "Unable to complete this request. Please try again.",
 });
-async function publicLimit(scope: string, email = "") {
-  const h = await headers();
-  // Only trust a single address header set/overwritten by the deployment's reverse proxy.
-  const ip = process.env.AUTH_TRUSTED_IP_HEADER
-    ? h.get(process.env.AUTH_TRUSTED_IP_HEADER)?.split(",")[0]?.trim()
-    : null;
-  const [addressLimited, sourceLimited] = await Promise.all([
-    rateLimited(`${scope}:email:${email}`),
-    rateLimited(`${scope}:source:${ip || "unconfigured-proxy"}`),
-  ]);
-  return addressLimited || sourceLimited;
-}
 export async function registerStudentAction(
   _: AdmissionActionState,
   form: FormData,
@@ -120,27 +107,6 @@ export async function verifyEmailAction(
     redirect("/admission");
   }
   redirect("/login?verified=1");
-}
-export async function resetPasswordAction(
-  _: AdmissionActionState,
-  form: FormData,
-): Promise<AdmissionActionState> {
-  const parsed = strongPassword.safeParse(form.get("password"));
-  if (!parsed.success) return errorState(parsed.error);
-  if (form.get("password") !== form.get("confirmPassword"))
-    return { error: "Passwords do not match" };
-  if (await publicLimit("reset"))
-    return { error: "Too many attempts. Try again in 15 minutes." };
-  try {
-    await consumeAuthToken(
-      String(form.get("token") || ""),
-      "RESET_PASSWORD",
-      parsed.data,
-    );
-  } catch (e) {
-    return errorState(e);
-  }
-  redirect("/login?recovered=1");
 }
 export async function selectCourseAction(
   _: AdmissionActionState,

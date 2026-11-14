@@ -20,7 +20,7 @@ async function run(exe, args, env, output = false) {
     p.on('error', () => reject(new Error('Local test executable unavailable')));
     // pg_ctl's detached server can inherit a pipe; wait for the command's exit,
     // not for every daemon descendant to close that pipe.
-    p.on('exit', code => code === 0 ? resolve(captured) : reject(new Error('Local test command failed: ' + path.basename(exe) + ' (exit ' + code + ')')));
+    p.on('exit', code => code === 0 ? resolve(captured) : reject(new Error('Local test command failed: ' + path.basename(exe) + ' (exit ' + code + ')' + (path.basename(exe).startsWith('psql') ? '\n'+captured.slice(-1800) : ''))));
   });
 }
 async function freePort() {
@@ -41,7 +41,7 @@ async function freePort() {
       LMS_PUBLIC_URL:'https://lms.example.invalid', RESEND_API_KEY:'', EMAIL_FROM:'', CRON_SECRET:randomBytes(32).toString('hex'),
       PGDATABASE:database, NODE_ENV:'test' };
     // Do not inherit provider keys into tests or the browser server.
-    for (const key of Object.keys(env)) if (/SUPABASE|BOOTSTRAP/.test(key)) env[key] = '';
+    for (const key of Object.keys(env)) if (/SUPABASE|BOOTSTRAP|^SMTP_|^APP_URL$/.test(key)) env[key] = '';
     for (const key of ['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_STORAGE_BUCKET']) env[key] = '';
     fs.writeFileSync(path.join(work,'password'), password + '\n', {mode:0o600});
     console.log('Initializing a disposable password-protected PostgreSQL cluster...');
@@ -63,14 +63,21 @@ async function freePort() {
     fs.mkdirSync(path.join(manualPrisma,'migrations'),{recursive:true});
     fs.copyFileSync(path.join(root,'prisma/schema.prisma'),path.join(manualPrisma,'schema.prisma'));
     for (const entry of fs.readdirSync(path.join(root,'prisma/migrations'))) {
-      if (!['20261113120000_auth_account_lifecycle','20261114120000_student_admissions'].includes(entry)) fs.cpSync(path.join(root,'prisma/migrations',entry),path.join(manualPrisma,'migrations',entry),{recursive:true});
+      if (!['20261113120000_auth_account_lifecycle','20261114084833_password_reset_tokens','20261114120000_student_admissions','20261114180000_unify_auth_recovery'].includes(entry)) fs.cpSync(path.join(root,'prisma/migrations',entry),path.join(manualPrisma,'migrations',entry),{recursive:true});
     }
     await run(process.execPath,['node_modules/prisma/build/index.js','migrate','deploy','--schema',path.join(manualPrisma,'schema.prisma')],manualEnv,true);
     const verifyLegacyData = await require('../tests/manual-migration.fixture.cjs').prepare(manualUrl.href);
     for (const file of ['docs/sql/01-auth-preflight.sql','prisma/migrations/20261113120000_auth_account_lifecycle/migration.sql','docs/sql/03-auth-postflight.sql','docs/sql/04-auth-reconcile-history.sql','docs/sql/04-auth-reconcile-history.sql']) {
       await run(path.join(bin,'psql.exe'),['-X','-v','ON_ERROR_STOP=1','-f',path.join(root,file)],manualEnv);
     }
+    for (const file of ['docs/sql/05-password-reset-preflight.sql','prisma/migrations/20261114084833_password_reset_tokens/migration.sql','docs/sql/06-password-reset-postflight.sql','docs/sql/07-password-reset-reconcile-history.sql','docs/sql/07-password-reset-reconcile-history.sql']) {
+      await run(path.join(bin,'psql.exe'),['-X','-v','ON_ERROR_STOP=1','-f',path.join(root,file)],manualEnv);
+    }
     for (const file of ['docs/sql/08-admissions-preflight.sql','prisma/migrations/20261114120000_student_admissions/migration.sql','docs/sql/09-admissions-postflight.sql','docs/sql/10-admissions-reconcile-history.sql','docs/sql/10-admissions-reconcile-history.sql']) {
+      await run(path.join(bin,'psql.exe'),['-X','-v','ON_ERROR_STOP=1','-f',path.join(root,file)],manualEnv);
+    }
+    await require('../tests/reconciliation-migration.fixture.cjs').prepare(manualUrl.href);
+    for (const file of ['docs/sql/11-consolidated-preflight.sql','prisma/migrations/20261114180000_unify_auth_recovery/migration.sql','docs/sql/12-consolidated-postflight.sql','docs/sql/13-unified-auth-reconcile-history.sql','docs/sql/13-unified-auth-reconcile-history.sql']) {
       await run(path.join(bin,'psql.exe'),['-X','-v','ON_ERROR_STOP=1','-f',path.join(root,file)],manualEnv);
     }
     await verifyLegacyData();
@@ -82,6 +89,23 @@ async function freePort() {
     if (!manualStatus.includes('up to date')) throw new Error('Manual migration history did not reconcile');
     console.log('PASS: preflight, manual migration, postflight and idempotent history reconciliation; Prisma reports up to date.');
     console.log('PASS: existing fixture accounts, hashes, roles, profiles, fees, payments and certificates survived the additive migration.');
+    console.log('Testing upgrade from an already deployed PR #6 with existing applications and academic data...');
+    const upgradeDatabase = database + '_admissions_upgrade';
+    await run(path.join(bin,'createdb.exe'),[upgradeDatabase],env);
+    const upgradeUrl = new URL(url); upgradeUrl.pathname = '/' + upgradeDatabase;
+    const upgradeEnv = { ...env, DATABASE_URL:upgradeUrl.href, DIRECT_URL:upgradeUrl.href, PGDATABASE:upgradeDatabase };
+    const upgradePrisma = path.join(work,'upgrade-prisma');
+    fs.mkdirSync(path.join(upgradePrisma,'migrations'),{recursive:true});
+    fs.copyFileSync(path.join(root,'prisma/schema.prisma'),path.join(upgradePrisma,'schema.prisma'));
+    for(const entry of fs.readdirSync(path.join(root,'prisma/migrations'))) {
+      if(!['20261114084833_password_reset_tokens','20261114180000_unify_auth_recovery'].includes(entry)) fs.cpSync(path.join(root,'prisma/migrations',entry),path.join(upgradePrisma,'migrations',entry),{recursive:true});
+    }
+    await run(process.execPath,['node_modules/prisma/build/index.js','migrate','deploy','--schema',path.join(upgradePrisma,'schema.prisma')],upgradeEnv,true);
+    const verifyUpgrade = await require('../tests/admission-upgrade.fixture.cjs').prepare(upgradeUrl.href);
+    await run(process.execPath,['node_modules/prisma/build/index.js','migrate','deploy'],upgradeEnv,true);
+    await verifyUpgrade();
+    await run(path.join(bin,'psql.exe'),['-X','-v','ON_ERROR_STOP=1','-f',path.join(root,'docs/sql/12-consolidated-postflight.sql')],upgradeEnv);
+    console.log('PASS: existing PR #6 accounts, approvals, pending applications, fee/payment balances, suspended access, outbox, tokens and academic records are byte-for-byte unchanged.');
     await run(process.execPath, ['node_modules/prisma/build/index.js','validate'], env, true);
     if (process.argv.includes('--migrations-only')) {
       console.log('Migration-only verification completed successfully. No shared database was used.');
@@ -93,7 +117,7 @@ async function freePort() {
     await run(process.execPath, ['--test','tests/auth.test.cjs'], env,true);
     console.log('Running real Prisma account lifecycle and local browser integration tests...');
     await run(process.execPath, ['tests/auth.integration.cjs'], {...env,NODE_ENV:'production'},true);
-    await run(process.execPath, ['node_modules/tsx/dist/cli.mjs','--test','--test-concurrency=1','tests/learning.test.ts','tests/notifications.test.ts','tests/regression.test.ts','tests/upload-validation.test.ts'],env,true);
+    await run(process.execPath, ['node_modules/tsx/dist/cli.mjs','--test','--test-concurrency=1','tests/learning.test.ts','tests/notifications.test.ts','tests/regression.test.ts','tests/upload-validation.test.ts','tests/password-reset.test.ts','tests/email.test.ts'],env,true);
     await run(process.execPath, ['tests/admissions.integration.cjs'], {...env,NODE_ENV:'production'},true);
     const inspect = await run(process.execPath,['node_modules/tsx/dist/cli.mjs','scripts/bootstrap-super-admin.ts','--inspect'],env);
     if (!/superAdminExists:\s*true/.test(inspect)) throw new Error('Bootstrap CLI inspection failed');

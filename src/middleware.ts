@@ -41,7 +41,10 @@ export async function middleware(req: NextRequest) {
 
     return NextResponse.next();
   } catch {
-    const res = NextResponse.redirect(new URL("/login", req.url));
+    // A cookie was presented but did not verify (expired or no longer
+    // valid): send the user to login with an explanation instead of a
+    // bare redirect, and clear the dead cookie.
+    const res = NextResponse.redirect(new URL("/login?expired=1", req.url));
     res.cookies.delete(COOKIE_NAME);
     return res;
   }

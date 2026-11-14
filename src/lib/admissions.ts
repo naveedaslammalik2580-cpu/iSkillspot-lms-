@@ -1,4 +1,10 @@
-import { randomBytes, createHash } from "node:crypto";
+import { issueAuthToken } from "@/lib/auth/tokens";
+export {
+  issueAuthToken,
+  requestAuthEmail,
+  consumeAuthToken,
+} from "@/lib/auth/tokens";
+import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
@@ -69,45 +75,6 @@ export async function admissionSettings(tx: Prisma.TransactionClient = db) {
   };
 }
 
-export async function issueAuthToken(
-  tx: Prisma.TransactionClient,
-  user: { id: string; email: string; sessionVersion: number },
-  purpose: "VERIFY_EMAIL" | "RESET_PASSWORD",
-) {
-  const raw = randomBytes(32).toString("base64url");
-  await tx.authToken.updateMany({
-    where: { userId: user.id, purpose, usedAt: null },
-    data: { usedAt: new Date() },
-  });
-  const token = await tx.authToken.create({
-    data: {
-      userId: user.id,
-      digest: createHash("sha256").update(raw).digest("hex"),
-      purpose,
-      version: user.sessionVersion,
-      expiresAt: new Date(
-        Date.now() + (purpose === "VERIFY_EMAIL" ? 60 : 30) * 60000,
-      ),
-    },
-  });
-  const verify = purpose === "VERIFY_EMAIL";
-  await queueEmail(tx, {
-    dedupeKey: `token:${token.id}`,
-    recipient: user.email,
-    subject: verify
-      ? "Verify your iSkillSpot email"
-      : "Reset your iSkillSpot password",
-    html: emailTemplate(
-      "student",
-      verify ? "Verify your email" : "Password recovery",
-      `Use this single-use link within ${verify ? "60" : "30"} minutes.`,
-      verify ? "Verify Email" : "Reset Password",
-      `/${verify ? "verify-email" : "reset-password"}?token=${raw}`,
-    ),
-  });
-  return token;
-}
-
 export async function registerStudent(
   input: z.infer<typeof registrationSchema>,
 ) {
@@ -163,94 +130,6 @@ export async function registerStudent(
       },
       tx,
     );
-  });
-}
-
-export async function requestAuthEmail(
-  email: string,
-  purpose: "VERIFY_EMAIL" | "RESET_PASSWORD",
-) {
-  return db.$transaction(async (tx) => {
-    const found = await tx.user.findFirst({
-      where: {
-        email: { equals: email, mode: "insensitive" },
-        status: "ACTIVE",
-      },
-    });
-    if (!found) return;
-    await tx.$queryRaw`SELECT id FROM "User" WHERE id=${found.id} FOR UPDATE`;
-    const user = await tx.user.findUniqueOrThrow({ where: { id: found.id } });
-    if (user.status !== "ACTIVE") return;
-    if (
-      purpose === "VERIFY_EMAIL" &&
-      (user.role !== "STUDENT" || user.emailVerifiedAt)
-    )
-      return;
-    const recent = await tx.authToken.findFirst({
-      where: {
-        userId: user.id,
-        purpose,
-        createdAt: { gt: new Date(Date.now() - 60000) },
-      },
-    });
-    if (recent) return;
-    await issueAuthToken(tx, user, purpose);
-  });
-}
-
-export async function consumeAuthToken(
-  raw: string,
-  purpose: "VERIFY_EMAIL" | "RESET_PASSWORD",
-  password?: string,
-) {
-  if (!/^[A-Za-z0-9_-]{43}$/.test(raw))
-    throw new AccountError("This link is invalid or has expired.");
-  const passwordHash =
-    purpose === "RESET_PASSWORD"
-      ? await hashPassword(strongPassword.parse(password))
-      : undefined;
-  const digest = createHash("sha256").update(raw).digest("hex");
-  return db.$transaction(async (tx) => {
-    const token = await tx.authToken.findUnique({ where: { digest } });
-    if (!token || token.purpose !== purpose)
-      throw new AccountError("This link is invalid or has expired.");
-    await tx.$queryRaw`SELECT id FROM "User" WHERE id=${token.userId} FOR UPDATE`;
-    const user = await tx.user.findUniqueOrThrow({
-      where: { id: token.userId },
-    });
-    const used = await tx.authToken.updateMany({
-      where: {
-        id: token.id,
-        purpose,
-        usedAt: null,
-        expiresAt: { gt: new Date() },
-        version: user.sessionVersion,
-      },
-      data: { usedAt: new Date() },
-    });
-    if (used.count !== 1 || user.status !== "ACTIVE")
-      throw new AccountError("This link is invalid or has expired.");
-    const updated = await tx.user.update({
-      where: { id: user.id },
-      data: passwordHash
-        ? {
-            passwordHash,
-            sessionVersion: { increment: 1 },
-            mustChangePassword: false,
-            passwordExpiresAt: null,
-          }
-        : { emailVerifiedAt: new Date() },
-    });
-    await logAction(
-      {
-        userId: user.id,
-        action: passwordHash ? "Password recovered" : "Email verified",
-        entity: "User",
-        entityId: user.id,
-      },
-      tx,
-    );
-    return updated;
   });
 }
 

@@ -1,2 +1,5 @@
 prisma/migrations/20261113120000_auth_account_lifecycle/migration.sql text eol=lf
 prisma/migrations/20261114120000_student_admissions/migration.sql text eol=lf
+prisma/migrations/20261114084833_password_reset_tokens/migration.sql text eol=lf
+prisma/migrations/20261114180000_unify_auth_recovery/migration.sql text eol=lf
+prisma/migrations/**/migration.sql text eol=lf

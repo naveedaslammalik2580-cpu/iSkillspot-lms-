@@ -7,12 +7,23 @@ import {
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { getSecret } from "@/lib/auth/token";
+import { sendEmail } from "@/lib/email-transport";
+export { sendEmail, emailProviderConfigured } from "@/lib/email-transport";
+export type { EmailResult, EmailMessage } from "@/lib/email-transport";
 
 export function portalUrl(path: string): string {
-  const base = new URL(process.env.LMS_PUBLIC_URL || "http://localhost:3000");
+  const configured = process.env.LMS_PUBLIC_URL || process.env.APP_URL;
+  if (
+    process.env.LMS_PUBLIC_URL &&
+    process.env.APP_URL &&
+    new URL(process.env.LMS_PUBLIC_URL).origin !==
+      new URL(process.env.APP_URL).origin
+  )
+    throw new Error("LMS_PUBLIC_URL and APP_URL must agree");
+  const base = new URL(configured || "http://localhost:3000");
   if (
     process.env.NODE_ENV === "production" &&
-    (!process.env.LMS_PUBLIC_URL || base.protocol !== "https:")
+    (!configured || base.protocol !== "https:")
   ) {
     throw new Error("Configure the official HTTPS LMS_PUBLIC_URL");
   }
@@ -84,24 +95,38 @@ export async function deliverEmails(limit = 10) {
       where: { id: rows[0].id },
     });
     try {
-      if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM)
-        throw new Error("configuration");
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        signal: AbortSignal.timeout(15000),
-        headers: {
-          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-          "Idempotency-Key": row.id,
-        },
-        body: JSON.stringify({
-          from: process.env.EMAIL_FROM,
-          to: [row.recipient],
+      if (row.dedupeKey.startsWith("token:")) {
+        const token = await db.authToken.findUnique({
+          where: { id: row.dedupeKey.slice(6) },
+          include: { user: { select: { status: true, sessionVersion: true } } },
+        });
+        if (
+          !token ||
+          token.usedAt ||
+          token.expiresAt.getTime() <= Date.now() ||
+          token.version !== token.user.sessionVersion ||
+          token.user.status !== "ACTIVE"
+        ) {
+          await db.emailOutbox.update({
+            where: { id: row.id },
+            data: {
+              status: "CANCELED",
+              encryptedBody: "",
+              lastError: "Link is no longer valid.",
+            },
+          });
+          continue;
+        }
+      }
+      const result = await sendEmail(
+        {
+          to: row.recipient,
           subject: row.subject,
           html: decryptEmail(row.encryptedBody),
-        }),
-      });
-      if (!response.ok) throw new Error("provider");
+        },
+        row.id,
+      );
+      if (!result.delivered) throw new Error("Delivery unavailable");
       await db.emailOutbox.update({
         where: { id: row.id },
         data: {

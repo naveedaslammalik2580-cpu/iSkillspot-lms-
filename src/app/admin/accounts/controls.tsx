@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAdminAction, resetAccountAction, setAccountActiveAction, type AccountResult } from "@/lib/actions/accounts";
+import { sendResetLinkAction } from "@/lib/actions/password-recovery";
+import { SendResetLinkButton } from "@/components/auth/send-reset-link-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +40,7 @@ export function AccountControls({ userId, active }: { userId: string; active: bo
       <Button type="button" size="sm" variant="outline" disabled={pending} onClick={() => perform(true)}>Reset password</Button>
       <Button type="button" size="sm" variant="outline" disabled={pending} onClick={() => perform(false)}>{active ? "Deactivate" : "Activate"}</Button>
     </div>
+    <SendResetLinkButton onSend={() => sendResetLinkAction(userId)} />
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
     {temp && <TemporaryCredential value={temp} dismiss={() => setTemp("")} />}
   </div>;
