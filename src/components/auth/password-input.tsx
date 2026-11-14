@@ -10,7 +10,10 @@ import { cn } from "@/lib/utils";
  * and change-password forms so the behavior (and the accessibility
  * labels) stay identical everywhere.
  */
-export function PasswordInput({ className, ...props }: ComponentProps<typeof Input>) {
+export function PasswordInput({
+  className,
+  ...props
+}: ComponentProps<typeof Input>) {
   const [visible, setVisible] = useState(false);
   return (
     <div className="relative">

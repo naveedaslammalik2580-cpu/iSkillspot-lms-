@@ -213,7 +213,7 @@ export async function sendTeacherResetLinkAction(
     if (result === "not-configured") {
       return { ok: false, error: "Email is not configured on the server, so no link was sent. Use the temporary-password reset instead." };
     }
-    if (result === "failed") return { ok: false, error: "The reset email could not be sent. Please try again." };
+    if (result === "failed") return { ok: false, error: "Please wait before requesting another reset link." };
     return { ok: true };
   } catch { return { ok: false, error: "Unable to send a reset link for this account." }; }
 }

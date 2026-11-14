@@ -9,6 +9,7 @@ export interface SessionPayload {
   username: string;
   mustChangePassword: boolean;
   sessionVersion: number;
+  admissionRequired?: boolean;
 }
 export function getSecret() {
   const value = process.env.SESSION_SECRET;

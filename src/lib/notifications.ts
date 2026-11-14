@@ -182,10 +182,10 @@ export async function teacherUserIdsForCourse(courseId: string): Promise<string[
   return [...new Set(batches.map((b) => b.teacher?.userId).filter((x): x is string => Boolean(x)))];
 }
 
-/** User ids of students enrolled in a course (any enrollment status). */
+/** User ids of students with approved access to a course. */
 export async function studentUserIdsForCourse(courseId: string): Promise<string[]> {
   const enrollments = await db.enrollment.findMany({
-    where: { courseId },
+    where: { courseId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] }, student: { user: { admissionRequired: false } } },
     select: { student: { select: { userId: true } } },
   });
   return [...new Set(enrollments.map((e) => e.student.userId))];
@@ -209,7 +209,7 @@ export async function resolveAnnouncementRecipients(announcement: {
   let teacherUserIds: string[] = [];
 
   if (audience === "ALL" || audience === "STUDENTS") {
-    const students = await db.user.findMany({ where: { role: "STUDENT" }, select: { id: true } });
+    const students = await db.user.findMany({ where: { role: "STUDENT", admissionRequired: false }, select: { id: true } });
     studentUserIds = students.map((u) => u.id);
   }
   if (audience === "ALL" || audience === "TEACHERS") {
@@ -218,7 +218,7 @@ export async function resolveAnnouncementRecipients(announcement: {
   }
   if (audience === "BATCH" && targetBatchId) {
     const enrollments = await db.enrollment.findMany({
-      where: { batchId: targetBatchId },
+      where: { batchId: targetBatchId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] }, student: { user: { admissionRequired: false } } },
       select: { student: { select: { userId: true } } },
     });
     studentUserIds = enrollments.map((e) => e.student.userId);

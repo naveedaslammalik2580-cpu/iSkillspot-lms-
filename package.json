@@ -12,11 +12,13 @@
     "auth:bootstrap": "tsx scripts/bootstrap-super-admin.ts",
     "test:auth": "node --test tests/auth.test.cjs",
     "test:auth:integration": "node scripts/test-auth-local.cjs",
-    "test": "tsx --test tests/*.test.ts && npm run test:auth",
+    "test:admissions": "node scripts/test-auth-local.cjs",
+    "test": "tsx --test --test-concurrency=1 tests/*.test.ts && npm run test:auth",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "verify:source": "node scripts/verify-readable-source.cjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -32,7 +34,7 @@
     "jose": "^5.9.6",
     "lucide-react": "^0.469.0",
     "next": "15.5.29",
-    "nodemailer": "^6.10.1",
+    "nodemailer": "10.5.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "recharts": "^2.15.0",
@@ -44,7 +46,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.10.5",
-    "@types/nodemailer": "^6.4.24",
+    "@types/nodemailer": "8.0.2",
     "@types/react": "^19.0.4",
     "@types/react-dom": "^19.0.2",
     "@types/web-push": "^3.6.4",

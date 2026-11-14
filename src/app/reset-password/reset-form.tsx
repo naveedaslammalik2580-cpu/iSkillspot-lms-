@@ -2,16 +2,21 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { resetPasswordAction, type RecoveryState } from "@/lib/actions/password-recovery";
+import {
+  resetPasswordAction,
+  type RecoveryState,
+} from "@/lib/actions/password-recovery";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { PasswordInput } from "@/components/auth/password-input";
+import { PasswordFields } from "@/components/auth/password-fields";
 import { CheckCircle2 } from "lucide-react";
 
 const initial: RecoveryState = {};
 
 export function ResetPasswordForm({ token }: { token: string }) {
-  const [state, formAction, pending] = useActionState(resetPasswordAction, initial);
+  const [state, formAction, pending] = useActionState(
+    resetPasswordAction,
+    initial,
+  );
 
   if (state.ok) {
     return (
@@ -32,33 +37,13 @@ export function ResetPasswordForm({ token }: { token: string }) {
   return (
     <>
       <h2 className="mb-1 text-lg font-semibold">Choose a new password</h2>
-      <p className="mb-6 text-sm text-muted-foreground">
-        Use at least 12 characters with uppercase, lowercase, a number and a symbol.
-      </p>
       <form action={formAction} className="space-y-4">
         <input type="hidden" name="token" value={token} />
-        <div className="space-y-2">
-          <Label htmlFor="newPassword">New password</Label>
-          <PasswordInput
-            id="newPassword"
-            name="newPassword"
-            autoComplete="new-password"
-            minLength={12}
-            maxLength={72}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm new password</Label>
-          <PasswordInput
-            id="confirmPassword"
-            name="confirmPassword"
-            autoComplete="new-password"
-            minLength={12}
-            maxLength={72}
-            required
-          />
-        </div>
+        <PasswordFields
+          passwordName="newPassword"
+          label="New password"
+          confirmLabel="Confirm new password"
+        />
         {state.error && (
           <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {state.error}
@@ -84,7 +69,10 @@ export function InvalidResetLink() {
         <Link href="/forgot-password">Request a new reset link</Link>
       </Button>
       <p className="mt-4 text-sm text-muted-foreground">
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link
+          href="/login"
+          className="font-medium text-primary hover:underline"
+        >
           Back to sign in
         </Link>
       </p>

@@ -19,7 +19,8 @@ function LoginForm() {
   // every failed attempt. (The password field intentionally clears.)
   const [identifier, setIdentifier] = useState("");
   const params = useSearchParams();
-  const justReset = params.get("reset") === "1";
+  const justReset =
+    params.get("reset") === "1" || params.get("recovered") === "1";
   const sessionExpired = params.get("expired") === "1";
 
   return (
@@ -30,13 +31,15 @@ function LoginForm() {
             <GraduationCap className="h-8 w-8" />
           </div>
           <h1 className="text-2xl font-bold">iSkillSpot</h1>
-          <p className="text-sm text-muted-foreground">Learning Management System</p>
+          <p className="text-sm text-muted-foreground">
+            Learning Management System
+          </p>
         </div>
 
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold">Sign in</h2>
           <p className="mb-6 text-sm text-muted-foreground">
-            Use the credentials provided by your institute.
+            Sign in with your registered email or institute credentials.
           </p>
 
           {justReset && (
@@ -80,7 +83,11 @@ function LoginForm() {
               />
             </div>
             <label className="flex items-center gap-2 text-sm text-muted-foreground">
-              <input type="checkbox" name="remember" className="h-4 w-4 rounded border-input" />
+              <input
+                type="checkbox"
+                name="remember"
+                className="h-4 w-4 rounded border-input"
+              />
               Remember me for 30 days
             </label>
 
@@ -97,7 +104,9 @@ function LoginForm() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Students cannot self-register. Contact the institute for an account.
+          <Link href="/register" className="text-primary underline">
+            Register as a student
+          </Link>
         </p>
       </div>
     </div>

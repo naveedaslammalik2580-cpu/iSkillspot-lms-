@@ -5,6 +5,7 @@
  */
 import type { NotificationType } from "@prisma/client";
 import { db } from "@/lib/db";
+import { notificationVisibility } from "@/lib/notification-access";
 
 export type NotificationRow = {
   id: string;
@@ -56,13 +57,13 @@ export async function getPreferencesForUser(userId: string): Promise<PreferenceR
 
 /** Unread count for the bell badge. */
 export async function getUnreadCount(userId: string): Promise<number> {
-  return db.notification.count({ where: { userId, read: false } });
+  return db.notification.count({ where: { userId, read: false, AND: await notificationVisibility(userId) } });
 }
 
 /** Most recent notifications (dropdown), newest first. */
 export async function getRecentNotifications(userId: string, limit = 8): Promise<NotificationRow[]> {
   return db.notification.findMany({
-    where: { userId },
+    where: { userId, AND: await notificationVisibility(userId) },
     orderBy: { createdAt: "desc" },
     take: Math.min(Math.max(limit, 1), 20),
     select,
@@ -90,7 +91,7 @@ export async function getNotificationsPage(
   opts: { page?: number; pageSize?: number; unreadOnly?: boolean } = {}
 ): Promise<NotificationPage> {
   const pageSize = Math.min(Math.max(opts.pageSize ?? 20, 1), 50);
-  const where = { userId, ...(opts.unreadOnly ? { read: false } : {}) };
+  const where = { userId, AND: await notificationVisibility(userId), ...(opts.unreadOnly ? { read: false } : {}) };
   const total = await db.notification.count({ where });
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const page = Math.min(Math.max(opts.page ?? 1, 1), totalPages);

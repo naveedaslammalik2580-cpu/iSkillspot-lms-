@@ -55,7 +55,7 @@ export async function generateAssignmentDeadlineReminders(now: Date = new Date()
     });
     const submittedStudentIds = new Set(submissions.map((s) => s.studentId));
     const enrolledStudents = await db.enrollment.findMany({
-      where: { courseId: a.courseId },
+      where: { courseId: a.courseId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] }, student: { user: { admissionRequired: false } } },
       select: { studentId: true, student: { select: { userId: true } } },
     });
     const pendingUserIds = enrolledStudents

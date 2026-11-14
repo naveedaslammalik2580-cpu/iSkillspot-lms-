@@ -10,7 +10,6 @@ import { KeyRound, Power } from "lucide-react";
 export function StudentActions({
   studentId,
   accountStatus,
-  currentStatus,
 }: {
   studentId: string;
   accountStatus: string;

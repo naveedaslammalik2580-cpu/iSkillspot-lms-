@@ -37,7 +37,7 @@ export async function getSession(): Promise<SessionPayload | null> {
   // Authorize from current DB state on every server read/action. Outages fail closed.
   const user = await db.user.findUnique({ where: { id: claims.userId }, select: {
     id: true, username: true, role: true, status: true, sessionVersion: true,
-    mustChangePassword: true, passwordExpiresAt: true,
+    mustChangePassword: true, passwordExpiresAt: true, admissionRequired: true,
     teacher: { select: { status: true } }, student: { select: { status: true } },
   } });
   if (!user || user.status !== "ACTIVE" || user.role !== claims.role || user.sessionVersion !== claims.sessionVersion ||
@@ -45,7 +45,7 @@ export async function getSession(): Promise<SessionPayload | null> {
       (user.role === "STUDENT" && (!user.student || ["SUSPENDED", "DROPPED"].includes(user.student.status))) ||
       (user.mustChangePassword && user.passwordExpiresAt && user.passwordExpiresAt.getTime() <= Date.now())) return null;
   return { userId: user.id, username: user.username, role: user.role,
-    mustChangePassword: user.mustChangePassword, sessionVersion: user.sessionVersion };
+    mustChangePassword: user.mustChangePassword, sessionVersion: user.sessionVersion, admissionRequired: user.admissionRequired };
 }
 
 export async function destroySession(): Promise<void> {

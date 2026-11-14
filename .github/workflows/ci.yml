@@ -42,6 +42,7 @@ jobs:
       # do not fail. Not a real credential; production values live in the
       # deployment environment, never in this repository.
       SESSION_SECRET: ci-placeholder-secret-0123456789abcdef
+      LMS_PUBLIC_URL: https://lms.example.invalid
 
     steps:
       - name: Check out the repository
@@ -58,6 +59,9 @@ jobs:
 
       - name: Generate the Prisma client
         run: npx prisma generate
+
+      - name: Verify readable source and migration checksums
+        run: npm run verify:source
 
       - name: Apply migrations to the CI database
         run: npx prisma migrate deploy

@@ -11,7 +11,6 @@ import {
 } from "@/lib/ids";
 import { logAction } from "@/lib/audit";
 import { notifyUser } from "@/lib/notifications";
-import { getSetting } from "@/lib/settings";
 import { emailSchema, assertIdentityAvailable } from "@/lib/auth/identity";
 import { authorizeActor, manageableTarget } from "@/lib/auth/account-policy";
 import { resetAccountPassword, sendAccountResetLink, setAccountActive } from "@/lib/auth/accounts";
@@ -150,7 +149,7 @@ export async function createStudentAction(
 
     revalidatePath("/admin/students");
     return { ok: true, id: student.id, studentId: student.studentId, username: student.username, tempPassword };
-  } catch (e) {
+  } catch {
     return { ok: false, error: "Failed to create student. Please try again." };
   }
 }
@@ -233,7 +232,7 @@ export async function sendStudentResetLinkAction(
     if (result === "not-configured") {
       return { ok: false, error: "Email is not configured on the server, so no link was sent. Use the temporary-password reset instead." };
     }
-    if (result === "failed") return { ok: false, error: "The reset email could not be sent. Please try again." };
+    if (result === "failed") return { ok: false, error: "Please wait before requesting another reset link." };
     return { ok: true };
   } catch { return { ok: false, error: "Unable to send a reset link for this account." }; }
 }

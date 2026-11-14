@@ -109,6 +109,7 @@ export async function getStudent360(id: string) {
         select: {
           id: true,
           progress: true,
+          accessSuspended: true,
           course: { select: { title: true } },
           batch: { select: { name: true, teacher: { select: { fullName: true } } } },
         },

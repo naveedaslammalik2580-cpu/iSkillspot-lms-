@@ -1,3 +1,5 @@
+> Historical feature report. For the combined implementation, use [the reconciliation report](auth-admissions-reconciliation-report.md) and [the consolidated deployment guide](deployment/consolidated-supabase.md).
+
 # Authentication, Password Recovery & UX Audit Report
 
 - Repository: `naveedaslammalik2580-cpu/iSkillspot-lms-`
