@@ -1,1 +1,55 @@
-aW1wb3J0IHsgTmV4dFJlc3BvbnNlLCB0eXBlIE5leHRSZXF1ZXN0IH0gZnJvbSAibmV4dC9zZXJ2ZXIiOwppbXBvcnQgeyBDT09LSUVfTkFNRSwgdmVyaWZ5VG9rZW4gfSBmcm9tICJAL2xpYi9hdXRoL3Rva2VuIjsKCi8vIFJvdXRlIHByZWZpeGVzIGFuZCB0aGUgcm9sZXMgYWxsb3dlZCB0byByZWFjaCB0aGVtLgpjb25zdCBSVUxFUzogeyBwcmVmaXg6IHN0cmluZzsgcm9sZXM6IHN0cmluZ1tdIH1bXSA9IFsKICB7IHByZWZpeDogIi9hZG1pbiIsIHJvbGVzOiBbIlNVUEVSX0FETUlOIiwgIkFETUlOIl0gfSwKICB7IHByZWZpeDogIi90ZWFjaGVyIiwgcm9sZXM6IFsiVEVBQ0hFUiJdIH0sCiAgeyBwcmVmaXg6ICIvc3R1ZGVudCIsIHJvbGVzOiBbIlNUVURFTlQiXSB9LApdOwoKZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIG1pZGRsZXdhcmUocmVxOiBOZXh0UmVxdWVzdCkgewogIGNvbnN0IHsgcGF0aG5hbWUgfSA9IHJlcS5uZXh0VXJsOwoKICBjb25zdCBydWxlID0gUlVMRVMuZmluZCgocikgPT4gcGF0aG5hbWUuc3RhcnRzV2l0aChyLnByZWZpeCkpOwogIGlmICghcnVsZSkgcmV0dXJuIE5leHRSZXNwb25zZS5uZXh0KCk7CgogIGNvbnN0IHRva2VuID0gcmVxLmNvb2tpZXMuZ2V0KENPT0tJRV9OQU1FKT8udmFsdWU7CiAgaWYgKCF0b2tlbikgewogICAgcmV0dXJuIE5leHRSZXNwb25zZS5yZWRpcmVjdChuZXcgVVJMKCIvbG9naW4iLCByZXEudXJsKSk7CiAgfQoKICB0cnkgewogICAgY29uc3QgcGF5bG9hZCA9IGF3YWl0IHZlcmlmeVRva2VuKHRva2VuKTsKICAgIGNvbnN0IHJvbGUgPSBwYXlsb2FkLnJvbGUgYXMgc3RyaW5nOwoKICAgIGlmICghcnVsZS5yb2xlcy5pbmNsdWRlcyhyb2xlKSkgewogICAgICByZXR1cm4gTmV4dFJlc3BvbnNlLnJlZGlyZWN0KG5ldyBVUkwoIi9mb3JiaWRkZW4iLCByZXEudXJsKSk7CiAgICB9CgogICAgLy8gRm9yY2UgcGFzc3dvcmQgY2hhbmdlIG9uIGZpcnN0IGxvZ2luIGJlZm9yZSBhbnl0aGluZyBlbHNlLgogICAgaWYgKAogICAgICBwYXlsb2FkLm11c3RDaGFuZ2VQYXNzd29yZCA9PT0gdHJ1ZSAmJgogICAgICAhcGF0aG5hbWUuc3RhcnRzV2l0aCgiL3N0dWRlbnQvY2hhbmdlLXBhc3N3b3JkIikgJiYKICAgICAgIXBhdGhuYW1lLnN0YXJ0c1dpdGgoIi9jaGFuZ2UtcGFzc3dvcmQiKQogICAgKSB7CiAgICAgIGNvbnN0IHRhcmdldCA9IHJvbGUgPT09ICJTVFVERU5UIiA/ICIvc3R1ZGVudC9jaGFuZ2UtcGFzc3dvcmQiIDogIi9jaGFuZ2UtcGFzc3dvcmQiOwogICAgICBpZiAocGF0aG5hbWUgIT09IHRhcmdldCkgewogICAgICAgIHJldHVybiBOZXh0UmVzcG9uc2UucmVkaXJlY3QobmV3IFVSTCh0YXJnZXQsIHJlcS51cmwpKTsKICAgICAgfQogICAgfQoKICAgIHJldHVybiBOZXh0UmVzcG9uc2UubmV4dCgpOwogIH0gY2F0Y2ggewogICAgLy8gQSBjb29raWUgd2FzIHByZXNlbnRlZCBidXQgZGlkIG5vdCB2ZXJpZnkgKGV4cGlyZWQgb3Igbm8gbG9uZ2VyCiAgICAvLyB2YWxpZCk6IHNlbmQgdGhlIHVzZXIgdG8gbG9naW4gd2l0aCBhbiBleHBsYW5hdGlvbiBpbnN0ZWFkIG9mIGEKICAgIC8vIGJhcmUgcmVkaXJlY3QsIGFuZCBjbGVhciB0aGUgZGVhZCBjb29raWUuCiAgICBjb25zdCByZXMgPSBOZXh0UmVzcG9uc2UucmVkaXJlY3QobmV3IFVSTCgiL2xvZ2luP2V4cGlyZWQ9MSIsIHJlcS51cmwpKTsKICAgIHJlcy5jb29raWVzLmRlbGV0ZShDT09LSUVfTkFNRSk7CiAgICByZXR1cm4gcmVzOwogIH0KfQoKZXhwb3J0IGNvbnN0IGNvbmZpZyA9IHsKICBtYXRjaGVyOiBbIi9hZG1pbi86cGF0aCoiLCAiL3RlYWNoZXIvOnBhdGgqIiwgIi9zdHVkZW50LzpwYXRoKiJdLAp9Owo=
+import { NextResponse, type NextRequest } from "next/server";
+import { COOKIE_NAME, verifyToken } from "@/lib/auth/token";
+
+// Route prefixes and the roles allowed to reach them.
+const RULES: { prefix: string; roles: string[] }[] = [
+  { prefix: "/admin", roles: ["SUPER_ADMIN", "ADMIN"] },
+  { prefix: "/teacher", roles: ["TEACHER"] },
+  { prefix: "/student", roles: ["STUDENT"] },
+];
+
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  const rule = RULES.find((r) => pathname.startsWith(r.prefix));
+  if (!rule) return NextResponse.next();
+
+  const token = req.cookies.get(COOKIE_NAME)?.value;
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  try {
+    const payload = await verifyToken(token);
+    const role = payload.role as string;
+
+    if (!rule.roles.includes(role)) {
+      return NextResponse.redirect(new URL("/forbidden", req.url));
+    }
+
+    // Force password change on first login before anything else.
+    if (
+      payload.mustChangePassword === true &&
+      !pathname.startsWith("/student/change-password") &&
+      !pathname.startsWith("/change-password")
+    ) {
+      const target = role === "STUDENT" ? "/student/change-password" : "/change-password";
+      if (pathname !== target) {
+        return NextResponse.redirect(new URL(target, req.url));
+      }
+    }
+
+    return NextResponse.next();
+  } catch {
+    // A cookie was presented but did not verify (expired or no longer
+    // valid): send the user to login with an explanation instead of a
+    // bare redirect, and clear the dead cookie.
+    const res = NextResponse.redirect(new URL("/login?expired=1", req.url));
+    res.cookies.delete(COOKIE_NAME);
+    return res;
+  }
+}
+
+export const config = {
+  matcher: ["/admin/:path*", "/teacher/:path*", "/student/:path*"],
+};

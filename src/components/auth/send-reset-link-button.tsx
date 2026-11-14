@@ -1,1 +1,38 @@
-InVzZSBjbGllbnQiOwoKaW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IE1haWwgfSBmcm9tICJsdWNpZGUtcmVhY3QiOwppbXBvcnQgeyBCdXR0b24gfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvYnV0dG9uIjsKCnR5cGUgU2VuZFJlc3VsdCA9IHsgb2s6IHRydWUgfSB8IHsgb2s6IGZhbHNlOyBlcnJvcjogc3RyaW5nIH07CgovKioKICogIkVtYWlsIHJlc2V0IGxpbmsiIOKAlCB0aGUgcHJlZmVycmVkIHN0YWZmIHJlY292ZXJ5IGFjdGlvbi4gVGhlIHNlcnZlcgogKiBhY3Rpb24gZW5mb3JjZXMgdGhlIHJvbGUgaGllcmFyY2h5OyB0aGlzIGJ1dHRvbiBvbmx5IHJlbmRlcnMgdGhlCiAqIG91dGNvbWUgKHNlbnQgLyB3aHkgbm90KS4gTm8gY3JlZGVudGlhbCBpcyBldmVyIHNob3duIHRvIHN0YWZmLgogKi8KZXhwb3J0IGZ1bmN0aW9uIFNlbmRSZXNldExpbmtCdXR0b24oeyBvblNlbmQgfTogeyBvblNlbmQ6ICgpID0+IFByb21pc2U8U2VuZFJlc3VsdD4gfSkgewogIGNvbnN0IFtidXN5LCBzZXRCdXN5XSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbc2VudCwgc2V0U2VudF0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgW2Vycm9yLCBzZXRFcnJvcl0gPSB1c2VTdGF0ZTxzdHJpbmcgfCBudWxsPihudWxsKTsKCiAgYXN5bmMgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldEJ1c3kodHJ1ZSk7CiAgICBzZXRFcnJvcihudWxsKTsKICAgIHNldFNlbnQoZmFsc2UpOwogICAgY29uc3QgcmVzID0gYXdhaXQgb25TZW5kKCk7CiAgICBzZXRCdXN5KGZhbHNlKTsKICAgIGlmIChyZXMub2spIHNldFNlbnQodHJ1ZSk7CiAgICBlbHNlIHNldEVycm9yKHJlcy5lcnJvcik7CiAgfQoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZmxleC1jb2wgaXRlbXMtZW5kIGdhcC0xIj4KICAgICAgPEJ1dHRvbiB0eXBlPSJidXR0b24iIHZhcmlhbnQ9Im91dGxpbmUiIHNpemU9InNtIiBvbkNsaWNrPXtvbkNsaWNrfSBkaXNhYmxlZD17YnVzeX0+CiAgICAgICAgPE1haWwgY2xhc3NOYW1lPSJoLTQgdy00IiAvPiB7YnVzeSA/ICJTZW5kaW5n4oCmIiA6ICJFbWFpbCByZXNldCBsaW5rIn0KICAgICAgPC9CdXR0b24+CiAgICAgIHtzZW50ICYmIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQiPlJlc2V0IGxpbmsgc2VudCB0byB0aGUgYWNjb3VudCZyc3F1bztzIGVtYWlsLjwvcD59CiAgICAgIHtlcnJvciAmJiA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC1kZXN0cnVjdGl2ZSI+e2Vycm9yfTwvcD59CiAgICA8L2Rpdj4KICApOwp9Cg==
+"use client";
+
+import { useState } from "react";
+import { Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+type SendResult = { ok: true } | { ok: false; error: string };
+
+/**
+ * "Email reset link" — the preferred staff recovery action. The server
+ * action enforces the role hierarchy; this button only renders the
+ * outcome (sent / why not). No credential is ever shown to staff.
+ */
+export function SendResetLinkButton({ onSend }: { onSend: () => Promise<SendResult> }) {
+  const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onClick() {
+    setBusy(true);
+    setError(null);
+    setSent(false);
+    const res = await onSend();
+    setBusy(false);
+    if (res.ok) setSent(true);
+    else setError(res.error);
+  }
+
+  return (
+    <div className="flex flex-col items-end gap-1">
+      <Button type="button" variant="outline" size="sm" onClick={onClick} disabled={busy}>
+        <Mail className="h-4 w-4" /> {busy ? "Sending…" : "Email reset link"}
+      </Button>
+      {sent && <p className="text-xs text-muted-foreground">Reset link sent to the account&rsquo;s email.</p>}
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}

@@ -1,1 +1,113 @@
-InVzZSBjbGllbnQiOwoKaW1wb3J0IHsgU3VzcGVuc2UsIHVzZUFjdGlvblN0YXRlLCB1c2VTdGF0ZSB9IGZyb20gInJlYWN0IjsKaW1wb3J0IExpbmsgZnJvbSAibmV4dC9saW5rIjsKaW1wb3J0IHsgdXNlU2VhcmNoUGFyYW1zIH0gZnJvbSAibmV4dC9uYXZpZ2F0aW9uIjsKaW1wb3J0IHsgbG9naW5BY3Rpb24sIHR5cGUgQWN0aW9uU3RhdGUgfSBmcm9tICJAL2xpYi9hY3Rpb25zL2F1dGgiOwppbXBvcnQgeyBCdXR0b24gfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvYnV0dG9uIjsKaW1wb3J0IHsgSW5wdXQgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvaW5wdXQiOwppbXBvcnQgeyBMYWJlbCB9IGZyb20gIkAvY29tcG9uZW50cy91aS9sYWJlbCI7CmltcG9ydCB7IFBhc3N3b3JkSW5wdXQgfSBmcm9tICJAL2NvbXBvbmVudHMvYXV0aC9wYXNzd29yZC1pbnB1dCI7CmltcG9ydCB7IEdyYWR1YXRpb25DYXAgfSBmcm9tICJsdWNpZGUtcmVhY3QiOwoKY29uc3QgaW5pdGlhbDogQWN0aW9uU3RhdGUgPSB7fTsKCmZ1bmN0aW9uIExvZ2luRm9ybSgpIHsKICBjb25zdCBbc3RhdGUsIGZvcm1BY3Rpb24sIHBlbmRpbmddID0gdXNlQWN0aW9uU3RhdGUobG9naW5BY3Rpb24sIGluaXRpYWwpOwogIC8vIENvbnRyb2xsZWQgaWRlbnRpZmllcjogUmVhY3QgcmVzZXRzIHVuY29udHJvbGxlZCBmb3JtIGZpZWxkcyBhZnRlcgogIC8vIGFuIGFjdGlvbiByb3VuZC10cmlwLCB3aGljaCB1c2VkIHRvIHdpcGUgdGhlIHR5cGVkIHVzZXJuYW1lIGFmdGVyCiAgLy8gZXZlcnkgZmFpbGVkIGF0dGVtcHQuIChUaGUgcGFzc3dvcmQgZmllbGQgaW50ZW50aW9uYWxseSBjbGVhcnMuKQogIGNvbnN0IFtpZGVudGlmaWVyLCBzZXRJZGVudGlmaWVyXSA9IHVzZVN0YXRlKCIiKTsKICBjb25zdCBwYXJhbXMgPSB1c2VTZWFyY2hQYXJhbXMoKTsKICBjb25zdCBqdXN0UmVzZXQgPSBwYXJhbXMuZ2V0KCJyZXNldCIpID09PSAiMSI7CiAgY29uc3Qgc2Vzc2lvbkV4cGlyZWQgPSBwYXJhbXMuZ2V0KCJleHBpcmVkIikgPT09ICIxIjsKCiAgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IG1pbi1oLXNjcmVlbiBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgYmctZ3JhZGllbnQtdG8tYnIgZnJvbS1hY2NlbnQgdG8tYmFja2dyb3VuZCBwLTQiPgogICAgICA8ZGl2IGNsYXNzTmFtZT0idy1mdWxsIG1heC13LW1kIj4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWItOCBmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciB0ZXh0LWNlbnRlciI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWItMyBmbGV4IGgtMTQgdy0xNCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgcm91bmRlZC14bCBiZy1wcmltYXJ5IHRleHQtcHJpbWFyeS1mb3JlZ3JvdW5kIj4KICAgICAgICAgICAgPEdyYWR1YXRpb25DYXAgY2xhc3NOYW1lPSJoLTggdy04IiAvPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8aDEgY2xhc3NOYW1lPSJ0ZXh0LTJ4bCBmb250LWJvbGQiPmlTa2lsbFNwb3Q8L2gxPgogICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+TGVhcm5pbmcgTWFuYWdlbWVudCBTeXN0ZW08L3A+CiAgICAgICAgPC9kaXY+CgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyb3VuZGVkLWxnIGJvcmRlciBib3JkZXItYm9yZGVyIGJnLWNhcmQgcC02IHNoYWRvdy1zbSI+CiAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJtYi0xIHRleHQtbGcgZm9udC1zZW1pYm9sZCI+U2lnbiBpbjwvaDI+CiAgICAgICAgICA8cCBjbGFzc05hbWU9Im1iLTYgdGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQiPgogICAgICAgICAgICBVc2UgdGhlIGNyZWRlbnRpYWxzIHByb3ZpZGVkIGJ5IHlvdXIgaW5zdGl0dXRlLgogICAgICAgICAgPC9wPgoKICAgICAgICAgIHtqdXN0UmVzZXQgJiYgKAogICAgICAgICAgICA8cCBjbGFzc05hbWU9Im1iLTQgcm91bmRlZC1tZCBiZy1ncmVlbi01MDAvMTAgcHgtMyBweS0yIHRleHQtc20gdGV4dC1ncmVlbi03MDAgZGFyazp0ZXh0LWdyZWVuLTQwMCI+CiAgICAgICAgICAgICAgWW91ciBwYXNzd29yZCBoYXMgYmVlbiByZXNldC4gU2lnbiBpbiB3aXRoIHlvdXIgbmV3IHBhc3N3b3JkLgogICAgICAgICAgICA8L3A+CiAgICAgICAgICApfQogICAgICAgICAge3Nlc3Npb25FeHBpcmVkICYmICFqdXN0UmVzZXQgJiYgKAogICAgICAgICAgICA8cCBjbGFzc05hbWU9Im1iLTQgcm91bmRlZC1tZCBiZy1hbWJlci01MDAvMTAgcHgtMyBweS0yIHRleHQtc20gdGV4dC1hbWJlci03MDAgZGFyazp0ZXh0LWFtYmVyLTQwMCI+CiAgICAgICAgICAgICAgWW91ciBzZXNzaW9uIGhhcyBleHBpcmVkLiBQbGVhc2Ugc2lnbiBpbiBhZ2Fpbi4KICAgICAgICAgICAgPC9wPgogICAgICAgICAgKX0KCiAgICAgICAgICA8Zm9ybSBhY3Rpb249e2Zvcm1BY3Rpb259IGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiI+CiAgICAgICAgICAgICAgPExhYmVsIGh0bWxGb3I9ImlkZW50aWZpZXIiPlVzZXJuYW1lIC8gRW1haWwgLyBTdHVkZW50IElEPC9MYWJlbD4KICAgICAgICAgICAgICA8SW5wdXQKICAgICAgICAgICAgICAgIGlkPSJpZGVudGlmaWVyIgogICAgICAgICAgICAgICAgbmFtZT0iaWRlbnRpZmllciIKICAgICAgICAgICAgICAgIGF1dG9Db21wbGV0ZT0idXNlcm5hbWUiCiAgICAgICAgICAgICAgICByZXF1aXJlZAogICAgICAgICAgICAgICAgdmFsdWU9e2lkZW50aWZpZXJ9CiAgICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHNldElkZW50aWZpZXIoZS50YXJnZXQudmFsdWUpfQogICAgICAgICAgICAgIC8+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0yIj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIj4KICAgICAgICAgICAgICAgIDxMYWJlbCBodG1sRm9yPSJwYXNzd29yZCI+UGFzc3dvcmQ8L0xhYmVsPgogICAgICAgICAgICAgICAgPExpbmsKICAgICAgICAgICAgICAgICAgaHJlZj0iL2ZvcmdvdC1wYXNzd29yZCIKICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtbWVkaXVtIHRleHQtcHJpbWFyeSBob3Zlcjp1bmRlcmxpbmUiCiAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgIEZvcmdvdCBwYXNzd29yZD8KICAgICAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8UGFzc3dvcmRJbnB1dAogICAgICAgICAgICAgICAgaWQ9InBhc3N3b3JkIgogICAgICAgICAgICAgICAgbmFtZT0icGFzc3dvcmQiCiAgICAgICAgICAgICAgICBhdXRvQ29tcGxldGU9ImN1cnJlbnQtcGFzc3dvcmQiCiAgICAgICAgICAgICAgICByZXF1aXJlZAogICAgICAgICAgICAgIC8+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8bGFiZWwgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiB0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+CiAgICAgICAgICAgICAgPGlucHV0IHR5cGU9ImNoZWNrYm94IiBuYW1lPSJyZW1lbWJlciIgY2xhc3NOYW1lPSJoLTQgdy00IHJvdW5kZWQgYm9yZGVyLWlucHV0IiAvPgogICAgICAgICAgICAgIFJlbWVtYmVyIG1lIGZvciAzMCBkYXlzCiAgICAgICAgICAgIDwvbGFiZWw+CgogICAgICAgICAgICB7c3RhdGUuZXJyb3IgJiYgKAogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0icm91bmRlZC1tZCBiZy1kZXN0cnVjdGl2ZS8xMCBweC0zIHB5LTIgdGV4dC1zbSB0ZXh0LWRlc3RydWN0aXZlIj4KICAgICAgICAgICAgICAgIHtzdGF0ZS5lcnJvcn0KICAgICAgICAgICAgICA8L3A+CiAgICAgICAgICAgICl9CgogICAgICAgICAgICA8QnV0dG9uIHR5cGU9InN1Ym1pdCIgY2xhc3NOYW1lPSJ3LWZ1bGwiIGRpc2FibGVkPXtwZW5kaW5nfT4KICAgICAgICAgICAgICB7cGVuZGluZyA/ICJTaWduaW5nIGlu4oCmIiA6ICJTaWduIGluIn0KICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICA8L2Zvcm0+CiAgICAgICAgPC9kaXY+CgogICAgICAgIDxwIGNsYXNzTmFtZT0ibXQtNiB0ZXh0LWNlbnRlciB0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+CiAgICAgICAgICBTdHVkZW50cyBjYW5ub3Qgc2VsZi1yZWdpc3Rlci4gQ29udGFjdCB0aGUgaW5zdGl0dXRlIGZvciBhbiBhY2NvdW50LgogICAgICAgIDwvcD4KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9CgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBMb2dpblBhZ2UoKSB7CiAgcmV0dXJuICgKICAgIDxTdXNwZW5zZT4KICAgICAgPExvZ2luRm9ybSAvPgogICAgPC9TdXNwZW5zZT4KICApOwp9Cg==
+"use client";
+
+import { Suspense, useActionState, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { loginAction, type ActionState } from "@/lib/actions/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/auth/password-input";
+import { GraduationCap } from "lucide-react";
+
+const initial: ActionState = {};
+
+function LoginForm() {
+  const [state, formAction, pending] = useActionState(loginAction, initial);
+  // Controlled identifier: React resets uncontrolled form fields after
+  // an action round-trip, which used to wipe the typed username after
+  // every failed attempt. (The password field intentionally clears.)
+  const [identifier, setIdentifier] = useState("");
+  const params = useSearchParams();
+  const justReset = params.get("reset") === "1";
+  const sessionExpired = params.get("expired") === "1";
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-accent to-background p-4">
+      <div className="w-full max-w-md">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <GraduationCap className="h-8 w-8" />
+          </div>
+          <h1 className="text-2xl font-bold">iSkillSpot</h1>
+          <p className="text-sm text-muted-foreground">Learning Management System</p>
+        </div>
+
+        <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold">Sign in</h2>
+          <p className="mb-6 text-sm text-muted-foreground">
+            Use the credentials provided by your institute.
+          </p>
+
+          {justReset && (
+            <p className="mb-4 rounded-md bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
+              Your password has been reset. Sign in with your new password.
+            </p>
+          )}
+          {sessionExpired && !justReset && (
+            <p className="mb-4 rounded-md bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
+              Your session has expired. Please sign in again.
+            </p>
+          )}
+
+          <form action={formAction} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="identifier">Username / Email / Student ID</Label>
+              <Input
+                id="identifier"
+                name="identifier"
+                autoComplete="username"
+                required
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <PasswordInput
+                id="password"
+                name="password"
+                autoComplete="current-password"
+                required
+              />
+            </div>
+            <label className="flex items-center gap-2 text-sm text-muted-foreground">
+              <input type="checkbox" name="remember" className="h-4 w-4 rounded border-input" />
+              Remember me for 30 days
+            </label>
+
+            {state.error && (
+              <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {state.error}
+              </p>
+            )}
+
+            <Button type="submit" className="w-full" disabled={pending}>
+              {pending ? "Signing in…" : "Sign in"}
+            </Button>
+          </form>
+        </div>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          Students cannot self-register. Contact the institute for an account.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}

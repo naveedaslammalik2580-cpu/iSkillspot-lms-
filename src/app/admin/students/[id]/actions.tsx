@@ -1,1 +1,56 @@
-InVzZSBjbGllbnQiOwoKaW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHVzZVJvdXRlciB9IGZyb20gIm5leHQvbmF2aWdhdGlvbiI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyByZXNldFN0dWRlbnRQYXNzd29yZEFjdGlvbiwgc2VuZFN0dWRlbnRSZXNldExpbmtBY3Rpb24sIHRvZ2dsZVN0dWRlbnRBY2NvdW50QWN0aW9uIH0gZnJvbSAiQC9saWIvYWN0aW9ucy9zdHVkZW50cyI7CmltcG9ydCB7IFNlbmRSZXNldExpbmtCdXR0b24gfSBmcm9tICJAL2NvbXBvbmVudHMvYXV0aC9zZW5kLXJlc2V0LWxpbmstYnV0dG9uIjsKaW1wb3J0IHsgS2V5Um91bmQsIFBvd2VyIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKCmV4cG9ydCBmdW5jdGlvbiBTdHVkZW50QWN0aW9ucyh7CiAgc3R1ZGVudElkLAogIGFjY291bnRTdGF0dXMsCiAgY3VycmVudFN0YXR1cywKfTogewogIHN0dWRlbnRJZDogc3RyaW5nOwogIGFjY291bnRTdGF0dXM6IHN0cmluZzsKICBjdXJyZW50U3RhdHVzOiBzdHJpbmc7Cn0pIHsKICBjb25zdCByb3V0ZXIgPSB1c2VSb3V0ZXIoKTsKICBjb25zdCBbdGVtcFBhc3N3b3JkLCBzZXRUZW1wUGFzc3dvcmRdID0gdXNlU3RhdGU8c3RyaW5nIHwgbnVsbD4obnVsbCk7CiAgY29uc3QgW2J1c3ksIHNldEJ1c3ldID0gdXNlU3RhdGUoZmFsc2UpOwogIGNvbnN0IGlzQWN0aXZlID0gYWNjb3VudFN0YXR1cyA9PT0gIkFDVElWRSI7CgogIGFzeW5jIGZ1bmN0aW9uIHJlc2V0KCkgewogICAgc2V0QnVzeSh0cnVlKTsKICAgIGNvbnN0IHJlcyA9IGF3YWl0IHJlc2V0U3R1ZGVudFBhc3N3b3JkQWN0aW9uKHN0dWRlbnRJZCk7CiAgICBzZXRCdXN5KGZhbHNlKTsKICAgIGlmIChyZXMub2sgJiYgInRlbXBQYXNzd29yZCIgaW4gcmVzKSBzZXRUZW1wUGFzc3dvcmQocmVzLnRlbXBQYXNzd29yZCEpOwogIH0KCiAgYXN5bmMgZnVuY3Rpb24gdG9nZ2xlKCkgewogICAgc2V0QnVzeSh0cnVlKTsKICAgIGF3YWl0IHRvZ2dsZVN0dWRlbnRBY2NvdW50QWN0aW9uKHN0dWRlbnRJZCwgIWlzQWN0aXZlKTsKICAgIHNldEJ1c3koZmFsc2UpOwogICAgcm91dGVyLnJlZnJlc2goKTsKICB9CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LWNvbCBpdGVtcy1lbmQgZ2FwLTIiPgogICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LXdyYXAgZ2FwLTIiPgogICAgICAgIDxCdXR0b24gdmFyaWFudD0ib3V0bGluZSIgc2l6ZT0ic20iIG9uQ2xpY2s9e3Jlc2V0fSBkaXNhYmxlZD17YnVzeX0+CiAgICAgICAgICA8S2V5Um91bmQgY2xhc3NOYW1lPSJoLTQgdy00IiAvPiBSZXNldCBwYXNzd29yZAogICAgICAgIDwvQnV0dG9uPgogICAgICAgIDxCdXR0b24gdmFyaWFudD17aXNBY3RpdmUgPyAiZGVzdHJ1Y3RpdmUiIDogImRlZmF1bHQifSBzaXplPSJzbSIgb25DbGljaz17dG9nZ2xlfSBkaXNhYmxlZD17YnVzeX0+CiAgICAgICAgICA8UG93ZXIgY2xhc3NOYW1lPSJoLTQgdy00IiAvPiB7aXNBY3RpdmUgPyAiRGVhY3RpdmF0ZSIgOiAiQWN0aXZhdGUifQogICAgICAgIDwvQnV0dG9uPgogICAgICAgIDxTZW5kUmVzZXRMaW5rQnV0dG9uIG9uU2VuZD17KCkgPT4gc2VuZFN0dWRlbnRSZXNldExpbmtBY3Rpb24oc3R1ZGVudElkKX0gLz4KICAgICAgPC9kaXY+CiAgICAgIHt0ZW1wUGFzc3dvcmQgJiYgKAogICAgICAgIDxwIGNsYXNzTmFtZT0icm91bmRlZC1tZCBiZy1tdXRlZCBweC0zIHB5LTIgdGV4dC14cyI+CiAgICAgICAgICBOZXcgdGVtcG9yYXJ5IHBhc3N3b3JkOiA8c3Ryb25nIGNsYXNzTmFtZT0iZm9udC1tb25vIj57dGVtcFBhc3N3b3JkfTwvc3Ryb25nPgogICAgICAgIDwvcD4KICAgICAgKX0KICAgIDwvZGl2PgogICk7Cn0K
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { resetStudentPasswordAction, sendStudentResetLinkAction, toggleStudentAccountAction } from "@/lib/actions/students";
+import { SendResetLinkButton } from "@/components/auth/send-reset-link-button";
+import { KeyRound, Power } from "lucide-react";
+
+export function StudentActions({
+  studentId,
+  accountStatus,
+  currentStatus,
+}: {
+  studentId: string;
+  accountStatus: string;
+  currentStatus: string;
+}) {
+  const router = useRouter();
+  const [tempPassword, setTempPassword] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const isActive = accountStatus === "ACTIVE";
+
+  async function reset() {
+    setBusy(true);
+    const res = await resetStudentPasswordAction(studentId);
+    setBusy(false);
+    if (res.ok && "tempPassword" in res) setTempPassword(res.tempPassword!);
+  }
+
+  async function toggle() {
+    setBusy(true);
+    await toggleStudentAccountAction(studentId, !isActive);
+    setBusy(false);
+    router.refresh();
+  }
+
+  return (
+    <div className="flex flex-col items-end gap-2">
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" onClick={reset} disabled={busy}>
+          <KeyRound className="h-4 w-4" /> Reset password
+        </Button>
+        <Button variant={isActive ? "destructive" : "default"} size="sm" onClick={toggle} disabled={busy}>
+          <Power className="h-4 w-4" /> {isActive ? "Deactivate" : "Activate"}
+        </Button>
+        <SendResetLinkButton onSend={() => sendStudentResetLinkAction(studentId)} />
+      </div>
+      {tempPassword && (
+        <p className="rounded-md bg-muted px-3 py-2 text-xs">
+          New temporary password: <strong className="font-mono">{tempPassword}</strong>
+        </p>
+      )}
+    </div>
+  );
+}

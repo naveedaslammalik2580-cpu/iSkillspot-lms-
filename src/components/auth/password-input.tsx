@@ -1,1 +1,34 @@
-InVzZSBjbGllbnQiOwoKaW1wb3J0IHsgdXNlU3RhdGUsIHR5cGUgQ29tcG9uZW50UHJvcHMgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IEV5ZSwgRXllT2ZmIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKaW1wb3J0IHsgSW5wdXQgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvaW5wdXQiOwppbXBvcnQgeyBjbiB9IGZyb20gIkAvbGliL3V0aWxzIjsKCi8qKgogKiBQYXNzd29yZCBmaWVsZCB3aXRoIGEgdmlzaWJpbGl0eSB0b2dnbGUuIFVzZWQgYnkgdGhlIGxvZ2luLCByZXNldAogKiBhbmQgY2hhbmdlLXBhc3N3b3JkIGZvcm1zIHNvIHRoZSBiZWhhdmlvciAoYW5kIHRoZSBhY2Nlc3NpYmlsaXR5CiAqIGxhYmVscykgc3RheSBpZGVudGljYWwgZXZlcnl3aGVyZS4KICovCmV4cG9ydCBmdW5jdGlvbiBQYXNzd29yZElucHV0KHsgY2xhc3NOYW1lLCAuLi5wcm9wcyB9OiBDb21wb25lbnRQcm9wczx0eXBlb2YgSW5wdXQ+KSB7CiAgY29uc3QgW3Zpc2libGUsIHNldFZpc2libGVdID0gdXNlU3RhdGUoZmFsc2UpOwogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0icmVsYXRpdmUiPgogICAgICA8SW5wdXQKICAgICAgICB7Li4ucHJvcHN9CiAgICAgICAgdHlwZT17dmlzaWJsZSA/ICJ0ZXh0IiA6ICJwYXNzd29yZCJ9CiAgICAgICAgY2xhc3NOYW1lPXtjbigicHItMTAiLCBjbGFzc05hbWUpfQogICAgICAvPgogICAgICA8YnV0dG9uCiAgICAgICAgdHlwZT0iYnV0dG9uIgogICAgICAgIG9uQ2xpY2s9eygpID0+IHNldFZpc2libGUoKHYpID0+ICF2KX0KICAgICAgICBhcmlhLWxhYmVsPXt2aXNpYmxlID8gIkhpZGUgcGFzc3dvcmQiIDogIlNob3cgcGFzc3dvcmQifQogICAgICAgIGFyaWEtcHJlc3NlZD17dmlzaWJsZX0KICAgICAgICBjbGFzc05hbWU9ImFic29sdXRlIGluc2V0LXktMCByaWdodC0wIGZsZXggdy0xMCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIGhvdmVyOnRleHQtZm9yZWdyb3VuZCIKICAgICAgICB0YWJJbmRleD17LTF9CiAgICAgID4KICAgICAgICB7dmlzaWJsZSA/IDxFeWVPZmYgY2xhc3NOYW1lPSJoLTQgdy00IiAvPiA6IDxFeWUgY2xhc3NOYW1lPSJoLTQgdy00IiAvPn0KICAgICAgPC9idXR0b24+CiAgICA8L2Rpdj4KICApOwp9Cg==
+"use client";
+
+import { useState, type ComponentProps } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+/**
+ * Password field with a visibility toggle. Used by the login, reset
+ * and change-password forms so the behavior (and the accessibility
+ * labels) stay identical everywhere.
+ */
+export function PasswordInput({ className, ...props }: ComponentProps<typeof Input>) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div className="relative">
+      <Input
+        {...props}
+        type={visible ? "text" : "password"}
+        className={cn("pr-10", className)}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        aria-label={visible ? "Hide password" : "Show password"}
+        aria-pressed={visible}
+        className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground hover:text-foreground"
+        tabIndex={-1}
+      >
+        {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+      </button>
+    </div>
+  );
+}

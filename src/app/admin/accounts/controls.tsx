@@ -1,1 +1,77 @@
-InVzZSBjbGllbnQiOwoKaW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHVzZVJvdXRlciB9IGZyb20gIm5leHQvbmF2aWdhdGlvbiI7CmltcG9ydCB7IGNyZWF0ZUFkbWluQWN0aW9uLCByZXNldEFjY291bnRBY3Rpb24sIHNldEFjY291bnRBY3RpdmVBY3Rpb24sIHR5cGUgQWNjb3VudFJlc3VsdCB9IGZyb20gIkAvbGliL2FjdGlvbnMvYWNjb3VudHMiOwppbXBvcnQgeyBzZW5kUmVzZXRMaW5rQWN0aW9uIH0gZnJvbSAiQC9saWIvYWN0aW9ucy9wYXNzd29yZC1yZWNvdmVyeSI7CmltcG9ydCB7IFNlbmRSZXNldExpbmtCdXR0b24gfSBmcm9tICJAL2NvbXBvbmVudHMvYXV0aC9zZW5kLXJlc2V0LWxpbmstYnV0dG9uIjsKaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CmltcG9ydCB7IElucHV0IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2lucHV0IjsKaW1wb3J0IHsgTGFiZWwgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvbGFiZWwiOwoKZnVuY3Rpb24gVGVtcG9yYXJ5Q3JlZGVudGlhbCh7IHZhbHVlLCBkaXNtaXNzIH06IHsgdmFsdWU6IHN0cmluZzsgZGlzbWlzczogKCkgPT4gdm9pZCB9KSB7CiAgcmV0dXJuIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTIgcm91bmRlZC1tZCBib3JkZXIgYm9yZGVyLWJvcmRlciBiZy1tdXRlZC80MCBwLTMiPgogICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIj5TaGFyZSBwcml2YXRlbHkuIFRoaXMgdGVtcG9yYXJ5IHBhc3N3b3JkIGV4cGlyZXMgaW4gMjQgaG91cnMgYW5kIG11c3QgYmUgY2hhbmdlZCBhdCBmaXJzdCBsb2dpbi48L3A+CiAgICA8SW5wdXQgdHlwZT0icGFzc3dvcmQiIHZhbHVlPXt2YWx1ZX0gcmVhZE9ubHkgYXV0b0NvbXBsZXRlPSJvZmYiIGFyaWEtbGFiZWw9Ik9uZS10aW1lIHRlbXBvcmFyeSBwYXNzd29yZCIgLz4KICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGdhcC0yIj4KICAgICAgPEJ1dHRvbiB0eXBlPSJidXR0b24iIHNpemU9InNtIiB2YXJpYW50PSJvdXRsaW5lIiBvbkNsaWNrPXsoKSA9PiBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCh2YWx1ZSl9PkNvcHkgdGVtcG9yYXJ5IHBhc3N3b3JkPC9CdXR0b24+CiAgICAgIDxCdXR0b24gdHlwZT0iYnV0dG9uIiBzaXplPSJzbSIgdmFyaWFudD0iZ2hvc3QiIG9uQ2xpY2s9e2Rpc21pc3N9PkRpc21pc3M8L0J1dHRvbj4KICAgIDwvZGl2PgogIDwvZGl2PjsKfQoKZXhwb3J0IGZ1bmN0aW9uIEFjY291bnRDb250cm9scyh7IHVzZXJJZCwgYWN0aXZlIH06IHsgdXNlcklkOiBzdHJpbmc7IGFjdGl2ZTogYm9vbGVhbiB9KSB7CiAgY29uc3Qgcm91dGVyID0gdXNlUm91dGVyKCk7CiAgY29uc3QgW3BlbmRpbmcsIHNldFBlbmRpbmddID0gdXNlU3RhdGUoZmFsc2UpOwogIGNvbnN0IFtlcnJvciwgc2V0RXJyb3JdID0gdXNlU3RhdGUoIiIpOwogIGNvbnN0IFt0ZW1wLCBzZXRUZW1wXSA9IHVzZVN0YXRlKCIiKTsKICBhc3luYyBmdW5jdGlvbiBwZXJmb3JtKHJlc2V0OiBib29sZWFuKSB7CiAgICBpZiAoIXdpbmRvdy5jb25maXJtKHJlc2V0ID8gIlJlc2V0IHRoaXMgcGFzc3dvcmQgYW5kIHNpZ24gb3V0IGV4aXN0aW5nIHNlc3Npb25zPyIgOiBgJHthY3RpdmUgPyAiRGVhY3RpdmF0ZSIgOiAiQWN0aXZhdGUifSB0aGlzIGFjY291bnQgYW5kIGludmFsaWRhdGUgZXhpc3Rpbmcgc2Vzc2lvbnM/YCkpIHJldHVybjsKICAgIHNldFBlbmRpbmcodHJ1ZSk7IHNldEVycm9yKCIiKTsgc2V0VGVtcCgiIik7CiAgICB0cnkgewogICAgICBjb25zdCByZXN1bHQ6IEFjY291bnRSZXN1bHQgPSByZXNldCA/IGF3YWl0IHJlc2V0QWNjb3VudEFjdGlvbih1c2VySWQpIDogYXdhaXQgc2V0QWNjb3VudEFjdGl2ZUFjdGlvbih1c2VySWQsICFhY3RpdmUpOwogICAgICBpZiAocmVzdWx0Lm9rKSB7IHNldFRlbXAocmVzdWx0LnRlbXBQYXNzd29yZCA/PyAiIik7IHJvdXRlci5yZWZyZXNoKCk7IH0KICAgICAgZWxzZSBzZXRFcnJvcihyZXN1bHQuZXJyb3IpOwogICAgfSBjYXRjaCB7IHNldEVycm9yKCJVbmFibGUgdG8gdXBkYXRlIGFjY291bnQuIFBsZWFzZSB0cnkgYWdhaW4uIik7IH0KICAgIGZpbmFsbHkgeyBzZXRQZW5kaW5nKGZhbHNlKTsgfQogIH0KICByZXR1cm4gPGRpdiBjbGFzc05hbWU9Im1pbi13LTU2IHNwYWNlLXktMiI+CiAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBnYXAtMiI+CiAgICAgIDxCdXR0b24gdHlwZT0iYnV0dG9uIiBzaXplPSJzbSIgdmFyaWFudD0ib3V0bGluZSIgZGlzYWJsZWQ9e3BlbmRpbmd9IG9uQ2xpY2s9eygpID0+IHBlcmZvcm0odHJ1ZSl9PlJlc2V0IHBhc3N3b3JkPC9CdXR0b24+CiAgICAgIDxCdXR0b24gdHlwZT0iYnV0dG9uIiBzaXplPSJzbSIgdmFyaWFudD0ib3V0bGluZSIgZGlzYWJsZWQ9e3BlbmRpbmd9IG9uQ2xpY2s9eygpID0+IHBlcmZvcm0oZmFsc2UpfT57YWN0aXZlID8gIkRlYWN0aXZhdGUiIDogIkFjdGl2YXRlIn08L0J1dHRvbj4KICAgIDwvZGl2PgogICAgPFNlbmRSZXNldExpbmtCdXR0b24gb25TZW5kPXsoKSA9PiBzZW5kUmVzZXRMaW5rQWN0aW9uKHVzZXJJZCl9IC8+CiAgICB7ZXJyb3IgJiYgPHAgcm9sZT0iYWxlcnQiIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LWRlc3RydWN0aXZlIj57ZXJyb3J9PC9wPn0KICAgIHt0ZW1wICYmIDxUZW1wb3JhcnlDcmVkZW50aWFsIHZhbHVlPXt0ZW1wfSBkaXNtaXNzPXsoKSA9PiBzZXRUZW1wKCIiKX0gLz59CiAgPC9kaXY+Owp9CgpleHBvcnQgZnVuY3Rpb24gQ3JlYXRlQWRtaW5Gb3JtKCkgewogIGNvbnN0IHJvdXRlciA9IHVzZVJvdXRlcigpOwogIGNvbnN0IFtwZW5kaW5nLCBzZXRQZW5kaW5nXSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbZXJyb3IsIHNldEVycm9yXSA9IHVzZVN0YXRlKCIiKTsKICBjb25zdCBbY3JlYXRlZCwgc2V0Q3JlYXRlZF0gPSB1c2VTdGF0ZTx7IHVzZXJuYW1lOiBzdHJpbmc7IHBhc3N3b3JkOiBzdHJpbmcgfSB8IG51bGw+KG51bGwpOwogIGFzeW5jIGZ1bmN0aW9uIHN1Ym1pdChldmVudDogUmVhY3QuRm9ybUV2ZW50PEhUTUxGb3JtRWxlbWVudD4pIHsKICAgIGV2ZW50LnByZXZlbnREZWZhdWx0KCk7CiAgICBjb25zdCBmb3JtID0gZXZlbnQuY3VycmVudFRhcmdldDsKICAgIGNvbnN0IGRhdGEgPSBuZXcgRm9ybURhdGEoZm9ybSk7CiAgICBzZXRQZW5kaW5nKHRydWUpOyBzZXRFcnJvcigiIik7CiAgICB0cnkgewogICAgICBjb25zdCByZXN1bHQgPSBhd2FpdCBjcmVhdGVBZG1pbkFjdGlvbih7IHVzZXJuYW1lOiBTdHJpbmcoZGF0YS5nZXQoInVzZXJuYW1lIikgPz8gIiIpLCBlbWFpbDogU3RyaW5nKGRhdGEuZ2V0KCJlbWFpbCIpID8/ICIiKSB9KTsKICAgICAgaWYgKHJlc3VsdC5vayAmJiByZXN1bHQudGVtcFBhc3N3b3JkICYmIHJlc3VsdC51c2VybmFtZSkgewogICAgICAgIHNldENyZWF0ZWQoeyB1c2VybmFtZTogcmVzdWx0LnVzZXJuYW1lLCBwYXNzd29yZDogcmVzdWx0LnRlbXBQYXNzd29yZCB9KTsgZm9ybS5yZXNldCgpOyByb3V0ZXIucmVmcmVzaCgpOwogICAgICB9IGVsc2UgaWYgKCFyZXN1bHQub2spIHNldEVycm9yKHJlc3VsdC5lcnJvcik7CiAgICB9IGNhdGNoIHsgc2V0RXJyb3IoIlVuYWJsZSB0byBjcmVhdGUgYWRtaW5pc3RyYXRvci4gUGxlYXNlIHRyeSBhZ2Fpbi4iKTsgfQogICAgZmluYWxseSB7IHNldFBlbmRpbmcoZmFsc2UpOyB9CiAgfQogIHJldHVybiA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgIDxoMiBjbGFzc05hbWU9ImZvbnQtc2VtaWJvbGQiPkNyZWF0ZSBhZG1pbmlzdHJhdG9yPC9oMj4KICAgIDxmb3JtIG9uU3VibWl0PXtzdWJtaXR9IGNsYXNzTmFtZT0iZmxleCBmbGV4LXdyYXAgaXRlbXMtZW5kIGdhcC0zIj4KICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiI+PExhYmVsIGh0bWxGb3I9ImFkbWluLXVzZXJuYW1lIj5Vc2VybmFtZTwvTGFiZWw+PElucHV0IGlkPSJhZG1pbi11c2VybmFtZSIgbmFtZT0idXNlcm5hbWUiIG1pbkxlbmd0aD17M30gbWF4TGVuZ3RoPXs1MH0gcmVxdWlyZWQgYXV0b0NvbXBsZXRlPSJvZmYiIC8+PC9kaXY+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTIiPjxMYWJlbCBodG1sRm9yPSJhZG1pbi1lbWFpbCI+RW1haWw8L0xhYmVsPjxJbnB1dCBpZD0iYWRtaW4tZW1haWwiIG5hbWU9ImVtYWlsIiB0eXBlPSJlbWFpbCIgbWF4TGVuZ3RoPXsyNTR9IHJlcXVpcmVkIGF1dG9Db21wbGV0ZT0ib2ZmIiAvPjwvZGl2PgogICAgICA8QnV0dG9uIHR5cGU9InN1Ym1pdCIgZGlzYWJsZWQ9e3BlbmRpbmd9PntwZW5kaW5nID8gIkNyZWF0aW5n4oCmIiA6ICJDcmVhdGUgQURNSU4ifTwvQnV0dG9uPgogICAgPC9mb3JtPgogICAge2Vycm9yICYmIDxwIHJvbGU9ImFsZXJ0IiBjbGFzc05hbWU9InRleHQtc20gdGV4dC1kZXN0cnVjdGl2ZSI+e2Vycm9yfTwvcD59CiAgICB7Y3JlYXRlZCAmJiA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0yIj48cCBjbGFzc05hbWU9InRleHQtc20iPkNyZWF0ZWQgdXNlcm5hbWU6IDxzdHJvbmc+e2NyZWF0ZWQudXNlcm5hbWV9PC9zdHJvbmc+PC9wPjxUZW1wb3JhcnlDcmVkZW50aWFsIHZhbHVlPXtjcmVhdGVkLnBhc3N3b3JkfSBkaXNtaXNzPXsoKSA9PiBzZXRDcmVhdGVkKG51bGwpfSAvPjwvZGl2Pn0KICA8L2Rpdj47Cn0K
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createAdminAction, resetAccountAction, setAccountActiveAction, type AccountResult } from "@/lib/actions/accounts";
+import { sendResetLinkAction } from "@/lib/actions/password-recovery";
+import { SendResetLinkButton } from "@/components/auth/send-reset-link-button";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+function TemporaryCredential({ value, dismiss }: { value: string; dismiss: () => void }) {
+  return <div className="space-y-2 rounded-md border border-border bg-muted/40 p-3">
+    <p className="text-sm">Share privately. This temporary password expires in 24 hours and must be changed at first login.</p>
+    <Input type="password" value={value} readOnly autoComplete="off" aria-label="One-time temporary password" />
+    <div className="flex gap-2">
+      <Button type="button" size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(value)}>Copy temporary password</Button>
+      <Button type="button" size="sm" variant="ghost" onClick={dismiss}>Dismiss</Button>
+    </div>
+  </div>;
+}
+
+export function AccountControls({ userId, active }: { userId: string; active: boolean }) {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [temp, setTemp] = useState("");
+  async function perform(reset: boolean) {
+    if (!window.confirm(reset ? "Reset this password and sign out existing sessions?" : `${active ? "Deactivate" : "Activate"} this account and invalidate existing sessions?`)) return;
+    setPending(true); setError(""); setTemp("");
+    try {
+      const result: AccountResult = reset ? await resetAccountAction(userId) : await setAccountActiveAction(userId, !active);
+      if (result.ok) { setTemp(result.tempPassword ?? ""); router.refresh(); }
+      else setError(result.error);
+    } catch { setError("Unable to update account. Please try again."); }
+    finally { setPending(false); }
+  }
+  return <div className="min-w-56 space-y-2">
+    <div className="flex gap-2">
+      <Button type="button" size="sm" variant="outline" disabled={pending} onClick={() => perform(true)}>Reset password</Button>
+      <Button type="button" size="sm" variant="outline" disabled={pending} onClick={() => perform(false)}>{active ? "Deactivate" : "Activate"}</Button>
+    </div>
+    <SendResetLinkButton onSend={() => sendResetLinkAction(userId)} />
+    {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+    {temp && <TemporaryCredential value={temp} dismiss={() => setTemp("")} />}
+  </div>;
+}
+
+export function CreateAdminForm() {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [created, setCreated] = useState<{ username: string; password: string } | null>(null);
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setPending(true); setError("");
+    try {
+      const result = await createAdminAction({ username: String(data.get("username") ?? ""), email: String(data.get("email") ?? "") });
+      if (result.ok && result.tempPassword && result.username) {
+        setCreated({ username: result.username, password: result.tempPassword }); form.reset(); router.refresh();
+      } else if (!result.ok) setError(result.error);
+    } catch { setError("Unable to create administrator. Please try again."); }
+    finally { setPending(false); }
+  }
+  return <div className="space-y-4">
+    <h2 className="font-semibold">Create administrator</h2>
+    <form onSubmit={submit} className="flex flex-wrap items-end gap-3">
+      <div className="space-y-2"><Label htmlFor="admin-username">Username</Label><Input id="admin-username" name="username" minLength={3} maxLength={50} required autoComplete="off" /></div>
+      <div className="space-y-2"><Label htmlFor="admin-email">Email</Label><Input id="admin-email" name="email" type="email" maxLength={254} required autoComplete="off" /></div>
+      <Button type="submit" disabled={pending}>{pending ? "Creating…" : "Create ADMIN"}</Button>
+    </form>
+    {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+    {created && <div className="space-y-2"><p className="text-sm">Created username: <strong>{created.username}</strong></p><TemporaryCredential value={created.password} dismiss={() => setCreated(null)} /></div>}
+  </div>;
+}
