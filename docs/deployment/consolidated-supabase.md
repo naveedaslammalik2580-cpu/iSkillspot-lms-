@@ -55,7 +55,7 @@ For a fresh **disposable** database, `npx prisma migrate deploy` applies all ele
 
 ## Compatibility, rollback and verification
 
-Existing students need no access backfill: admissionsRequired defaults false and enrollment accessSuspended defaults false. Legacy emailVerifiedAt may remain null without preventing existing dashboard access. Existing additional-course applications retain their quoted fee, payment, enrollment and user state. Manual admissions remain available.
+Existing students need no access backfill: admissionRequired defaults false and enrollment accessSuspended defaults false. Legacy emailVerifiedAt may remain null without preventing existing dashboard access. Existing additional-course applications retain their quoted fee, payment, enrollment and user state. Manual admissions remain available.
 
 Code rollback must be reviewed: the old PR #5 app issues legacy tokens that the consolidated app deliberately does not accept. Prefer rolling back to a compatible consolidated build, keep admissions closed and preserve the additive schema. Never roll back by dropping tables, deleting student records or reverting migration history. Before emergency SESSION_SECRET rotation, drain queued email if possible; afterwards issue fresh links and resend confirmations because encrypted queue bodies use that secret.
 

@@ -1,6 +1,6 @@
 # Authentication, recovery and student admissions reconciliation
 
-Date: 14 November 2026 (Asia/Karachi). This report supersedes the separate PR #5/#6 deployment recommendations. Deploy only the consolidated pull request; neither original branch nor main was modified during reconciliation.
+Date: 14 November 2026 (Asia/Karachi). This report supersedes the separate PR #5/#6 deployment recommendations. Deploy only the consolidated pull request. This work does not push to or merge main. During verification, PR #5 was independently merged into main at `f543a5c`; that baseline merge is included in the consolidated branch. Its code was already present through the retained PR #5 history, so incorporating the main merge introduced no source changes.
 
 ## Result and implementation decisions
 
@@ -52,7 +52,7 @@ Email tests performed a real SMTP exchange with a disposable loopback relay, req
 
 The first reconciliation verification caught and corrected a PL/pgSQL variable/column ambiguity in the new postflight assertion. An initial TypeScript check caught readonly NODE_ENV assignments in the SMTP test; those were corrected before the successful run. No intermediate failure is represented as a pass.
 
-`npm audit --json` and a separate audit of main's unchanged lockfile both reported exactly the same 16 affected packages (8 moderate, 8 high, 0 critical). They include Next/PostCSS, Zod, Prisma/config and lint/build transitives. Nodemailer is pinned to 10.5.0 and was not among the findings. Several proposed fixes require major framework/schema-library upgrades; those inherited advisories remain a separate reviewed maintenance task. No force-upgrade or broad automatic audit fix was applied during this compatibility change.
+`npm audit --json` reports 16 affected packages (8 moderate, 8 high, 0 critical) in the consolidated branch, matching the original pre-recovery main baseline at `86084c2`. After PR #5 was independently merged, the current main lockfile at `f543a5c` reports 17 (8 moderate, 9 high), including its older Nodemailer. This reconciliation removes that Nodemailer finding by pinning 10.5.0. The remaining inherited findings include Next/PostCSS, Zod, Prisma/config and lint/build transitives. Several proposed fixes require major framework/schema-library upgrades; those remaining advisories are a separate reviewed maintenance task. No force-upgrade or broad automatic audit fix was applied during this compatibility change.
 
 ## Remaining operational limits
 
