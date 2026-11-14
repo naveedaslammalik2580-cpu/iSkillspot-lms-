@@ -18,7 +18,7 @@ export default function AdminError({ error, reset }: { error: Error & { digest?:
       </div>
       <h1 className="mt-4 text-lg font-semibold">Something went wrong</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        This page couldn't load. Try again, or go back to the dashboard.
+        This page couldn&apos;t load. Try again, or go back to the dashboard.
       </p>
       <div className="mt-5 flex justify-center gap-2">
         <Button variant="outline" asChild>

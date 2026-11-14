@@ -6,3 +6,4 @@ node_modules
 *.tsbuildinfo
 .auth-work/
 .next-auth-test/
+.seed-credentials.local.json

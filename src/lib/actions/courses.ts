@@ -146,12 +146,24 @@ export async function deleteCourse(
 
   const existing = await db.course.findUnique({
     where: { id },
-    include: { _count: { select: { batches: true } } },
+    include: { _count: { select: { batches: true, fees: true, certificates: true } } },
   });
   if (!existing) return { ok: false, error: "Course not found." };
 
   if (existing._count.batches > 0) {
     return { ok: false, error: "Cannot delete a course that has batches." };
+  }
+  // Financial and issued records must never be cascade-deleted with a
+  // course (Fee.course / Certificate.course are onDelete: Cascade).
+  // Same protective pattern as deleteFee/deleteBatch. A course with no
+  // batches can still carry fees or certificates, because neither
+  // requires a batch.
+  if (existing._count.fees > 0 || existing._count.certificates > 0) {
+    return {
+      ok: false,
+      error:
+        "Cannot delete a course that has fee or certificate records. Archive the course instead so its financial and certificate history is preserved.",
+    };
   }
 
   await db.course.delete({ where: { id } });

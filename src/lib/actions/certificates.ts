@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
+import { notifyStudent } from "@/lib/notifications";
 import { generateCertificateNumber, generateVerificationCode } from "@/lib/ids";
 
 const issueCertificateSchema = z.object({
@@ -64,7 +65,13 @@ export async function issueCertificate(
       },
     });
 
-    // TODO: fire notification when notifications module lands
+    await notifyStudent(certificate.studentId, {
+      type: "CERTIFICATE",
+      title: "Certificate issued",
+      message: "Your certificate is ready. Open it to view, download, or share the verification link.",
+      linkUrl: `/student/certificates/${certificate.id}`,
+      dedupeKey: `certificate:${certificate.id}`,
+    });
 
     await logAction({
       userId: session.userId,

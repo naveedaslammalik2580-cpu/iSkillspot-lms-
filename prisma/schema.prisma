@@ -24,6 +24,8 @@ model User {
   announcements      Announcement[] @relation("AnnouncementAuthor")
   auditLogs          AuditLog[]
   notifications      Notification[]
+  notificationPreferences NotificationPreference[]
+  pushSubscriptions  PushSubscription[]
   student            Student?
   teacher            Teacher?
 
@@ -449,11 +451,42 @@ model Notification {
   message   String
   type      NotificationType @default(SYSTEM)
   read      Boolean          @default(false)
+  readAt    DateTime?
   createdAt DateTime         @default(now())
   linkUrl   String?
+  dedupeKey String?
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, dedupeKey])
   @@index([userId, read])
+}
+
+model NotificationPreference {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  inApp     Boolean          @default(true)
+  push      Boolean          @default(true)
+  updatedAt DateTime         @updatedAt
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@index([userId])
+}
+
+model PushSubscription {
+  id           String    @id @default(cuid())
+  userId       String
+  endpoint     String    @unique
+  p256dhKey    String
+  authKey      String
+  userAgent    String?
+  createdAt    DateTime  @default(now())
+  lastUsedAt   DateTime?
+  failureCount Int       @default(0)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model AuditLog {

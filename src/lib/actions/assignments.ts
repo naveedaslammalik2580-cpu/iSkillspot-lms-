@@ -12,11 +12,13 @@ import {
   AuthError,
 } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
+import { notifyStudent, notifyUsers, studentUserIdsForCourse, teacherUserIdsForCourse } from "@/lib/notifications";
 import {
   uploadSubmissionFile,
   getSignedDownloadUrl,
   deleteSubmissionFile,
 } from "@/lib/storage/supabase";
+import { validateUploadFile } from "@/lib/upload-validation";
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50MB per file
 const MAX_TOTAL_BYTES = 200 * 1024 * 1024; // 200MB per submission
@@ -119,6 +121,14 @@ export async function createAssignment(
     entity: "Assignment",
     entityId: assignment.id,
     metadata: { title: d.title, courseId: d.courseId },
+  });
+
+  await notifyUsers(await studentUserIdsForCourse(assignment.courseId), {
+    type: "ASSIGNMENT",
+    title: "New assignment",
+    message: assignment.title,
+    linkUrl: `/student/assignments/${assignment.id}`,
+    dedupeKey: `assignment-created:${assignment.id}`,
   });
 
   revalidatePath("/admin/assignments");
@@ -288,6 +298,14 @@ export async function gradeSubmission(
     metadata: { assignmentId: submission.assignmentId, studentId: submission.studentId, score: d.score, wasLate },
   });
 
+  await notifyStudent(submission.studentId, {
+    type: "ASSIGNMENT",
+    title: "Assignment graded",
+    message: submission.assignment.title,
+    linkUrl: `/student/assignments/${submission.assignmentId}`,
+    dedupeKey: `assignment-graded:${submission.id}:${d.score}`,
+  });
+
   revalidatePath(`/admin/assignments/${submission.assignmentId}`);
   revalidatePath(`/teacher/assignments/${submission.assignmentId}`);
   revalidatePath("/student/assignments");
@@ -378,6 +396,13 @@ export async function createOrUpdateSubmission(input: {
     if (f.size > MAX_FILE_BYTES) {
       return { ok: false, error: `"${f.name}" is larger than 50MB.` };
     }
+    // Content validation: allowlisted types only, verified against the
+    // file's actual bytes — extensions and client-reported MIME types
+    // are never trusted on their own (see lib/upload-validation.ts).
+    const validation = await validateUploadFile(f);
+    if (!validation.ok) {
+      return { ok: false, error: validation.error };
+    }
   }
   const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
   if (totalBytes > MAX_TOTAL_BYTES) {
@@ -453,6 +478,14 @@ export async function createOrUpdateSubmission(input: {
     entity: "AssignmentSubmission",
     entityId: submissionId,
     metadata: { assignmentId, studentId: student.id, status, fileCount: uploaded.length },
+  });
+
+  await notifyUsers(await teacherUserIdsForCourse(assignment.courseId), {
+    type: "ASSIGNMENT",
+    title: existing ? "Submission updated" : "New submission received",
+    message: assignment.title,
+    linkUrl: `/teacher/assignments/${assignmentId}`,
+    dedupeKey: `submission:${submissionId}:${now.toISOString()}`,
   });
 
   revalidatePath(`/student/assignments/${assignmentId}`);

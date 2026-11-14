@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
 import { DeleteCourseButton } from "@/components/courses/delete-course-button";
 import { formatDate } from "@/lib/utils";
-import { Pencil } from "lucide-react";
+import { BookOpen, Pencil } from "lucide-react";
 
 export default async function AdminCourseDetailPage({
   params,
@@ -27,6 +27,11 @@ export default async function AdminCourseDetailPage({
         description={course.code}
         action={
           <div className="flex items-center gap-2">
+            <Button variant="outline" asChild>
+              <Link href={`/admin/courses/${course.id}/content`}>
+                <BookOpen className="h-4 w-4" /> Manage content
+              </Link>
+            </Button>
             <Button variant="outline" asChild>
               <Link href={`/admin/courses/${course.id}/edit`}>
                 <Pencil className="h-4 w-4" /> Edit

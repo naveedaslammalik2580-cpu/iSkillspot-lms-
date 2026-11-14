@@ -10,6 +10,7 @@ import {
   generateUsername,
 } from "@/lib/ids";
 import { logAction } from "@/lib/audit";
+import { notifyUser } from "@/lib/notifications";
 import { getSetting } from "@/lib/settings";
 import { emailSchema, assertIdentityAvailable } from "@/lib/auth/identity";
 import { authorizeActor, manageableTarget } from "@/lib/auth/account-policy";
@@ -137,6 +138,14 @@ export async function createStudentAction(
       await logAction({ userId: session.userId, action: "Created student", entity: "Student", entityId: student.id,
         metadata: { studentId, username } }, tx);
       return { ...student, username };
+    });
+
+    await notifyUser(student.userId, {
+      type: "SYSTEM",
+      title: "Welcome to iSkillSpot",
+      message: "Your student account is ready. Open your dashboard to see your courses, batches and announcements.",
+      linkUrl: "/student/dashboard",
+      dedupeKey: `welcome:${student.userId}`,
     });
 
     revalidatePath("/admin/students");

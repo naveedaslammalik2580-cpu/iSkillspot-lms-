@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
+import { validateUploadFile } from "@/lib/upload-validation";
 
 /**
  * Supabase Storage adapter for assignment submission files (private bucket,
@@ -50,6 +51,12 @@ export async function uploadSubmissionFile({
   file: File;
   originalName: string;
 }): Promise<{ storageKey: string; sizeBytes: number; mimeType: string }> {
+  // Choke-point enforcement: no caller of this adapter can store a file
+  // that fails the upload allowlist/content checks, even if a future
+  // action forgets to validate first.
+  const validation = await validateUploadFile(file);
+  if (!validation.ok) throw new Error(validation.error);
+
   const { client, bucket } = getClient();
 
   const storageKey = `submissions/${submissionId}/${randomUUID()}-${sanitizeFileName(originalName)}`;

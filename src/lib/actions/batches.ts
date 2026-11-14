@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
+import { notifyUser, userIdForTeacher } from "@/lib/notifications";
 
 // Schema note: Batch.capacity does not exist (confirmed with the user — no
 // schema change). Batch.name is a required schema field the spec's input
@@ -205,7 +206,7 @@ export async function deleteBatch(
 
   const existing = await db.batch.findUnique({
     where: { id },
-    include: { _count: { select: { enrollments: true } } },
+    include: { _count: { select: { enrollments: true, attendance: true, announcements: true } } },
   });
   if (!existing) return { ok: false, error: "Batch not found." };
 
@@ -213,6 +214,16 @@ export async function deleteBatch(
     return {
       ok: false,
       error: "Cannot delete a batch that has enrollments. Set its status to CANCELLED instead.",
+    };
+  }
+  // Attendance history and announcements reference the batch directly
+  // (onDelete: Cascade) and can outlive enrollments — never silently
+  // cascade-delete them with the batch.
+  if (existing._count.attendance > 0 || existing._count.announcements > 0) {
+    return {
+      ok: false,
+      error:
+        "Cannot delete a batch that has attendance or announcement records. Set its status to CANCELLED instead.",
     };
   }
 
@@ -253,7 +264,20 @@ export async function assignTeacherToBatch(
     newTeacherName = teacher.fullName;
   }
 
-  await db.batch.update({ where: { id: batchId }, data: { teacherId } });
+  const updatedBatch = await db.batch.update({ where: { id: batchId }, data: { teacherId } });
+
+  if (teacherId) {
+    const newTeacherUserId = await userIdForTeacher(teacherId);
+    if (newTeacherUserId) {
+      await notifyUser(newTeacherUserId, {
+        type: "SYSTEM",
+        title: "New batch assigned",
+        message: `You have been assigned to batch ${existing.name}.`,
+        linkUrl: "/teacher/batches",
+        dedupeKey: `batch-teacher:${batchId}:${teacherId}:${updatedBatch.updatedAt.toISOString()}`,
+      });
+    }
+  }
 
   await logAction({
     userId: session.userId,

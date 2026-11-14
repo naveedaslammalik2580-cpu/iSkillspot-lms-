@@ -43,7 +43,7 @@ export async function TeacherDashboardBody({
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle>Today's classes</CardTitle></CardHeader>
+          <CardHeader><CardTitle>Today&apos;s classes</CardTitle></CardHeader>
           <CardContent>
             {data.todaysBatches.length === 0 ? (
               <p className="py-6 text-center text-sm text-muted-foreground">

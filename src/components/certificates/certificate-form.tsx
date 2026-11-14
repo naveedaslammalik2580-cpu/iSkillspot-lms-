@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { issueCertificate } from "@/lib/actions/certificates";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import { CheckCircle2, Copy } from "lucide-react";
 type StudentOption = { id: string; studentId: string; fullName: string; courses: { id: string; title: string }[] };
 
 export function CertificateForm({ students }: { students: StudentOption[] }) {
-  const router = useRouter();
   const [studentId, setStudentId] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);

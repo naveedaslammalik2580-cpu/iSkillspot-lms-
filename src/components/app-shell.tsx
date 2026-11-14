@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, Menu, Bell, LogOut } from "lucide-react";
+import { GraduationCap, Menu, LogOut } from "lucide-react";
 import { ICONS } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/lib/nav";
@@ -19,11 +19,14 @@ export function AppShell({
   nav,
   role,
   displayName,
+  notificationBell,
   children,
 }: {
   nav: NavItem[];
   role: string;
   displayName: string;
+  /** Live notification bell (server-rendered per role layout). */
+  notificationBell?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -90,9 +93,7 @@ export function AppShell({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="#" className="relative rounded-md p-2 text-muted-foreground hover:bg-muted" aria-label="Notifications">
-              <Bell className="h-5 w-5" />
-            </Link>
+            {notificationBell}
             <form action={logoutAction}>
               <Button variant="outline" size="sm" type="submit">
                 <LogOut className="h-4 w-4" /> Logout
