@@ -22,7 +22,7 @@ export default function StudentError({ error, reset }: { error: Error & { digest
       </p>
       <div className="mt-5 flex justify-center gap-2">
         <Button variant="outline" asChild>
-          <Link href="/student/dashboard">Back to dashboard</Link>
+          <Link href="/student/courses">Back to My Courses</Link>
         </Button>
         <Button onClick={() => reset()}>Try again</Button>
       </div>

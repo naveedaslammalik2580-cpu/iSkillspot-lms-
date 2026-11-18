@@ -4,7 +4,6 @@ import { COOKIE_NAME, verifyToken } from "@/lib/auth/token";
 // Route prefixes and the roles allowed to reach them.
 const RULES: { prefix: string; roles: string[] }[] = [
   { prefix: "/admin", roles: ["SUPER_ADMIN", "ADMIN"] },
-  { prefix: "/teacher", roles: ["TEACHER"] },
   { prefix: "/student", roles: ["STUDENT"] },
 ];
 
@@ -51,5 +50,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/teacher/:path*", "/student/:path*"],
+  matcher: ["/admin/:path*", "/student/:path*"],
 };

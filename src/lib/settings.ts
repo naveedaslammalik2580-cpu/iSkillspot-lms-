@@ -9,7 +9,6 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   studentIdPrefix: "ISP",
   currency: "PKR",
   timezone: "Asia/Karachi",
-  attendanceThreshold: "75", // percent
   passingScore: "70", // percent
   certMinProgress: "100",
   certMinAttendance: "80",

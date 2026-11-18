@@ -28,24 +28,13 @@ import { notifyUsers } from "@/lib/notifications";
 type Result<T = undefined> = { ok: true; data?: T } | { ok: false; error: string };
 
 async function requireContentManager(courseId: string) {
-  const session = await requirePermission("lesson.manage");
-  if (session.role === "TEACHER") {
-    const teacher = await db.teacher.findUnique({
-      where: { userId: session.userId },
-      select: { id: true },
-    });
-    if (!teacher) throw new Error("Teacher profile not found.");
-    await assertTeacherOwnsCourse(teacher.id, courseId);
-  }
-  return session;
+  void courseId;
+  return requirePermission("lesson.manage");
 }
 
 function revalidateCourse(courseId: string) {
   revalidatePath(`/admin/courses/${courseId}`);
   revalidatePath(`/admin/courses/${courseId}/content`);
-  revalidatePath(`/teacher/courses/${courseId}`);
-  revalidatePath(`/teacher/courses/${courseId}/content`);
-  revalidatePath(`/teacher/courses`);
   revalidatePath(`/student/courses/${courseId}`);
   revalidatePath(`/student/courses`);
 }

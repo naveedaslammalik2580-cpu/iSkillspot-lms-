@@ -42,11 +42,6 @@ export default async function StudentCourseDetailPage({
           <div className="space-y-1 text-sm text-muted-foreground">
             <p>
               Batch <span className="font-medium text-foreground">{batch.name}</span> ({batch.code})
-              {batch.teacherName ? (
-                <>
-                  {" "}· Teacher <span className="font-medium text-foreground">{batch.teacherName}</span>
-                </>
-              ) : null}
             </p>
             <p className="flex flex-wrap items-center gap-2">
               <Badge variant="neutral" className="capitalize">{course.level.toLowerCase()}</Badge>

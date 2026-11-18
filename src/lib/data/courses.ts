@@ -83,7 +83,6 @@ export interface CourseBatchRow {
   id: string;
   code: string;
   name: string;
-  teacherName: string | null;
   startDate: Date | null;
   endDate: Date | null;
   status: BatchStatus;
@@ -107,7 +106,6 @@ export async function getCourseById(id: string): Promise<CourseDetail | null> {
     include: {
       batches: {
         include: {
-          teacher: { select: { fullName: true } },
           enrollments: { where: { status: "ACTIVE" }, select: { id: true } },
         },
         orderBy: { createdAt: "desc" },
@@ -128,7 +126,6 @@ export async function getCourseById(id: string): Promise<CourseDetail | null> {
       id: b.id,
       code: b.code,
       name: b.name,
-      teacherName: b.teacher?.fullName ?? null,
       startDate: b.startDate,
       endDate: b.endDate,
       status: b.status,

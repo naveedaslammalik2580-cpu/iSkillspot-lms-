@@ -76,7 +76,6 @@ export default async function AdminCourseDetailPage({
                 <thead className="border-b border-border bg-muted/50 text-left text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3 font-medium">Batch</th>
-                    <th className="px-4 py-3 font-medium">Teacher</th>
                     <th className="px-4 py-3 font-medium">Dates</th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium">Active students</th>
@@ -91,7 +90,6 @@ export default async function AdminCourseDetailPage({
                         </Link>
                         <div className="font-mono text-xs text-muted-foreground">{b.code}</div>
                       </td>
-                      <td className="px-4 py-3">{b.teacherName ?? "Unassigned"}</td>
                       <td className="px-4 py-3 text-muted-foreground">
                         {b.startDate ? formatDate(b.startDate) : "—"} – {b.endDate ? formatDate(b.endDate) : "—"}
                       </td>

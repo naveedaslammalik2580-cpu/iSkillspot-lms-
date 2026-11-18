@@ -1,7 +1,5 @@
 import { db } from "@/lib/db";
 import type { AnnouncementAudience, PublishStatus, Role } from "@prisma/client";
-import { getBatchesForTeacher } from "@/lib/data/attendance";
-import { getCoursesForTeacher } from "@/lib/data/assignments";
 
 export interface CallerScope {
   role: Role;
@@ -179,34 +177,3 @@ export async function getAnnouncementsForStudent(studentId: string): Promise<Ann
   }));
 }
 
-/** PUBLISHED announcements in this teacher's audience, newest first. */
-export async function getAnnouncementsForTeacher(teacherId: string): Promise<AnnouncementListRow[]> {
-  const [batches, courses] = await Promise.all([
-    getBatchesForTeacher(teacherId),
-    getCoursesForTeacher(teacherId),
-  ]);
-  const batchIds = batches.map((b) => b.id);
-  const courseIds = courses.map((c) => c.id);
-
-  const rows = await db.announcement.findMany({
-    where: {
-      status: "PUBLISHED",
-      OR: [
-        { audience: "ALL" },
-        { audience: "TEACHERS" },
-        { audience: "BATCH", targetBatchId: { in: batchIds } },
-        { audience: "COURSE", targetCourseId: { in: courseIds } },
-      ],
-    },
-    orderBy: { publishedAt: "desc" },
-  });
-  return rows.map((a) => ({
-    id: a.id,
-    title: a.title,
-    audience: a.audience,
-    audienceLabel: audienceLabel(a.audience),
-    status: a.status,
-    publishedAt: a.publishedAt,
-    createdAt: a.createdAt,
-  }));
-}

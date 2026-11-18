@@ -1,6 +1,5 @@
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { getAnnouncementsForStudent } from "@/lib/data/announcements";
 
 // Re-evaluate stored notifications too, so suspending a course hides its old notices.
 export async function notificationVisibility(
@@ -27,25 +26,19 @@ export async function notificationVisibility(
     select: { courseId: true },
   });
   const courseIds = enrollments.map((e) => e.courseId);
-  const [assignments, certificates, announcements] = await Promise.all([
-    db.assignment.findMany({
-      where: { courseId: { in: courseIds } },
-      select: { id: true },
-    }),
-    db.certificate.findMany({
-      where: { studentId, courseId: { in: courseIds } },
-      select: { id: true },
-    }),
-    getAnnouncementsForStudent(studentId),
-  ]);
+  const assignments = await db.assignment.findMany({
+    where: { courseId: { in: courseIds } },
+    select: { id: true },
+  });
+  // Agency model: the student portal is Courses / Quizzes / Assignments /
+  // Profile, plus the notifications page itself (announcement notifications
+  // link there now that the student announcement pages are gone). Fee,
+  // attendance and certificate links are no longer student-visible.
   const links = [
     ...assignments.map((a) => `/student/assignments/${a.id}`),
-    ...certificates.map((c) => `/student/certificates/${c.id}`),
-    ...announcements.map((a) => `/student/announcements/${a.id}`),
     ...(courseIds.length
       ? [
-          "/student/fees",
-          "/student/attendance",
+          "/student/notifications",
           "/student/assignments",
           "/student/courses",
         ]

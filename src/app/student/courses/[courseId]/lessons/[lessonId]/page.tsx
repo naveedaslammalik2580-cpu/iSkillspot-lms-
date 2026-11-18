@@ -54,7 +54,7 @@ export default async function StudentLessonPage({
               <div className="whitespace-pre-wrap leading-relaxed text-foreground/90">{lesson.content}</div>
             ) : !lesson.description && !lesson.videoUrl ? (
               <p className="text-muted-foreground">
-                This lesson has no written content yet. Please check the resources below or ask your teacher.
+                This lesson has no written content yet. Please check the resources below or contact the admin team.
               </p>
             ) : null}
             <div className="border-t border-border pt-4">

@@ -2,13 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requirePermission } from "@/lib/auth/guards";
 import { getBatchById } from "@/lib/data/batches";
-import { getTeacherPicker } from "@/lib/data/teachers";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
 import { DeleteBatchButton } from "@/components/batches/delete-batch-button";
-import { ReassignTeacherButton } from "@/components/batches/reassign-teacher-button";
 import { formatDate } from "@/lib/utils";
 import { Pencil, UserPlus } from "lucide-react";
 
@@ -19,7 +17,7 @@ export default async function AdminBatchDetailPage({
 }) {
   await requirePermission("batch.manage");
   const { id } = await params;
-  const [batch, teachers] = await Promise.all([getBatchById(id), getTeacherPicker()]);
+  const batch = await getBatchById(id);
   if (!batch) notFound();
 
   return (
@@ -57,13 +55,6 @@ export default async function AdminBatchDetailPage({
               {batch.courseTitle}
             </Link>
           </div>
-          <div className="sm:col-span-2">
-            <p className="text-sm text-muted-foreground">Teacher</p>
-            <p className="font-medium">{batch.teacherName ?? "Unassigned"}</p>
-          </div>
-          <div className="flex items-end justify-end">
-            <ReassignTeacherButton batchId={batch.id} currentTeacherId={batch.teacherId} teachers={teachers} />
-          </div>
           <div>
             <p className="text-sm text-muted-foreground">Total enrolled</p>
             <p className="font-medium">{batch.stats.totalEnrolled}</p>
@@ -71,10 +62,6 @@ export default async function AdminBatchDetailPage({
           <div>
             <p className="text-sm text-muted-foreground">Active</p>
             <p className="font-medium">{batch.stats.activeEnrolled}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Attendance marked</p>
-            <p className="font-medium">{batch.stats.attendanceMarkedDays} day(s)</p>
           </div>
         </CardContent>
       </Card>

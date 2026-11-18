@@ -18,13 +18,13 @@ export default async function NewAnnouncementPage() {
 
   return (
     <>
-      <PageHeader title="New announcement" description="Compose a message for students, teachers, or everyone" />
+      <PageHeader title="New announcement" description="Compose a message for students or everyone" />
 
       <Card className="mb-6">
         <CardHeader><CardTitle>How audience targeting works</CardTitle></CardHeader>
         <CardContent className="space-y-1 text-sm text-muted-foreground">
-          <p><strong>Everyone</strong> reaches all staff, teachers, and students. <strong>All students</strong> / <strong>all teachers</strong> reach every account with that role.</p>
-          <p><strong>One batch</strong> or <strong>one course</strong> narrows it to students (and, for teachers, their own assigned batches/courses) tied to that specific batch or course.</p>
+          <p><strong>Everyone</strong> reaches all staff and students. <strong>All students</strong> reaches every student account.</p>
+          <p><strong>One batch</strong> or <strong>one course</strong> narrows it to the students tied to that specific batch or course.</p>
           <p>
             You can save as a draft to review later, or check &quot;Publish immediately&quot; to send it right away.
             Once published, the title and audience are locked — only the message body can still be edited.

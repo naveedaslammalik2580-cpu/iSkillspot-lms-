@@ -2,6 +2,21 @@ import { db } from "@/lib/db";
 import type { Prisma, StudentStatus } from "@prisma/client";
 import { pct } from "@/lib/utils";
 
+export interface StudentOption {
+  id: string;
+  studentId: string;
+  fullName: string;
+}
+
+/** All students, for admin picker dropdowns. */
+export async function getAllStudentsForPicker(): Promise<StudentOption[]> {
+  const students = await db.student.findMany({
+    select: { id: true, studentId: true, fullName: true },
+    orderBy: { fullName: "asc" },
+  });
+  return students;
+}
+
 export interface StudentFilters {
   q?: string;
   courseId?: string;
@@ -84,7 +99,7 @@ export async function getStudent360(id: string) {
   // strict TypeScript" requirement — a 7% gain isn't worth trading away
   // type safety for. Left as plain independent queries below, same as
   // enrollments/certificates/studentCore.
-  const [student, enrollments, certificates, attendanceCounts, submissionStats, quizStats, feeTotals] =
+  const [student, enrollments, certificates, submissionStats, quizStats, feeTotals] =
     await Promise.all([
       db.student.findUnique({
         where: { id },
@@ -111,7 +126,7 @@ export async function getStudent360(id: string) {
           progress: true,
           accessSuspended: true,
           course: { select: { title: true } },
-          batch: { select: { name: true, teacher: { select: { fullName: true } } } },
+          batch: { select: { name: true } },
         },
       }),
       // Small, bounded collection in practice; ordered + capped defensively
@@ -122,12 +137,6 @@ export async function getStudent360(id: string) {
         select: { id: true, certificateNumber: true, course: { select: { title: true } } },
         orderBy: { issueDate: "desc" },
         take: 20,
-      }),
-      // Attendance: already Postgres-side (unchanged from before).
-      db.attendance.groupBy({
-        by: ["status"],
-        where: { studentId: id },
-        _count: { _all: true },
       }),
       // Assignment summary: was `submissions: { include: { assignment: true } }`
       // reduced to counts/avg in JS, with `assignment` never actually read.
@@ -154,15 +163,6 @@ export async function getStudent360(id: string) {
       }),
     ]);
   if (!student) return null;
-
-  // Attendance summary (unchanged logic)
-  const countOf = (status: string) =>
-    attendanceCounts.find((r) => r.status === status)?._count._all ?? 0;
-  const attTotal = attendanceCounts.reduce((sum, r) => sum + r._count._all, 0);
-  const present = countOf("PRESENT");
-  const absent = countOf("ABSENT");
-  const late = countOf("LATE");
-  const attendancePct = pct(present + late, attTotal);
 
   // Assignment summary, from the groupBy above instead of row-level filters.
   // Same arithmetic as before: avgScore is the average score of GRADED
@@ -198,7 +198,6 @@ export async function getStudent360(id: string) {
     // exactly as before — no consumer-side shape change.
     student: { ...student, enrollments, certificates },
     summary: {
-      attendance: { total: attTotal, present, absent, late, pct: attendancePct },
       assignments: {
         total: subsTotal,
         completed: subCountOf("SUBMITTED") + subCountOf("GRADED"),

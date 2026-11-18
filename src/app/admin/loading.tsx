@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * Default fallback for admin routes that don't have a more specific
- * loading.tsx (courses, students, teachers, batches, fees, etc.) — these are
+ * loading.tsx (courses, students, batches, fees, etc.) — these are
  * almost all "PageHeader + filter bar + table" pages, so this shape covers
  * the majority case. Routes shaped differently (the dashboard) get their own
  * loading.tsx, which Next.js prefers over this one.

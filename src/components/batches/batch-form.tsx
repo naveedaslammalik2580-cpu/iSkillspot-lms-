@@ -10,21 +10,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type CourseOption = { id: string; code: string; name: string };
-type TeacherOption = { id: string; fullName: string; specialization: string | null };
 
 export function BatchForm({
   courses,
-  teachers,
   batch,
 }: {
   courses: CourseOption[];
-  teachers: TeacherOption[];
   batch?: {
     id: string;
     code: string;
     name: string;
     courseId: string;
-    teacherId: string | null;
     startDate: string; // "" or "YYYY-MM-DD"
     endDate: string;
     status: string;
@@ -43,7 +39,6 @@ export function BatchForm({
       code: String(fd.get("code") || "").toUpperCase(),
       name: String(fd.get("name") || ""),
       courseId: String(fd.get("courseId") || ""),
-      teacherId: String(fd.get("teacherId") || "") || undefined,
       startDate: String(fd.get("startDate") || "") || undefined,
       endDate: String(fd.get("endDate") || "") || undefined,
       status: fd.get("status") as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED",
@@ -95,22 +90,6 @@ export function BatchForm({
               <option value="">Select course</option>
               {courses.map((c) => (
                 <option key={c.id} value={c.id}>{c.code} — {c.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="teacherId">Teacher</Label>
-            <select
-              id="teacherId"
-              name="teacherId"
-              defaultValue={batch?.teacherId ?? ""}
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="">Unassigned</option>
-              {teachers.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.fullName}{t.specialization ? ` — ${t.specialization}` : ""}
-                </option>
               ))}
             </select>
           </div>

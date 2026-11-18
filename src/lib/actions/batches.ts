@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
-import { notifyUser, userIdForTeacher } from "@/lib/notifications";
 
 // Schema note: Batch.capacity does not exist (confirmed with the user — no
 // schema change). Batch.name is a required schema field the spec's input
@@ -16,7 +15,6 @@ const createBatchSchema = z.object({
   code: z.string().min(2).max(30, "Code must be 2-30 characters"),
   name: z.string().min(2, "Name is required").max(200),
   courseId: z.string().min(1, "Select a course"),
-  teacherId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   status: z.enum(["UPCOMING", "ONGOING", "COMPLETED", "CANCELLED"]),
@@ -41,12 +39,6 @@ export async function createBatch(
     return { ok: false, error: "Cannot create a batch under an archived course." };
   }
 
-  if (d.teacherId) {
-    const teacher = await db.teacher.findUnique({ where: { id: d.teacherId } });
-    if (!teacher) return { ok: false, error: "Teacher not found." };
-    if (teacher.status !== "ACTIVE") return { ok: false, error: "Selected teacher is not active." };
-  }
-
   const startDate = d.startDate ? new Date(d.startDate) : null;
   const endDate = d.endDate ? new Date(d.endDate) : null;
   if (startDate && endDate && startDate >= endDate) {
@@ -59,7 +51,6 @@ export async function createBatch(
         code: d.code,
         name: d.name,
         courseId: d.courseId,
-        teacherId: d.teacherId || null,
         startDate,
         endDate,
         status: d.status,
@@ -90,7 +81,6 @@ const updateBatchSchema = z.object({
   code: z.string().min(2).max(30, "Code must be 2-30 characters"),
   name: z.string().min(2, "Name is required").max(200),
   courseId: z.string().min(1),
-  teacherId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   status: z.enum(["UPCOMING", "ONGOING", "COMPLETED", "CANCELLED"]),
@@ -109,7 +99,6 @@ export async function updateBatch(
 
   const existing = await db.batch.findUnique({
     where: { id: d.id },
-    include: { teacher: { select: { fullName: true } } },
   });
   if (!existing) return { ok: false, error: "Batch not found." };
 
@@ -120,15 +109,6 @@ export async function updateBatch(
     }
     const course = await db.course.findUnique({ where: { id: d.courseId } });
     if (!course) return { ok: false, error: "Course not found." };
-  }
-
-  const nextTeacherId = d.teacherId || null;
-  let newTeacherName: string | null = null;
-  if (nextTeacherId) {
-    const teacher = await db.teacher.findUnique({ where: { id: nextTeacherId } });
-    if (!teacher) return { ok: false, error: "Teacher not found." };
-    if (teacher.status !== "ACTIVE") return { ok: false, error: "Selected teacher is not active." };
-    newTeacherName = teacher.fullName;
   }
 
   const startDate = d.startDate ? new Date(d.startDate) : null;
@@ -147,13 +127,6 @@ export async function updateBatch(
   if ((existing.endDate?.toISOString() ?? null) !== (endDate?.toISOString() ?? null))
     changes.endDate = { old: existing.endDate, new: endDate };
 
-  // Teacher reassignment is logged as its own clear, named event separate
-  // from the generic field-diff log.
-  const isReassignment = existing.teacherId !== nextTeacherId;
-  const reassignmentNote = isReassignment
-    ? `Reassigned from ${existing.teacher?.fullName ?? "Unassigned"} to ${newTeacherName ?? "Unassigned"}`
-    : null;
-
   try {
     await db.batch.update({
       where: { id: d.id },
@@ -161,7 +134,6 @@ export async function updateBatch(
         code: d.code,
         name: d.name,
         courseId: d.courseId,
-        teacherId: nextTeacherId,
         startDate,
         endDate,
         status: d.status,
@@ -174,15 +146,6 @@ export async function updateBatch(
     return { ok: false, error: "Failed to update batch. Please try again." };
   }
 
-  if (reassignmentNote) {
-    await logAction({
-      userId: session.userId,
-      action: "Reassigned batch teacher",
-      entity: "Batch",
-      entityId: d.id,
-      metadata: { note: reassignmentNote },
-    });
-  }
   if (Object.keys(changes).length > 0) {
     await logAction({
       userId: session.userId,
@@ -195,7 +158,6 @@ export async function updateBatch(
 
   revalidatePath("/admin/batches");
   revalidatePath(`/admin/batches/${d.id}`);
-  revalidatePath("/teacher/batches");
   return { ok: true, batchId: d.id };
 }
 
@@ -238,59 +200,5 @@ export async function deleteBatch(
   });
 
   revalidatePath("/admin/batches");
-  return { ok: true };
-}
-
-/** Convenience action for reassignment from the batch detail page. */
-export async function assignTeacherToBatch(
-  batchId: string,
-  teacherId: string | null
-): Promise<{ ok: true } | { ok: false; error: string }> {
-  const session = await requirePermission("batch.manage");
-
-  const existing = await db.batch.findUnique({
-    where: { id: batchId },
-    include: { teacher: { select: { fullName: true } } },
-  });
-  if (!existing) return { ok: false, error: "Batch not found." };
-
-  if (existing.teacherId === teacherId) return { ok: true };
-
-  let newTeacherName: string | null = null;
-  if (teacherId) {
-    const teacher = await db.teacher.findUnique({ where: { id: teacherId } });
-    if (!teacher) return { ok: false, error: "Teacher not found." };
-    if (teacher.status !== "ACTIVE") return { ok: false, error: "Selected teacher is not active." };
-    newTeacherName = teacher.fullName;
-  }
-
-  const updatedBatch = await db.batch.update({ where: { id: batchId }, data: { teacherId } });
-
-  if (teacherId) {
-    const newTeacherUserId = await userIdForTeacher(teacherId);
-    if (newTeacherUserId) {
-      await notifyUser(newTeacherUserId, {
-        type: "SYSTEM",
-        title: "New batch assigned",
-        message: `You have been assigned to batch ${existing.name}.`,
-        linkUrl: "/teacher/batches",
-        dedupeKey: `batch-teacher:${batchId}:${teacherId}:${updatedBatch.updatedAt.toISOString()}`,
-      });
-    }
-  }
-
-  await logAction({
-    userId: session.userId,
-    action: "Reassigned batch teacher",
-    entity: "Batch",
-    entityId: batchId,
-    metadata: {
-      note: `Reassigned from ${existing.teacher?.fullName ?? "Unassigned"} to ${newTeacherName ?? "Unassigned"}`,
-    },
-  });
-
-  revalidatePath("/admin/batches");
-  revalidatePath(`/admin/batches/${batchId}`);
-  revalidatePath("/teacher/batches");
   return { ok: true };
 }

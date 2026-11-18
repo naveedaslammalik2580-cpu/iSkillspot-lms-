@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requirePermission } from "@/lib/auth/guards";
 import { getCoursesWithDefaultFee } from "@/lib/data/fees";
-import { getAllStudentsForPicker } from "@/lib/data/attendance-reports";
+import { getAllStudentsForPicker } from "@/lib/data/students";
 import { PageHeader, EmptyState } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

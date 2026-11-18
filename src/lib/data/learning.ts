@@ -89,7 +89,6 @@ export interface StudentCourseCard {
   batchId: string;
   batchName: string;
   batchCode: string;
-  teacherName: string | null;
   enrollmentStatus: string;
   enrollmentDate: Date;
   progress: ProgressSummary;
@@ -161,7 +160,6 @@ export async function getStudentCourses(studentId: string): Promise<StudentCours
     batchId: e.batch.id,
     batchName: e.batch.name,
     batchCode: e.batch.code,
-    teacherName: e.batch.teacher?.fullName ?? null,
     enrollmentStatus: e.status,
     enrollmentDate: e.enrollmentDate,
     progress: computeProgress(totals.get(e.courseId) ?? 0, completedPerCourse.get(e.courseId) ?? 0),
@@ -188,7 +186,7 @@ export interface StudentCourseDetail {
     level: string;
     duration: string | null;
   };
-  batch: { id: string; name: string; code: string; teacherName: string | null };
+  batch: { id: string; name: string; code: string };
   enrollmentStatus: string;
   progress: ProgressSummary;
   modules: {
@@ -206,7 +204,7 @@ export async function getStudentCourse(studentId: string, courseId: string): Pro
     where: { studentId, courseId, accessSuspended: false, status: { in: [...ENROLLMENT_LEARNING_STATUSES] } },
     include: {
       course: { select: { id: true, title: true, slug: true, description: true, level: true, duration: true } },
-      batch: { select: { id: true, name: true, code: true, teacher: { select: { fullName: true } } } },
+      batch: { select: { id: true, name: true, code: true } },
     },
   });
   if (!enrollment) return null;
@@ -242,7 +240,6 @@ export async function getStudentCourse(studentId: string, courseId: string): Pro
       id: enrollment.batch.id,
       name: enrollment.batch.name,
       code: enrollment.batch.code,
-      teacherName: enrollment.batch.teacher?.fullName ?? null,
     },
     enrollmentStatus: enrollment.status,
     progress: computeProgress(total, done.size),

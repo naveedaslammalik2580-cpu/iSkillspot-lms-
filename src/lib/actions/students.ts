@@ -143,7 +143,7 @@ export async function createStudentAction(
       type: "SYSTEM",
       title: "Welcome to iSkillSpot",
       message: "Your student account is ready. Open your dashboard to see your courses, batches and announcements.",
-      linkUrl: "/student/dashboard",
+      linkUrl: "/student/courses",
       dedupeKey: `welcome:${student.userId}`,
     });
 

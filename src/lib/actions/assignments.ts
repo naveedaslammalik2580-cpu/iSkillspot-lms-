@@ -12,7 +12,7 @@ import {
   AuthError,
 } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
-import { notifyStudent, notifyUsers, studentUserIdsForCourse, teacherUserIdsForCourse } from "@/lib/notifications";
+import { notifyStudent, notifyUsers, studentUserIdsForCourse } from "@/lib/notifications";
 import {
   uploadSubmissionFile,
   getSignedDownloadUrl,
@@ -33,31 +33,21 @@ function safeParseKeys(json: string): string[] {
 }
 
 /**
- * Assignments are course-wide (no batchId on Assignment). Admin/super-admin
- * already passed requirePermission; teachers must additionally own >=1 batch
- * of the assignment's course (see assertTeacherOwnsCourse in guards.ts).
+ * Assignments are course-wide (no batchId on Assignment). Callers already
+ * passed requirePermission("assignment.*"), which only staff roles hold in
+ * the agency model, so no further course scoping is needed.
  */
 async function assertCourseAccess(
   role: string,
   userId: string,
   courseId: string
 ): Promise<{ ok: true } | { ok: false; error: string }> {
-  if (role !== "TEACHER") return { ok: true };
-  const teacher = await db.teacher.findUnique({ where: { userId } });
-  if (!teacher) return { ok: false, error: "Teacher profile not found." };
-  try {
-    await assertTeacherOwnsCourse(teacher.id, courseId);
-    return { ok: true };
-  } catch (e) {
-    return {
-      ok: false,
-      error: e instanceof AuthError ? e.message : "Not authorized for this course.",
-    };
-  }
+  void role; void userId; void courseId;
+  return { ok: true };
 }
 
 // ---------------------------------------------------------------------------
-// Teacher / admin: assignment CRUD
+// Admin: assignment CRUD
 // ---------------------------------------------------------------------------
 
 const createAssignmentSchema = z.object({
@@ -132,7 +122,6 @@ export async function createAssignment(
   });
 
   revalidatePath("/admin/assignments");
-  revalidatePath("/teacher/assignments");
   revalidatePath("/student/assignments");
   return { ok: true, assignmentId: assignment.id };
 }
@@ -201,8 +190,6 @@ export async function updateAssignment(
 
   revalidatePath("/admin/assignments");
   revalidatePath(`/admin/assignments/${d.id}`);
-  revalidatePath("/teacher/assignments");
-  revalidatePath(`/teacher/assignments/${d.id}`);
   revalidatePath("/student/assignments");
   return { ok: true, assignmentId: d.id };
 }
@@ -236,13 +223,12 @@ export async function deleteAssignment(
   });
 
   revalidatePath("/admin/assignments");
-  revalidatePath("/teacher/assignments");
   revalidatePath("/student/assignments");
   return { ok: true };
 }
 
 // ---------------------------------------------------------------------------
-// Teacher / admin: grading
+// Admin: grading
 // ---------------------------------------------------------------------------
 
 const gradeSchema = z.object({
@@ -307,7 +293,6 @@ export async function gradeSubmission(
   });
 
   revalidatePath(`/admin/assignments/${submission.assignmentId}`);
-  revalidatePath(`/teacher/assignments/${submission.assignmentId}`);
   revalidatePath("/student/assignments");
   revalidatePath(`/student/assignments/${submission.assignmentId}`);
   return { ok: true };
@@ -356,7 +341,6 @@ export async function reopenSubmission(
   });
 
   revalidatePath(`/admin/assignments/${submission.assignmentId}`);
-  revalidatePath(`/teacher/assignments/${submission.assignmentId}`);
   revalidatePath("/student/assignments");
   revalidatePath(`/student/assignments/${submission.assignmentId}`);
   return { ok: true };
@@ -480,18 +464,9 @@ export async function createOrUpdateSubmission(input: {
     metadata: { assignmentId, studentId: student.id, status, fileCount: uploaded.length },
   });
 
-  await notifyUsers(await teacherUserIdsForCourse(assignment.courseId), {
-    type: "ASSIGNMENT",
-    title: existing ? "Submission updated" : "New submission received",
-    message: assignment.title,
-    linkUrl: `/teacher/assignments/${assignmentId}`,
-    dedupeKey: `submission:${submissionId}:${now.toISOString()}`,
-  });
-
   revalidatePath(`/student/assignments/${assignmentId}`);
   revalidatePath("/student/assignments");
   revalidatePath(`/admin/assignments/${assignmentId}`);
-  revalidatePath(`/teacher/assignments/${assignmentId}`);
   return { ok: true };
 }
 
@@ -501,8 +476,8 @@ export async function createOrUpdateSubmission(input: {
 
 /**
  * Not a form action — called server-to-server from the download route
- * handler. Student: only their own submission's files. Teacher: only
- * submissions for courses they teach. Admin/super-admin: any. Returns a
+ * handler. Student: only their own submission's files.
+ * Admin/super-admin: any. Returns a
  * generic "not found" (never "forbidden") so file existence isn't leaked.
  */
 export async function getSubmissionFileSignedUrl(
@@ -524,14 +499,6 @@ export async function getSubmissionFileSignedUrl(
     const student = await db.student.findUnique({ where: { userId: session.userId } });
     if (!student || student.id !== submission.studentId) return { ok: false, error: "Not found." };
     if (!await db.enrollment.findFirst({ where: { studentId: student.id, courseId: submission.assignment.courseId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } } })) return { ok: false, error: "Not found." };
-  } else if (session.role === "TEACHER") {
-    const teacher = await db.teacher.findUnique({ where: { userId: session.userId } });
-    if (!teacher) return { ok: false, error: "Not found." };
-    try {
-      await assertTeacherOwnsCourse(teacher.id, submission.assignment.courseId);
-    } catch {
-      return { ok: false, error: "Not found." };
-    }
   }
   // ADMIN / SUPER_ADMIN: no further scoping.
 

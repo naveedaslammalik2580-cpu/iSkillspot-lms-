@@ -42,12 +42,6 @@ export default async function StudentCoursesPage() {
                     <Layers className="h-4 w-4 shrink-0" />
                     Batch {c.batchName} ({c.batchCode})
                   </p>
-                  {c.teacherName ? (
-                    <p className="flex items-center gap-2">
-                      <User className="h-4 w-4 shrink-0" />
-                      Teacher: {c.teacherName}
-                    </p>
-                  ) : null}
                   {c.duration ? (
                     <p className="flex items-center gap-2">
                       <Clock className="h-4 w-4 shrink-0" />

@@ -7,7 +7,6 @@ export interface BatchListRow {
   name: string;
   courseId: string;
   courseTitle: string;
-  teacherName: string | null;
   startDate: Date | null;
   endDate: Date | null;
   status: BatchStatus;
@@ -17,13 +16,11 @@ export interface BatchListRow {
 export interface BatchFilters {
   status?: BatchStatus;
   courseId?: string;
-  teacherId?: string;
   search?: string;
 }
 
 const batchInclude = {
   course: { select: { id: true, title: true } },
-  teacher: { select: { fullName: true } },
   _count: { select: { enrollments: true } },
 } satisfies Prisma.BatchInclude;
 
@@ -36,7 +33,6 @@ function mapBatchRow(b: BatchWithRelations): BatchListRow {
     name: b.name,
     courseId: b.course.id,
     courseTitle: b.course.title,
-    teacherName: b.teacher?.fullName ?? null,
     startDate: b.startDate,
     endDate: b.endDate,
     status: b.status,
@@ -48,7 +44,6 @@ function buildBatchWhere(filters?: BatchFilters): Prisma.BatchWhereInput {
   return {
     status: filters?.status,
     courseId: filters?.courseId,
-    teacherId: filters?.teacherId,
     ...(filters?.search
       ? {
           OR: [
@@ -62,9 +57,7 @@ function buildBatchWhere(filters?: BatchFilters): Prisma.BatchWhereInput {
 
 /**
  * Unpaginated — returns every matching batch. Used where the full set is
- * genuinely needed: the teacher dashboard's internal aggregation
- * (src/lib/data/dashboard.ts) and the teacher's own "My Batches" page, which
- * both need the complete list, not a page of it. For the admin batch
+ * genuinely needed by internal aggregations. For the admin batch
  * listing (which does want pagination), use listBatches below instead.
  */
 export async function getAllBatches(filters?: BatchFilters): Promise<BatchListRow[]> {
@@ -127,13 +120,11 @@ export interface BatchDetail {
   name: string;
   courseId: string;
   courseTitle: string;
-  teacherId: string | null;
-  teacherName: string | null;
   startDate: Date | null;
   endDate: Date | null;
   status: BatchStatus;
   students: BatchStudentRow[];
-  stats: { totalEnrolled: number; activeEnrolled: number; attendanceMarkedDays: number };
+  stats: { totalEnrolled: number; activeEnrolled: number };
 }
 
 export async function getBatchById(id: string): Promise<BatchDetail | null> {
@@ -141,7 +132,6 @@ export async function getBatchById(id: string): Promise<BatchDetail | null> {
     where: { id },
     include: {
       course: { select: { id: true, title: true } },
-      teacher: { select: { id: true, fullName: true } },
       enrollments: {
         include: { student: { select: { id: true, studentId: true, fullName: true } } },
         orderBy: { student: { fullName: "asc" } },
@@ -150,20 +140,12 @@ export async function getBatchById(id: string): Promise<BatchDetail | null> {
   });
   if (!batch) return null;
 
-  const attendanceDates = await db.attendance.findMany({
-    where: { batchId: id },
-    select: { date: true },
-    distinct: ["date"],
-  });
-
   return {
     id: batch.id,
     code: batch.code,
     name: batch.name,
     courseId: batch.course.id,
     courseTitle: batch.course.title,
-    teacherId: batch.teacher?.id ?? null,
-    teacherName: batch.teacher?.fullName ?? null,
     startDate: batch.startDate,
     endDate: batch.endDate,
     status: batch.status,
@@ -176,7 +158,6 @@ export async function getBatchById(id: string): Promise<BatchDetail | null> {
     stats: {
       totalEnrolled: batch.enrollments.length,
       activeEnrolled: batch.enrollments.filter((e) => e.status === "ACTIVE").length,
-      attendanceMarkedDays: attendanceDates.length,
     },
   };
 }
@@ -190,10 +171,9 @@ export interface BatchPickerOption {
 
 export async function getBatchPicker(filters?: {
   courseId?: string;
-  teacherId?: string;
 }): Promise<BatchPickerOption[]> {
   const batches = await db.batch.findMany({
-    where: { courseId: filters?.courseId, teacherId: filters?.teacherId },
+    where: { courseId: filters?.courseId },
     include: { course: { select: { title: true } } },
     orderBy: { name: "asc" },
   });

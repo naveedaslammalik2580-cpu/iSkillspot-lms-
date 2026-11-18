@@ -14,7 +14,6 @@ const FIELDS: { key: string; label: string }[] = [
   { key: "studentIdPrefix", label: "Student ID prefix" },
   { key: "currency", label: "Currency" },
   { key: "timezone", label: "Timezone" },
-  { key: "attendanceThreshold", label: "Attendance threshold (%)" },
   { key: "passingScore", label: "Passing score (%)" },
   { key: "certMinProgress", label: "Certificate: min progress (%)" },
   { key: "certMinAttendance", label: "Certificate: min attendance (%)" },

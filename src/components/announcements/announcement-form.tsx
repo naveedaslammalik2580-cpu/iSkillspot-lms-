@@ -11,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type BatchOption = { id: string; code: string; name: string; courseTitle: string };
 type CourseOption = { id: string; code: string; name: string };
+// "TEACHERS" remains in the type so legacy announcements with that audience
+// stay editable; it is no longer offered as an option in the form.
 type Audience = "ALL" | "STUDENTS" | "TEACHERS" | "BATCH" | "COURSE";
 
 export function AnnouncementForm({
@@ -109,7 +111,6 @@ export function AnnouncementForm({
                 >
                   <option value="ALL">Everyone</option>
                   <option value="STUDENTS">All students</option>
-                  <option value="TEACHERS">All teachers</option>
                   <option value="BATCH">One batch</option>
                   <option value="COURSE">One course</option>
                 </select>

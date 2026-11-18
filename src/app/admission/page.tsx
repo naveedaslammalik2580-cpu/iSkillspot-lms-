@@ -162,7 +162,7 @@ export default async function AdmissionPage() {
           </a>
         )}
         {!user.admissionRequired && (
-          <Link className={buttonVariants()} href="/student/dashboard">
+          <Link className={buttonVariants()} href="/student/courses">
             Open student dashboard
           </Link>
         )}

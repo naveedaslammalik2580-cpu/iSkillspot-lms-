@@ -32,7 +32,7 @@ import {
 /**
  * Explicit map of every icon name actually referenced by string anywhere in
  * the app (nav items in src/lib/nav.ts, StatCard's `icon` prop across
- * admin/teacher/student), built from a full-repo grep rather than a guess.
+ * admin/student), built from a full-repo grep rather than a guess.
  * Named imports above (instead of `import * as Icons from "lucide-react"`)
  * let the bundler tree-shake every icon that isn't in this list — the
  * previous namespace-import + dynamic-lookup pattern shipped the entire

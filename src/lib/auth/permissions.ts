@@ -52,17 +52,14 @@ const SUPER_ADMIN: Permission[] = [
   "student.edit",
   "student.delete",
   "student.viewAll",
-  "teacher.manage",
   "course.manage",
   "batch.manage",
   "lesson.manage",
   "enrollment.manage",
-  "attendance.manage",
   "assignment.manage",
   "assignment.grade",
   "quiz.manage",
   "quiz.grade",
-  "grade.manage",
   "fee.manage",
   "payment.manage",
   "certificate.manage",
@@ -77,17 +74,14 @@ const ADMIN: Permission[] = [
   "student.edit",
   "student.delete",
   "student.viewAll",
-  "teacher.manage",
   "course.manage",
   "batch.manage",
   "lesson.manage",
   "enrollment.manage",
-  "attendance.manage",
   "assignment.manage",
   "assignment.grade",
   "quiz.manage",
   "quiz.grade",
-  "grade.manage",
   "fee.manage",
   "payment.manage",
   "certificate.manage",
@@ -98,15 +92,8 @@ const ADMIN: Permission[] = [
 ];
 
 const TEACHER: Permission[] = [
-  "lesson.manage",
-  "assignment.manage",
-  "assignment.grade",
-  "quiz.manage",
-  "quiz.grade",
-  "attendance.manage",
-  "grade.manage",
-  "announcement.sendBatch",
-  // Teacher-scoped: limited to assigned batches/students, enforced at data layer.
+  // Agency model: the TEACHER role no longer exists as a portal role.
+  // The Role enum value remains in the schema until the Phase 2 cleanup.
 ];
 
 const STUDENT: Permission[] = [
@@ -137,9 +124,9 @@ export function homePathFor(role: Role): string {
     case "ADMIN":
       return "/admin/dashboard";
     case "TEACHER":
-      return "/teacher/dashboard";
+      return "/forbidden";
     case "STUDENT":
-      return "/student/dashboard";
+      return "/student/courses";
     default:
       return "/login";
   }

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { requirePermission } from "@/lib/auth/guards";
 import { listBatches } from "@/lib/data/batches";
 import { getCoursePicker } from "@/lib/data/courses";
-import { getTeacherPicker } from "@/lib/data/teachers";
 import { PageHeader, EmptyState } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -22,16 +21,14 @@ export default async function AdminBatchesPage({
   const sp = await searchParams;
   const page = Number(sp.page ?? "1");
 
-  const [result, courses, teachers] = await Promise.all([
+  const [result, courses] = await Promise.all([
     listBatches({
       status: sp.status as BatchStatus | undefined,
       courseId: sp.courseId,
-      teacherId: sp.teacherId,
       search: sp.q,
       page,
     }),
     getCoursePicker(),
-    getTeacherPicker(),
   ]);
 
   return (
@@ -65,20 +62,6 @@ export default async function AdminBatchesPage({
               <option value="">All courses</option>
               {courses.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="teacherId">Teacher</label>
-            <select
-              id="teacherId"
-              name="teacherId"
-              defaultValue={sp.teacherId ?? ""}
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="">All teachers</option>
-              {teachers.map((t) => (
-                <option key={t.id} value={t.id}>{t.fullName}</option>
               ))}
             </select>
           </div>
@@ -119,7 +102,6 @@ export default async function AdminBatchesPage({
                 <tr>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Batch</th>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Course</th>
-                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Teacher</th>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Dates</th>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Status</th>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider">Enrolled</th>
@@ -135,7 +117,6 @@ export default async function AdminBatchesPage({
                       <div className="font-mono text-xs text-muted-foreground">{b.code}</div>
                     </td>
                     <td className="px-4 py-3">{b.courseTitle}</td>
-                    <td className="px-4 py-3">{b.teacherName ?? "Unassigned"}</td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {b.startDate ? formatDate(b.startDate) : "—"} – {b.endDate ? formatDate(b.endDate) : "—"}
                     </td>

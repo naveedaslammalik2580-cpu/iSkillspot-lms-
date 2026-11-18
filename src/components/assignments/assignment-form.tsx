@@ -16,7 +16,7 @@ export function AssignmentForm({
   courses,
   assignment,
 }: {
-  basePath: string; // "/admin/assignments" or "/teacher/assignments"
+  basePath: string; // "/admin/assignments"
   courses: CourseOption[];
   /** Present only in edit mode. Course/module are fixed at creation and shown read-only here. */
   assignment?: {

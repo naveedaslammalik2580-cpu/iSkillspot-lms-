@@ -65,7 +65,6 @@ export default async function AdminAnnouncementsPage({
               <option value="">All audiences</option>
               <option value="ALL">Everyone</option>
               <option value="STUDENTS">All students</option>
-              <option value="TEACHERS">All teachers</option>
               <option value="BATCH">One batch</option>
               <option value="COURSE">One course</option>
             </select>

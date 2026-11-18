@@ -32,7 +32,6 @@ export async function setAccountActiveAction(userId: string, active: boolean): P
   try {
     await setAccountActive(session, userId, active);
     revalidatePath("/admin/accounts");
-    revalidatePath("/admin/teachers");
     revalidatePath("/admin/students");
     return { ok: true };
   } catch (error) { return safeError(error); }

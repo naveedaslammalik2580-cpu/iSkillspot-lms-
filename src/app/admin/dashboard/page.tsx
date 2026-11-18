@@ -65,7 +65,6 @@ export default async function AdminDashboard() {
       <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Total Students" value={stats.totalStudents} icon="Users" variant="compact" />
         <StatCard label="Completed" value={stats.completedStudents} icon="GraduationCap" variant="compact" />
-        <StatCard label="Teachers" value={stats.totalTeachers} icon="Presentation" variant="compact" />
         <StatCard label="Active Courses" value={stats.activeCourses} icon="BookOpen" variant="compact" />
       </div>
 

@@ -54,8 +54,7 @@ export default async function StudentProfile({
                 <StatusBadge status={student.status} />
               </div>
               <div className="text-sm text-muted-foreground">
-                {enr?.course.title ?? "No course"} · {enr?.batch.name ?? "No batch"} ·{" "}
-                {enr?.batch.teacher?.fullName ?? "No instructor"}
+                {enr?.course.title ?? "No course"} · {enr?.batch.name ?? "No batch"}
               </div>
               <div className="font-mono text-xs text-muted-foreground">{student.studentId}</div>
             </div>
@@ -67,7 +66,6 @@ export default async function StudentProfile({
       {/* Summary tiles */}
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Tile label="Overall progress" value={`${summary.overallProgress}%`} />
-        <Tile label="Attendance" value={`${summary.attendance.pct}%`} />
         <Tile label="Avg assignment" value={`${summary.assignments.avgScore}%`} />
         <Tile label="Avg quiz" value={`${summary.quizzes.avg}%`} />
       </div>
@@ -88,14 +86,6 @@ export default async function StudentProfile({
           <Row label="Username" value={student.user.username} />
           <Row label="Account status" value={student.user.status} />
           <Row label="Last login" value={student.user.lastLogin ? formatDate(student.user.lastLogin) : "Never"} />
-        </Section>
-
-        <Section title="Attendance">
-          <Row label="Total classes" value={summary.attendance.total} />
-          <Row label="Present" value={summary.attendance.present} />
-          <Row label="Absent" value={summary.attendance.absent} />
-          <Row label="Late" value={summary.attendance.late} />
-          <Row label="Percentage" value={`${summary.attendance.pct}%`} />
         </Section>
 
         <Section title="Assignments & quizzes">

@@ -106,7 +106,7 @@ export function SubmissionForm({
             </div>
           )}
           <p className="text-xs text-muted-foreground">
-            This submission is graded and locked. Contact your teacher if it needs to be reopened.
+            This submission is graded and locked. Contact the admin if it needs to be reopened.
           </p>
         </CardContent>
       </Card>

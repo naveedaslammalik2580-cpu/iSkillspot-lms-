@@ -239,8 +239,8 @@ export async function resolveAnnouncementRecipients(announcement: {
  * Fire notifications for a freshly published announcement. Uses one stable
  * dedupe key ("announcement:<id>") across both publish paths
  * (createAnnouncement with publishNow, and publishAnnouncement), so an
- * announcement can never notify twice. Students and teachers get links
- * into their own role area.
+ * announcement can never notify twice. Students get a link to their
+ * notifications page.
  */
 export async function notifyAnnouncementPublished(announcement: {
   id: string;
@@ -251,14 +251,11 @@ export async function notifyAnnouncementPublished(announcement: {
   targetCourseId: string | null;
 }): Promise<NotifyResult> {
   try {
-    const { studentUserIds, teacherUserIds } = await resolveAnnouncementRecipients(announcement);
+    const { studentUserIds } = await resolveAnnouncementRecipients(announcement);
     const message = announcement.content.trim().slice(0, 140);
     const base = { title: announcement.title, message, type: "ANNOUNCEMENT" as const, dedupeKey: `announcement:${announcement.id}` };
-    const [a, b] = await Promise.all([
-      notifyUsers(studentUserIds, { ...base, linkUrl: `/student/announcements/${announcement.id}` }),
-      notifyUsers(teacherUserIds, { ...base, linkUrl: `/teacher/announcements/${announcement.id}` }),
-    ]);
-    return { created: a.created + b.created, skipped: a.skipped + b.skipped };
+    const a = await notifyUsers(studentUserIds, { ...base, linkUrl: "/student/notifications" });
+    return { created: a.created, skipped: a.skipped };
   } catch (e) {
     console.error("[notifications] notifyAnnouncementPublished failed", e);
     return { created: 0, skipped: 0 };

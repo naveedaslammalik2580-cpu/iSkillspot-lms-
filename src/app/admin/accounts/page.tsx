@@ -17,7 +17,6 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
   return <>
     <PageHeader title="User Accounts" description={`${result.total} accounts you can manage`} />
     <Card className="mb-4 flex flex-wrap gap-3 p-4">
-      <Button asChild variant="outline"><Link href="/admin/teachers/new">Create teacher</Link></Button>
       <Button asChild variant="outline"><Link href="/admin/students/new">Create student</Link></Button>
     </Card>
     {session.role === "SUPER_ADMIN" && <Card className="mb-4 p-4"><CreateAdminForm /></Card>}
@@ -25,7 +24,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
       <Input name="q" aria-label="Search accounts by username or email" defaultValue={sp.q ?? ""} placeholder="Username or email…" maxLength={254} />
       <Button type="submit" variant="outline">Search</Button>
     </form></Card>
-    {!result.rows.length ? <EmptyState title="No accounts found." hint="Try another search or create a teacher, student or administrator as permitted." /> :
+    {!result.rows.length ? <EmptyState title="No accounts found." hint="Try another search or create a student or administrator as permitted." /> :
       <Card className="overflow-hidden"><div className="overflow-x-auto"><table className="w-full text-sm">
         <thead className="border-b border-border bg-muted/50 text-left text-muted-foreground"><tr>
           {["Account", "Role", "Status", "Linked profile", "Created", "Last login", "Actions"].map(label => <th key={label} scope="col" className="px-4 py-3 font-medium">{label}</th>)}
@@ -33,7 +32,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
         <tbody>{result.rows.map(user => <tr key={user.id} className="border-b border-border last:border-0">
           <td className="px-4 py-3"><div className="font-medium">{user.username}</div><div className="text-xs text-muted-foreground">{user.email}</div>{user.mustChangePassword && <div className="text-xs text-muted-foreground">Password change required</div>}</td>
           <td className="px-4 py-3">{user.role}</td><td className="px-4 py-3"><StatusBadge status={user.status} /></td>
-          <td className="px-4 py-3">{user.teacher ? <Link className="text-primary hover:underline" href={`/admin/teachers/${user.teacher.id}`}>{user.teacher.fullName}</Link> : user.student ? <Link className="text-primary hover:underline" href={`/admin/students/${user.student.id}`}>{user.student.fullName} ({user.student.studentId})</Link> : user.role === "ADMIN" ? "Administrator" : "Profile missing"}</td>
+          <td className="px-4 py-3">{user.student ? <Link className="text-primary hover:underline" href={`/admin/students/${user.student.id}`}>{user.student.fullName} ({user.student.studentId})</Link> : user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? "Administrator" : "Profile missing"}</td>
           <td className="whitespace-nowrap px-4 py-3">{date(user.createdAt)}</td><td className="whitespace-nowrap px-4 py-3">{date(user.lastLogin)}</td>
           <td className="px-4 py-3"><AccountControls userId={user.id} active={user.status === "ACTIVE"} /></td>
         </tr>)}</tbody>

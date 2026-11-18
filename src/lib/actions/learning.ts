@@ -99,13 +99,6 @@ export async function getLessonResourceAccess(
         select: { id: true },
       });
       if (!enrollment) return { ok: false };
-    } else if (session.role === "TEACHER") {
-      const teacher = await db.teacher.findUnique({
-        where: { userId: session.userId },
-        select: { id: true },
-      });
-      if (!teacher) return { ok: false };
-      await assertTeacherOwnsCourse(teacher.id, courseId);
     } else if (session.role !== "SUPER_ADMIN" && session.role !== "ADMIN") {
       return { ok: false };
     }

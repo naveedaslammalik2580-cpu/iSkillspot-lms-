@@ -160,22 +160,6 @@ export async function setAccountActive(
         "Restore the student's academic status before activating this account.",
       );
     }
-    if (
-      !active &&
-      target.teacher &&
-      (await tx.batch.count({
-        where: { teacherId: target.teacher.id, status: "ONGOING" },
-      }))
-    ) {
-      throw new AccountError(
-        "Reassign this teacher's ongoing batches before deactivation.",
-      );
-    }
-    if (target.teacher)
-      await tx.teacher.update({
-        where: { id: target.teacher.id },
-        data: { status: active ? "ACTIVE" : "INACTIVE" },
-      });
     await tx.user.update({
       where: { id: userId },
       data: {
