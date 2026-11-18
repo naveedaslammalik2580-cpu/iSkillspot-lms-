@@ -15,10 +15,18 @@ import { logAction } from "@/lib/audit";
 import { notifyStudent, notifyUsers, studentUserIdsForCourse } from "@/lib/notifications";
 import {
   uploadSubmissionFile,
+  uploadAssignmentTaskFile,
   getSignedDownloadUrl,
   deleteSubmissionFile,
+  isStorageConfigured,
 } from "@/lib/storage/supabase";
 import { validateUploadFile } from "@/lib/upload-validation";
+import {
+  attachmentNameFromUrl,
+  parseAssignmentAttachment,
+  serializeAssignmentAttachment,
+  type AssignmentAttachment,
+} from "@/lib/assignment-attachment";
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50MB per file
 const MAX_TOTAL_BYTES = 200 * 1024 * 1024; // 200MB per submission
@@ -58,7 +66,94 @@ const createAssignmentSchema = z.object({
   instructions: z.string().max(10_000).optional(),
   dueDate: z.string().optional(),
   maxScore: z.coerce.number().int().min(1).max(1000),
+  /** Optional link to a task PDF hosted elsewhere (used when no file is uploaded). */
+  taskPdfUrl: z.string().max(2000).optional(),
 });
+
+// ---------------------------------------------------------------------------
+// Practical task PDF (Assignment.attachments — see lib/assignment-attachment.ts)
+// ---------------------------------------------------------------------------
+
+const STORAGE_NOT_CONFIGURED_ERROR =
+  "File storage is not configured on the server, so the task PDF could not be uploaded. Paste a PDF link instead, or ask an administrator to configure storage.";
+
+/**
+ * Resolve the task attachment for a create/update. Precedence: an
+ * uploaded file wins over everything; an explicit remove beats the URL
+ * field; a non-empty URL sets/replaces a link attachment; an emptied URL
+ * field clears an existing LINK attachment but leaves an uploaded file
+ * untouched (the field is empty in that case by design).
+ */
+async function buildTaskAttachment(opts: {
+  assignmentId: string;
+  taskFile?: File | null;
+  taskPdfUrl?: string;
+  existing: AssignmentAttachment | null;
+  removeTaskFile?: boolean;
+}): Promise<
+  | { ok: true; attachment: AssignmentAttachment | null; uploadedKey: string | null }
+  | { ok: false; error: string }
+> {
+  const file = opts.taskFile && opts.taskFile.size > 0 ? opts.taskFile : null;
+
+  if (file) {
+    if (file.size > MAX_FILE_BYTES) {
+      return { ok: false, error: `"${file.name}" is larger than 50MB.` };
+    }
+    const validation = await validateUploadFile(file);
+    if (!validation.ok) return { ok: false, error: validation.error };
+    if (validation.kind !== "pdf") {
+      return { ok: false, error: "The task file must be a PDF." };
+    }
+    if (!isStorageConfigured()) {
+      return { ok: false, error: STORAGE_NOT_CONFIGURED_ERROR };
+    }
+    try {
+      const uploaded = await uploadAssignmentTaskFile({
+        assignmentId: opts.assignmentId,
+        file,
+        originalName: file.name,
+      });
+      return {
+        ok: true,
+        attachment: { kind: "upload", key: uploaded.storageKey, name: file.name },
+        uploadedKey: uploaded.storageKey,
+      };
+    } catch {
+      return { ok: false, error: "Task PDF upload failed. Please try again." };
+    }
+  }
+
+  if (opts.removeTaskFile) {
+    return { ok: true, attachment: null, uploadedKey: null };
+  }
+
+  if (opts.taskPdfUrl !== undefined) {
+    const url = opts.taskPdfUrl.trim();
+    if (url) {
+      let parsed: URL;
+      try {
+        parsed = new URL(url);
+      } catch {
+        return { ok: false, error: "The task PDF link is not a valid URL." };
+      }
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        return { ok: false, error: "The task PDF link must start with http:// or https://." };
+      }
+      return {
+        ok: true,
+        attachment: { kind: "url", url, name: attachmentNameFromUrl(url) },
+        uploadedKey: null,
+      };
+    }
+    // Emptied link field clears a link attachment, keeps an upload.
+    if (opts.existing?.kind === "url") {
+      return { ok: true, attachment: null, uploadedKey: null };
+    }
+  }
+
+  return { ok: true, attachment: opts.existing, uploadedKey: null };
+}
 
 export type AssignmentResult =
   | { ok: true; assignmentId: string }
@@ -69,7 +164,7 @@ export type AssignmentResult =
  * teacher assigned to a batch of the course, or any staff member, may create.
  */
 export async function createAssignment(
-  input: z.infer<typeof createAssignmentSchema>
+  input: z.infer<typeof createAssignmentSchema> & { taskFile?: File | null }
 ): Promise<AssignmentResult> {
   const session = await requirePermission("assignment.manage");
 
@@ -92,18 +187,38 @@ export async function createAssignment(
   const scope = await assertCourseAccess(session.role, session.userId, d.courseId);
   if (!scope.ok) return scope;
 
-  const assignment = await db.assignment.create({
-    data: {
-      courseId: d.courseId,
-      moduleId: d.moduleId || null,
-      title: d.title,
-      description: d.description || null,
-      instructions: d.instructions || null,
-      dueDate: d.dueDate ? new Date(d.dueDate) : null,
-      maxScore: d.maxScore,
-      createdBy: session.userId,
-    },
+  // Pre-generate the id so the task PDF can be uploaded under it before
+  // the row exists (same pattern as submissions). If the create fails,
+  // the uploaded file is cleaned up again.
+  const assignmentId = randomUUID();
+  const task = await buildTaskAttachment({
+    assignmentId,
+    taskFile: input.taskFile,
+    taskPdfUrl: d.taskPdfUrl,
+    existing: null,
   });
+  if (!task.ok) return task;
+
+  let assignment;
+  try {
+    assignment = await db.assignment.create({
+      data: {
+        id: assignmentId,
+        courseId: d.courseId,
+        moduleId: d.moduleId || null,
+        title: d.title,
+        description: d.description || null,
+        instructions: d.instructions || null,
+        dueDate: d.dueDate ? new Date(d.dueDate) : null,
+        maxScore: d.maxScore,
+        attachments: task.attachment ? serializeAssignmentAttachment(task.attachment) : null,
+        createdBy: session.userId,
+      },
+    });
+  } catch {
+    if (task.uploadedKey) await deleteSubmissionFile(task.uploadedKey).catch(() => {});
+    return { ok: false, error: "Failed to create the assignment. Please try again." };
+  }
 
   await logAction({
     userId: session.userId,
@@ -133,10 +248,11 @@ const updateAssignmentSchema = z.object({
   instructions: z.string().max(10_000).optional(),
   dueDate: z.string().optional(),
   maxScore: z.coerce.number().int().min(1).max(1000),
+  taskPdfUrl: z.string().max(2000).optional(),
 });
 
 export async function updateAssignment(
-  input: z.infer<typeof updateAssignmentSchema>
+  input: z.infer<typeof updateAssignmentSchema> & { taskFile?: File | null; removeTaskFile?: boolean }
 ): Promise<AssignmentResult> {
   const session = await requirePermission("assignment.manage");
 
@@ -152,6 +268,17 @@ export async function updateAssignment(
   const scope = await assertCourseAccess(session.role, session.userId, existing.courseId);
   if (!scope.ok) return scope;
 
+  const existingAttachment = parseAssignmentAttachment(existing.attachments);
+  const task = await buildTaskAttachment({
+    assignmentId: d.id,
+    taskFile: input.taskFile,
+    taskPdfUrl: d.taskPdfUrl,
+    existing: existingAttachment,
+    removeTaskFile: input.removeTaskFile,
+  });
+  if (!task.ok) return task;
+  const nextAttachments = task.attachment ? serializeAssignmentAttachment(task.attachment) : null;
+
   const nextDueDate = d.dueDate ? new Date(d.dueDate) : null;
   const nextDescription = d.description || null;
   const nextInstructions = d.instructions || null;
@@ -166,17 +293,37 @@ export async function updateAssignment(
     changes.dueDate = { old: existing.dueDate, new: nextDueDate };
   if (existing.maxScore !== d.maxScore)
     changes.maxScore = { old: existing.maxScore, new: d.maxScore };
+  if ((existing.attachments ?? null) !== nextAttachments)
+    changes.attachments = {
+      old: existingAttachment ? `${existingAttachment.kind}:${existingAttachment.name}` : null,
+      new: task.attachment ? `${task.attachment.kind}:${task.attachment.name}` : null,
+    };
 
-  await db.assignment.update({
-    where: { id: d.id },
-    data: {
-      title: d.title,
-      description: nextDescription,
-      instructions: nextInstructions,
-      dueDate: nextDueDate,
-      maxScore: d.maxScore,
-    },
-  });
+  try {
+    await db.assignment.update({
+      where: { id: d.id },
+      data: {
+        title: d.title,
+        description: nextDescription,
+        instructions: nextInstructions,
+        dueDate: nextDueDate,
+        maxScore: d.maxScore,
+        attachments: nextAttachments,
+      },
+    });
+  } catch {
+    if (task.uploadedKey) await deleteSubmissionFile(task.uploadedKey).catch(() => {});
+    return { ok: false, error: "Failed to save the assignment. Please try again." };
+  }
+
+  // The replaced/removed upload is only deleted once the new state is
+  // safely persisted.
+  if (
+    existingAttachment?.kind === "upload" &&
+    !(task.attachment?.kind === "upload" && task.attachment.key === existingAttachment.key)
+  ) {
+    await deleteSubmissionFile(existingAttachment.key).catch(() => {});
+  }
 
   if (Object.keys(changes).length > 0) {
     await logAction({
@@ -213,6 +360,11 @@ export async function deleteAssignment(
   }
 
   await db.assignment.delete({ where: { id } });
+
+  const attachment = parseAssignmentAttachment(existing.attachments);
+  if (attachment?.kind === "upload") {
+    await deleteSubmissionFile(attachment.key).catch(() => {});
+  }
 
   await logAction({
     userId: session.userId,
@@ -499,6 +651,50 @@ export async function getSubmissionFileSignedUrl(
     const student = await db.student.findUnique({ where: { userId: session.userId } });
     if (!student || student.id !== submission.studentId) return { ok: false, error: "Not found." };
     if (!await db.enrollment.findFirst({ where: { studentId: student.id, courseId: submission.assignment.courseId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } } })) return { ok: false, error: "Not found." };
+  }
+  // ADMIN / SUPER_ADMIN: no further scoping.
+
+  try {
+    const url = await getSignedDownloadUrl(storageKey, { expiresInSeconds: 300 });
+    return { ok: true, url };
+  } catch {
+    return { ok: false, error: "Could not generate a download link." };
+  }
+}
+
+/**
+ * Signed download URL for an assignment's uploaded task PDF. Called
+ * server-to-server from the task-file route handler. Student: only when
+ * ACTIVE/COMPLETED-enrolled in the assignment's course. Admin/super-admin:
+ * any. Generic "not found" on every failure, same as submission files.
+ */
+export async function getAssignmentTaskFileSignedUrl(
+  assignmentId: string,
+  storageKey: string
+): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  const session = await requireSession();
+
+  const assignment = await db.assignment.findUnique({ where: { id: assignmentId } });
+  if (!assignment) return { ok: false, error: "Not found." };
+
+  const attachment = parseAssignmentAttachment(assignment.attachments);
+  if (!attachment || attachment.kind !== "upload" || attachment.key !== storageKey) {
+    return { ok: false, error: "Not found." };
+  }
+
+  if (session.role === "STUDENT") {
+    const student = await db.student.findUnique({ where: { userId: session.userId } });
+    if (!student) return { ok: false, error: "Not found." };
+    const enrollment = await db.enrollment.findFirst({
+      where: {
+        studentId: student.id,
+        courseId: assignment.courseId,
+        accessSuspended: false,
+        status: { in: ["ACTIVE", "COMPLETED"] },
+      },
+      select: { id: true },
+    });
+    if (!enrollment) return { ok: false, error: "Not found." };
   }
   // ADMIN / SUPER_ADMIN: no further scoping.
 

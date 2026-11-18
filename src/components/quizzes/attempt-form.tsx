@@ -31,7 +31,7 @@ export function AttemptForm({ quiz }: { quiz: AttemptQuiz }) {
     }
   }
 
-  const answered = Object.keys(answers).length;
+  const answered = Object.values(answers).filter((v) => v.trim() !== "").length;
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -40,22 +40,36 @@ export function AttemptForm({ quiz }: { quiz: AttemptQuiz }) {
           <CardContent className="pt-6">
             <p className="font-medium">
               {i + 1}. {q.question}{" "}
-              <span className="text-sm text-muted-foreground">({q.points} pt{q.points === 1 ? "" : "s"})</span>
+              <span className="text-sm text-muted-foreground">
+                ({q.points} pt{q.points === 1 ? "" : "s"}{q.type === "SHORT_ANSWER" ? " · written answer" : ""})
+              </span>
             </p>
-            <div className="mt-3 space-y-2">
-              {q.options.map((opt) => (
-                <label key={opt} className="flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-sm hover:bg-muted/40">
-                  <input
-                    type="radio"
-                    name={`q-${q.id}`}
-                    value={opt}
-                    checked={answers[q.id] === opt}
-                    onChange={() => setAnswers({ ...answers, [q.id]: opt })}
-                  />
-                  {opt}
-                </label>
-              ))}
-            </div>
+            {q.type === "SHORT_ANSWER" ? (
+              <textarea
+                aria-label={`Your answer to question ${i + 1}`}
+                value={answers[q.id] ?? ""}
+                onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
+                rows={5}
+                maxLength={5000}
+                placeholder="Write your answer here…"
+                className="mt-3 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              />
+            ) : (
+              <div className="mt-3 space-y-2">
+                {q.options.map((opt) => (
+                  <label key={opt} className="flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-sm hover:bg-muted/40">
+                    <input
+                      type="radio"
+                      name={`q-${q.id}`}
+                      value={opt}
+                      checked={answers[q.id] === opt}
+                      onChange={() => setAnswers({ ...answers, [q.id]: opt })}
+                    />
+                    {opt}
+                  </label>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}

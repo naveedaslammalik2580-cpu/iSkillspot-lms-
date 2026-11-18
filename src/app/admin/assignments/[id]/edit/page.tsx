@@ -32,6 +32,13 @@ export default async function EditAssignmentPage({
           instructions: assignment.instructions,
           dueDate: assignment.dueDate ? assignment.dueDate.toISOString().slice(0, 10) : "",
           maxScore: assignment.maxScore,
+          taskAttachment: assignment.taskAttachment
+            ? {
+                kind: assignment.taskAttachment.kind,
+                name: assignment.taskAttachment.name,
+                url: assignment.taskAttachment.kind === "url" ? assignment.taskAttachment.url : undefined,
+              }
+            : null,
         }}
       />
     </>

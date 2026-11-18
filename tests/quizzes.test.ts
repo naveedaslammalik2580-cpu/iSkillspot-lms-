@@ -15,10 +15,16 @@ import assert from "node:assert/strict";
 import { db } from "@/lib/db";
 import {
   canAttempt,
+  evaluateAttempt,
+  getQuizForAdmin,
+  getQuizAttemptForAdmin,
   getQuizForStudentAttempt,
   getQuizzesForStudent,
   getStudentAttemptReview,
+  parseAttemptAnswers,
   scoreQuizAnswers,
+  serializeAttemptAnswers,
+  type MarkableQuestion,
   type ScorableQuestion,
 } from "@/lib/data/quizzes";
 
@@ -204,5 +210,216 @@ describe("attempt recording + review", () => {
     // Another student cannot read this attempt's review.
     assert.equal(await getStudentAttemptReview(quizPublished, student2, attempt.id), null);
     assert.equal(await getStudentAttemptReview(quizPublished, student2), null);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// v2: SHORT_ANSWER questions + admin marking
+// ---------------------------------------------------------------------------
+
+const MIXED: MarkableQuestion[] = [
+  { id: "mx-mcq", type: "MULTIPLE_CHOICE", correctAnswer: "Paris", points: 2 },
+  { id: "mx-sa", type: "SHORT_ANSWER", correctAnswer: "MODEL-ANSWER-TEXT", points: 3 },
+];
+
+describe("attempt answers format (wrapped + legacy)", () => {
+  it("parses the v2 wrapped shape", () => {
+    const raw = serializeAttemptAnswers({ a: "one", b: "two" }, { b: 1.5 });
+    const parsed = parseAttemptAnswers(raw);
+    assert.deepEqual(parsed.answers, { a: "one", b: "two" });
+    assert.deepEqual(parsed.awarded, { b: 1.5 });
+  });
+
+  it("parses the v1 flat shape (awarded empty)", () => {
+    const parsed = parseAttemptAnswers(JSON.stringify({ a: "one", b: "two" }));
+    assert.deepEqual(parsed.answers, { a: "one", b: "two" });
+    assert.deepEqual(parsed.awarded, {});
+  });
+
+  it("degrades invalid values to empty maps", () => {
+    assert.deepEqual(parseAttemptAnswers(null), { answers: {}, awarded: {} });
+    assert.deepEqual(parseAttemptAnswers("not json"), { answers: {}, awarded: {} });
+    assert.deepEqual(parseAttemptAnswers(JSON.stringify(["x"])), { answers: {}, awarded: {} });
+    // Non-string answers / non-number awarded entries are dropped.
+    const parsed = parseAttemptAnswers(
+      JSON.stringify({ answers: { a: 5, b: "ok" }, awarded: { a: "3", b: 2 } })
+    );
+    assert.deepEqual(parsed.answers, { b: "ok" });
+    assert.deepEqual(parsed.awarded, { b: 2 });
+  });
+});
+
+describe("evaluateAttempt (mixed auto + written)", () => {
+  const answers = { "mx-mcq": "Paris", "mx-sa": "my written answer" };
+
+  it("is pending while a written answer is unmarked; totals cover the auto part only", () => {
+    const ev = evaluateAttempt(MIXED, answers, {}, 70);
+    assert.equal(ev.pendingMarking, true);
+    assert.equal(ev.autoScore, 2);
+    assert.equal(ev.autoTotalPoints, 2);
+    assert.equal(ev.score, 2);
+    assert.equal(ev.totalPoints, 5);
+    assert.equal(ev.percentage, 40);
+  });
+
+  it("recomputes across all questions once marked — pass/fail can flip either way", () => {
+    const full = evaluateAttempt(MIXED, answers, { "mx-sa": 3 }, 70);
+    assert.equal(full.pendingMarking, false);
+    assert.equal(full.score, 5);
+    assert.equal(full.percentage, 100);
+    assert.equal(full.passed, true);
+
+    const weak = evaluateAttempt(MIXED, answers, { "mx-sa": 1 }, 70);
+    assert.equal(weak.pendingMarking, false);
+    assert.equal(weak.score, 3);
+    assert.equal(weak.percentage, 60);
+    assert.equal(weak.passed, false);
+
+    // Decimal awards allowed; landing exactly on the pass mark passes.
+    const boundary = evaluateAttempt(MIXED, answers, { "mx-sa": 1.5 }, 70);
+    assert.equal(boundary.percentage, 70);
+    assert.equal(boundary.passed, true);
+  });
+
+  it("a quiz without written questions is never pending", () => {
+    const ev = evaluateAttempt(
+      [{ id: "a", type: "MULTIPLE_CHOICE", correctAnswer: "X", points: 4 }],
+      { a: "X" },
+      {},
+      70
+    );
+    assert.equal(ev.pendingMarking, false);
+    assert.equal(ev.score, 4);
+  });
+});
+
+describe("mixed quiz (DB): pending → marked lifecycle", () => {
+  const MODEL = "Because the Bastille fell in 1789.";
+  let quizMixed: string;
+  let mMcq: string, mSa: string;
+  let attemptId: string;
+
+  before(async () => {
+    const quiz = await db.quiz.create({
+      data: { courseId: courseA, title: "Mixed Quiz", passingScore: 70, attemptsAllowed: 3, status: "PUBLISHED" },
+    });
+    quizMixed = quiz.id;
+    const mcq = await db.quizQuestion.create({
+      data: {
+        quizId: quizMixed, question: "Capital of France?", type: "MULTIPLE_CHOICE",
+        options: JSON.stringify(["Paris", "London", "Rome", "Berlin"]), correctAnswer: "Paris", points: 2, order: 0,
+      },
+    });
+    const sa = await db.quizQuestion.create({
+      data: {
+        quizId: quizMixed, question: "Why did the French Revolution start?", type: "SHORT_ANSWER",
+        options: null, correctAnswer: MODEL, points: 3, order: 1,
+      },
+    });
+    mMcq = mcq.id; mSa = sa.id;
+
+    // Exactly what submitQuizAttempt stores: wrapped shape, auto part
+    // scored (MCQ correct = 2), written answer unmarked.
+    const attempt = await db.quizAttempt.create({
+      data: {
+        quizId: quizMixed,
+        studentId: student1,
+        answers: serializeAttemptAnswers({ [mMcq]: "Paris", [mSa]: "People were hungry and angry." }, {}),
+        score: 2, percentage: 40, passed: false, attemptNumber: 1, completedAt: new Date(),
+      },
+    });
+    attemptId = attempt.id;
+  });
+
+  it("attempt DTO contains neither correct answers nor the model answer", async () => {
+    const dto = await getQuizForStudentAttempt(quizMixed, student1);
+    assert.ok(dto);
+    assert.equal(dto.questions.length, 2);
+    for (const q of dto.questions) assert.ok(!("correctAnswer" in q));
+    assert.ok(!JSON.stringify(dto).includes(MODEL), "model answer must not leak into the attempt DTO");
+    const sa = dto.questions.find((q) => q.id === mSa)!;
+    assert.deepEqual(sa.options, []);
+  });
+
+  it("student review shows the pending state, never the model answer", async () => {
+    const review = await getStudentAttemptReview(quizMixed, student1, attemptId);
+    assert.ok(review);
+    assert.equal(review.pendingMarking, true);
+    assert.equal(review.autoScore, 2);
+    assert.equal(review.autoTotalPoints, 2);
+    const sa = review.questions.find((q) => q.id === mSa)!;
+    assert.equal(sa.yourAnswer, "People were hungry and angry.");
+    assert.equal(sa.awardedPoints, null);
+    assert.equal(sa.correctAnswer, null, "model answer is never shown to students");
+    assert.ok(!JSON.stringify(review).includes(MODEL));
+
+    const list = await getQuizzesForStudent(student1);
+    const item = list.find((q) => q.id === quizMixed)!;
+    assert.equal(item.latestPendingMarking, true);
+    assert.equal(item.latestPassed, null);
+    assert.equal(item.bestPercentage, null, "pending attempts do not count toward best %");
+
+    const admin = await getQuizForAdmin(quizMixed);
+    assert.equal(admin!.attempts.find((a) => a.id === attemptId)!.pendingMarking, true);
+  });
+
+  it("admin marking view exposes the model answer and student text", async () => {
+    const detail = await getQuizAttemptForAdmin(quizMixed, attemptId);
+    assert.ok(detail);
+    assert.equal(detail.evaluation.pendingMarking, true);
+    const sa = detail.questions.find((q) => q.id === mSa)!;
+    assert.equal(sa.correctAnswer, MODEL);
+    assert.equal(sa.yourAnswer, "People were hungry and angry.");
+    assert.equal(sa.awardedPoints, null);
+    const mcq = detail.questions.find((q) => q.id === mMcq)!;
+    assert.equal(mcq.isCorrect, true);
+    assert.equal(mcq.earnedPoints, 2);
+  });
+
+  it("after marking, the review is final with the awarded points", async () => {
+    // Mirror markQuizAttempt's write: merge awarded, recompute, persist.
+    const questions: MarkableQuestion[] = [
+      { id: mMcq, type: "MULTIPLE_CHOICE", correctAnswer: "Paris", points: 2 },
+      { id: mSa, type: "SHORT_ANSWER", correctAnswer: MODEL, points: 3 },
+    ];
+    const answers = { [mMcq]: "Paris", [mSa]: "People were hungry and angry." };
+    const ev = evaluateAttempt(questions, answers, { [mSa]: 3 }, 70);
+    assert.equal(ev.pendingMarking, false);
+    await db.quizAttempt.update({
+      where: { id: attemptId },
+      data: {
+        answers: serializeAttemptAnswers(answers, { [mSa]: 3 }),
+        score: ev.score, percentage: ev.percentage, passed: ev.passed,
+      },
+    });
+
+    const review = await getStudentAttemptReview(quizMixed, student1, attemptId);
+    assert.ok(review);
+    assert.equal(review.pendingMarking, false);
+    assert.equal(review.score, 5);
+    assert.equal(review.percentage, 100);
+    assert.equal(review.passed, true);
+    const sa = review.questions.find((q) => q.id === mSa)!;
+    assert.equal(sa.awardedPoints, 3);
+    assert.equal(sa.correctAnswer, null);
+
+    const admin = await getQuizForAdmin(quizMixed);
+    assert.equal(admin!.attempts.find((a) => a.id === attemptId)!.pendingMarking, false);
+  });
+
+  it("legacy flat-shape attempts still render (and read as pending)", async () => {
+    const legacy = await db.quizAttempt.create({
+      data: {
+        quizId: quizMixed,
+        studentId: student1,
+        answers: JSON.stringify({ [mMcq]: "London", [mSa]: "legacy written answer" }),
+        score: 0, percentage: 0, passed: false, attemptNumber: 2, completedAt: new Date(),
+      },
+    });
+    const review = await getStudentAttemptReview(quizMixed, student1, legacy.id);
+    assert.ok(review);
+    assert.equal(review.pendingMarking, true);
+    assert.equal(review.questions.find((q) => q.id === mSa)!.yourAnswer, "legacy written answer");
+    assert.equal(review.questions.find((q) => q.id === mMcq)!.isCorrect, false);
   });
 });

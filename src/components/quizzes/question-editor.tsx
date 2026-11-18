@@ -21,8 +21,10 @@ type QuestionData = {
 
 type Draft = {
   question: string;
-  type: "MULTIPLE_CHOICE" | "TRUE_FALSE";
+  type: "MULTIPLE_CHOICE" | "TRUE_FALSE" | "SHORT_ANSWER";
   options: string[];
+  /** Correct option text (MCQ / True-False), or the model answer used
+   *  as a marking reference for Short answer questions. */
   correctAnswer: string;
   points: number;
 };
@@ -67,7 +69,14 @@ function QuestionFields({
               setDraft({
                 ...draft,
                 type,
-                options: type === "TRUE_FALSE" ? ["True", "False"] : draft.options.length === 4 ? draft.options : ["", "", "", ""],
+                options:
+                  type === "TRUE_FALSE"
+                    ? ["True", "False"]
+                    : type === "SHORT_ANSWER"
+                      ? []
+                      : draft.options.length === 4
+                        ? draft.options
+                        : ["", "", "", ""],
                 correctAnswer: "",
               });
             }}
@@ -75,6 +84,7 @@ function QuestionFields({
           >
             <option value="MULTIPLE_CHOICE">Multiple choice</option>
             <option value="TRUE_FALSE">True / False</option>
+            <option value="SHORT_ANSWER">Short answer (written)</option>
           </select>
         </div>
         <div className="space-y-2">
@@ -92,7 +102,23 @@ function QuestionFields({
         </div>
       </div>
 
-      {draft.type === "MULTIPLE_CHOICE" ? (
+      {draft.type === "SHORT_ANSWER" ? (
+        <div className="space-y-2">
+          <Label htmlFor={`${prefix}-model-answer`}>Model answer (for marking reference)</Label>
+          <textarea
+            id={`${prefix}-model-answer`}
+            value={draft.correctAnswer}
+            onChange={(e) => setDraft({ ...draft, correctAnswer: e.target.value })}
+            rows={3}
+            maxLength={5000}
+            placeholder="Optional — shown only to whoever marks the written answers, never to students."
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+          <p className="text-xs text-muted-foreground">
+            Students write their answer in their own words; an admin awards the points manually.
+          </p>
+        </div>
+      ) : draft.type === "MULTIPLE_CHOICE" ? (
         <div className="space-y-2">
           <Label>Options — select the correct one *</Label>
           {draft.options.map((opt, i) => (
@@ -144,8 +170,20 @@ function ExistingQuestion({ quizId, q, isFirst, isLast }: { quizId: string; q: Q
   const router = useRouter();
   const [draft, setDraft] = useState<Draft>({
     question: q.question,
-    type: q.type === "TRUE_FALSE" ? "TRUE_FALSE" : "MULTIPLE_CHOICE",
-    options: q.type === "TRUE_FALSE" ? ["True", "False"] : q.options.length === 4 ? q.options : ["", "", "", ""],
+    type:
+      q.type === "TRUE_FALSE"
+        ? "TRUE_FALSE"
+        : q.type === "SHORT_ANSWER"
+          ? "SHORT_ANSWER"
+          : "MULTIPLE_CHOICE",
+    options:
+      q.type === "TRUE_FALSE"
+        ? ["True", "False"]
+        : q.type === "SHORT_ANSWER"
+          ? []
+          : q.options.length === 4
+            ? q.options
+            : ["", "", "", ""],
     correctAnswer: q.correctAnswer ?? "",
     points: q.points,
   });

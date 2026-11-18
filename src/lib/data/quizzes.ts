@@ -3,11 +3,25 @@ import { db } from "@/lib/db";
 /**
  * Quizzes data layer (agency model — admin manages, students attempt).
  *
- * correctAnswer CONVENTION (v1, used consistently everywhere):
+ * correctAnswer CONVENTION (used consistently everywhere):
  * `QuizQuestion.correctAnswer` stores the TEXT of the correct option —
  * one of the strings in the JSON `options` array for MULTIPLE_CHOICE, or
  * "True" / "False" for TRUE_FALSE. A student's submitted answer is the
  * option text they selected; scoring is an exact string match.
+ *
+ * SHORT_ANSWER questions (v2) have no options. For them, `correctAnswer`
+ * stores an optional MODEL ANSWER — a marking reference for the admin
+ * only. It is never sent to students (not in the attempt DTO, not in the
+ * post-attempt review). Written answers are marked by an admin, who
+ * awards points per question.
+ *
+ * QuizAttempt.answers FORMAT (v2): a JSON string of the wrapped shape
+ *   { "answers": { [questionId]: answerText },
+ *     "awarded": { [questionId]: pointsAwarded } }
+ * `awarded` only ever holds entries for SHORT_ANSWER questions, written
+ * by the marking action. v1 attempts stored a FLAT map
+ * { [questionId]: answerText } with no wrapper — the parsers below
+ * accept BOTH shapes so old attempts keep rendering.
  */
 
 // ---------------------------------------------------------------------------
@@ -24,19 +38,56 @@ export function parseOptions(options: string | null | undefined): string[] {
   }
 }
 
-export function parseAnswers(answers: string | null | undefined): Record<string, string> {
-  if (!answers) return {};
+export type ParsedAttemptAnswers = {
+  answers: Record<string, string>;
+  awarded: Record<string, number>;
+};
+
+/** Parse a stored QuizAttempt.answers value. Accepts the v2 wrapped
+ *  shape ({answers, awarded}) and the v1 flat shape ({questionId: text}).
+ *  Anything unrecognised degrades to empty maps rather than throwing. */
+export function parseAttemptAnswers(raw: string | null | undefined): ParsedAttemptAnswers {
+  if (!raw) return { answers: {}, awarded: {} };
   try {
-    const obj = JSON.parse(answers);
-    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
-    const out: Record<string, string> = {};
-    for (const [k, v] of Object.entries(obj)) {
-      if (typeof v === "string") out[k] = v;
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return { answers: {}, awarded: {} };
+
+    const wrapped =
+      obj.answers !== null && typeof obj.answers === "object" && !Array.isArray(obj.answers);
+    const answersRaw: Record<string, unknown> = wrapped ? obj.answers : obj;
+    const answers: Record<string, string> = {};
+    for (const [k, v] of Object.entries(answersRaw)) {
+      if (typeof v === "string") answers[k] = v;
     }
-    return out;
+
+    const awarded: Record<string, number> = {};
+    if (wrapped && obj.awarded !== null && typeof obj.awarded === "object" && !Array.isArray(obj.awarded)) {
+      for (const [k, v] of Object.entries(obj.awarded)) {
+        if (typeof v === "number" && Number.isFinite(v)) awarded[k] = v;
+      }
+    }
+    return { answers, awarded };
   } catch {
-    return {};
+    return { answers: {}, awarded: {} };
   }
+}
+
+/** Just the student's answer texts, from either stored shape. */
+export function parseAnswers(answers: string | null | undefined): Record<string, string> {
+  return parseAttemptAnswers(answers).answers;
+}
+
+/** Just the admin-awarded points (SHORT_ANSWER questions only). */
+export function parseAwarded(answers: string | null | undefined): Record<string, number> {
+  return parseAttemptAnswers(answers).awarded;
+}
+
+/** Serialize an attempt's answers + awarded points in the v2 wrapped shape. */
+export function serializeAttemptAnswers(
+  answers: Record<string, string>,
+  awarded: Record<string, number>
+): string {
+  return JSON.stringify({ answers, awarded });
 }
 
 export type ScorableQuestion = { id: string; correctAnswer: string | null; points: number };
@@ -67,6 +118,81 @@ export function scoreQuizAnswers(
 
 export function canAttempt(attemptsUsed: number, attemptsAllowed: number): boolean {
   return attemptsUsed < attemptsAllowed;
+}
+
+export type MarkableQuestion = ScorableQuestion & { type: string };
+
+export function isShortAnswer(q: { type: string }): boolean {
+  return q.type === "SHORT_ANSWER";
+}
+
+export type AttemptEvaluation = {
+  /** Points from auto-scored questions (everything except SHORT_ANSWER). */
+  autoScore: number;
+  /** Total points available on auto-scored questions. */
+  autoTotalPoints: number;
+  /** Sum of admin-awarded points across SHORT_ANSWER questions. */
+  awardedScore: number;
+  /** True while any SHORT_ANSWER question lacks an awarded value. */
+  pendingMarking: boolean;
+  /** While pending: auto part only. Once final: auto + awarded. */
+  score: number;
+  totalPoints: number;
+  percentage: number;
+  passed: boolean;
+};
+
+/**
+ * Evaluate an attempt across auto-scored and manually marked questions.
+ *
+ * While marking is pending, score/percentage/passed reflect ONLY the
+ * auto-scored part (callers must not present them as final). Once every
+ * SHORT_ANSWER question has an awarded value, totals are recomputed
+ * across ALL questions. Boundary rule matches scoreQuizAnswers:
+ * percentage == passingScore PASSES.
+ */
+export function evaluateAttempt(
+  questions: MarkableQuestion[],
+  answers: Record<string, string>,
+  awarded: Record<string, number>,
+  passingScore: number
+): AttemptEvaluation {
+  const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
+  const autoQuestions = questions.filter((q) => !isShortAnswer(q));
+  const shortQuestions = questions.filter((q) => isShortAnswer(q));
+
+  const auto = scoreQuizAnswers(autoQuestions, answers, passingScore);
+  const pendingMarking = shortQuestions.some((q) => typeof awarded[q.id] !== "number");
+  const awardedScore = shortQuestions.reduce(
+    (sum, q) => sum + (typeof awarded[q.id] === "number" ? awarded[q.id] : 0),
+    0
+  );
+
+  if (pendingMarking) {
+    return {
+      autoScore: auto.score,
+      autoTotalPoints: auto.totalPoints,
+      awardedScore,
+      pendingMarking: true,
+      score: auto.score,
+      totalPoints,
+      percentage: totalPoints > 0 ? (auto.score / totalPoints) * 100 : 0,
+      passed: totalPoints > 0 ? (auto.score / totalPoints) * 100 >= passingScore : false,
+    };
+  }
+
+  const score = auto.score + awardedScore;
+  const percentage = totalPoints > 0 ? (score / totalPoints) * 100 : 0;
+  return {
+    autoScore: auto.score,
+    autoTotalPoints: auto.totalPoints,
+    awardedScore,
+    pendingMarking: false,
+    score,
+    totalPoints,
+    percentage,
+    passed: percentage >= passingScore,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -146,6 +272,7 @@ export type AdminQuizDetail = {
     score: number;
     percentage: number;
     passed: boolean;
+    pendingMarking: boolean;
     completedAt: Date | null;
   }[];
 };
@@ -186,16 +313,98 @@ export async function getQuizForAdmin(id: string): Promise<AdminQuizDetail | nul
       points: q.points,
       order: q.order,
     })),
-    attempts: quiz.attempts.map((a) => ({
-      id: a.id,
-      studentName: a.student.fullName,
-      studentCode: a.student.studentId,
-      attemptNumber: a.attemptNumber,
-      score: a.score,
-      percentage: a.percentage,
-      passed: a.passed,
-      completedAt: a.completedAt,
-    })),
+    attempts: quiz.attempts.map((a) => {
+      const parsed = parseAttemptAnswers(a.answers);
+      const evaluation = evaluateAttempt(quiz.questions, parsed.answers, parsed.awarded, quiz.passingScore);
+      return {
+        id: a.id,
+        studentName: a.student.fullName,
+        studentCode: a.student.studentId,
+        attemptNumber: a.attemptNumber,
+        score: a.score,
+        percentage: a.percentage,
+        passed: a.passed,
+        pendingMarking: evaluation.pendingMarking,
+        completedAt: a.completedAt,
+      };
+    }),
+  };
+}
+
+export type AdminAttemptDetail = {
+  quizId: string;
+  quizTitle: string;
+  passingScore: number;
+  attemptId: string;
+  attemptNumber: number;
+  studentName: string;
+  studentCode: string;
+  completedAt: Date | null;
+  evaluation: AttemptEvaluation;
+  questions: {
+    id: string;
+    question: string;
+    type: string;
+    options: string[];
+    points: number;
+    /** Correct option text (auto) or model answer (SHORT_ANSWER). Admin only. */
+    correctAnswer: string | null;
+    yourAnswer: string | null;
+    isAuto: boolean;
+    isCorrect: boolean | null;
+    earnedPoints: number | null;
+    awardedPoints: number | null;
+  }[];
+};
+
+/** One attempt in full, for the admin marking page. Admin-only data:
+ *  includes correct answers and model answers. */
+export async function getQuizAttemptForAdmin(
+  quizId: string,
+  attemptId: string
+): Promise<AdminAttemptDetail | null> {
+  const attempt = await db.quizAttempt.findFirst({
+    where: { id: attemptId, quizId },
+    include: { student: { select: { fullName: true, studentId: true } } },
+  });
+  if (!attempt) return null;
+
+  const quiz = await db.quiz.findUnique({
+    where: { id: quizId },
+    select: { title: true, passingScore: true, questions: { orderBy: { order: "asc" } } },
+  });
+  if (!quiz) return null;
+
+  const { answers, awarded } = parseAttemptAnswers(attempt.answers);
+  const evaluation = evaluateAttempt(quiz.questions, answers, awarded, quiz.passingScore);
+
+  return {
+    quizId,
+    quizTitle: quiz.title,
+    passingScore: quiz.passingScore,
+    attemptId: attempt.id,
+    attemptNumber: attempt.attemptNumber,
+    studentName: attempt.student.fullName,
+    studentCode: attempt.student.studentId,
+    completedAt: attempt.completedAt,
+    evaluation,
+    questions: quiz.questions.map((q) => {
+      const yourAnswer = answers[q.id] ?? null;
+      const auto = !isShortAnswer(q);
+      return {
+        id: q.id,
+        question: q.question,
+        type: q.type,
+        options: parseOptions(q.options),
+        points: q.points,
+        correctAnswer: q.correctAnswer,
+        yourAnswer,
+        isAuto: auto,
+        isCorrect: auto ? q.correctAnswer !== null && yourAnswer === q.correctAnswer : null,
+        earnedPoints: auto ? (q.correctAnswer !== null && yourAnswer === q.correctAnswer ? q.points : 0) : null,
+        awardedPoints: auto ? null : typeof awarded[q.id] === "number" ? awarded[q.id] : null,
+      };
+    }),
   };
 }
 
@@ -213,8 +422,11 @@ export type StudentQuizListItem = {
   questionCount: number;
   myAttemptCount: number;
   attemptsRemaining: number;
+  /** Best percentage across FINAL (fully marked) attempts only. */
   bestPercentage: number | null;
+  /** Pass/fail of the latest attempt; null while it is pending marking. */
   latestPassed: boolean | null;
+  latestPendingMarking: boolean;
 };
 
 export async function getQuizzesForStudent(studentId: string): Promise<StudentQuizListItem[]> {
@@ -235,9 +447,10 @@ export async function getQuizzesForStudent(studentId: string): Promise<StudentQu
       course: { select: { title: true } },
       module: { select: { title: true } },
       _count: { select: { questions: true } },
+      questions: { select: { id: true, type: true, correctAnswer: true, points: true } },
       attempts: {
         where: { studentId },
-        select: { percentage: true, passed: true },
+        select: { percentage: true, passed: true, answers: true },
         orderBy: { attemptNumber: "asc" },
       },
     },
@@ -246,6 +459,14 @@ export async function getQuizzesForStudent(studentId: string): Promise<StudentQu
 
   return quizzes.map((q) => {
     const used = q.attempts.length;
+    const evaluations = q.attempts.map((a) => {
+      const parsed = parseAttemptAnswers(a.answers);
+      return evaluateAttempt(q.questions, parsed.answers, parsed.awarded, q.passingScore);
+    });
+    const finalPercentages = q.attempts
+      .filter((_, i) => !evaluations[i].pendingMarking)
+      .map((a) => a.percentage);
+    const latestPending = used > 0 ? evaluations[used - 1].pendingMarking : false;
     return {
       id: q.id,
       title: q.title,
@@ -256,8 +477,9 @@ export async function getQuizzesForStudent(studentId: string): Promise<StudentQu
       questionCount: q._count.questions,
       myAttemptCount: used,
       attemptsRemaining: Math.max(0, q.attemptsAllowed - used),
-      bestPercentage: used > 0 ? Math.max(...q.attempts.map((a) => a.percentage)) : null,
-      latestPassed: used > 0 ? q.attempts[used - 1].passed : null,
+      bestPercentage: finalPercentages.length > 0 ? Math.max(...finalPercentages) : null,
+      latestPassed: used > 0 && !latestPending ? q.attempts[used - 1].passed : null,
+      latestPendingMarking: latestPending,
     };
   });
 }
@@ -343,6 +565,12 @@ export type StudentAttemptReview = {
   passed: boolean;
   passingScore: number;
   completedAt: Date | null;
+  /** True while written answers await admin marking. While pending,
+   *  score/percentage/passed cover ONLY the auto-scored part and must
+   *  not be presented as the final result. */
+  pendingMarking: boolean;
+  autoScore: number;
+  autoTotalPoints: number;
   questions: {
     id: string;
     question: string;
@@ -350,8 +578,15 @@ export type StudentAttemptReview = {
     options: string[];
     points: number;
     yourAnswer: string | null;
+    /** Correct option text for auto-scored questions. ALWAYS null for
+     *  SHORT_ANSWER — the model answer is a marking reference and is
+     *  never shown to students. */
     correctAnswer: string | null;
     isCorrect: boolean;
+    isAuto: boolean;
+    /** Points awarded by the admin for a SHORT_ANSWER question;
+     *  null while unmarked (and for auto-scored questions). */
+    awardedPoints: number | null;
   }[];
 };
 
@@ -380,7 +615,8 @@ export async function getStudentAttemptReview(
   });
   if (!quiz) return null;
 
-  const answers = parseAnswers(attempt.answers);
+  const { answers, awarded } = parseAttemptAnswers(attempt.answers);
+  const evaluation = evaluateAttempt(quiz.questions, answers, awarded, quiz.passingScore);
   return {
     attemptId: attempt.id,
     attemptNumber: attempt.attemptNumber,
@@ -390,8 +626,13 @@ export async function getStudentAttemptReview(
     passed: attempt.passed,
     passingScore: quiz.passingScore,
     completedAt: attempt.completedAt,
+    pendingMarking: evaluation.pendingMarking,
+    autoScore: evaluation.autoScore,
+    autoTotalPoints: evaluation.autoTotalPoints,
     questions: quiz.questions.map((q) => {
       const yourAnswer = answers[q.id] ?? null;
+      const auto = !isShortAnswer(q);
+      const awardedPoints = auto ? null : typeof awarded[q.id] === "number" ? awarded[q.id] : null;
       return {
         id: q.id,
         question: q.question,
@@ -399,8 +640,12 @@ export async function getStudentAttemptReview(
         options: parseOptions(q.options),
         points: q.points,
         yourAnswer,
-        correctAnswer: q.correctAnswer,
-        isCorrect: q.correctAnswer !== null && yourAnswer === q.correctAnswer,
+        correctAnswer: auto ? q.correctAnswer : null,
+        isCorrect: auto
+          ? q.correctAnswer !== null && yourAnswer === q.correctAnswer
+          : awardedPoints !== null && awardedPoints >= q.points,
+        isAuto: auto,
+        awardedPoints,
       };
     }),
   };

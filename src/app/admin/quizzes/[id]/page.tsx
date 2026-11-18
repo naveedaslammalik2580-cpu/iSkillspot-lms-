@@ -53,15 +53,22 @@ export default async function AdminQuizDetailPage({ params }: { params: Promise<
             <ol className="space-y-4">
               {quiz.questions.map((q, i) => (
                 <li key={q.id} className="rounded-md border border-border p-4">
-                  <p className="font-medium">{i + 1}. {q.question} <span className="text-sm text-muted-foreground">({q.points} pt{q.points === 1 ? "" : "s"} · {q.type === "TRUE_FALSE" ? "True/False" : "Multiple choice"})</span></p>
-                  <ul className="mt-2 space-y-1 text-sm">
-                    {q.options.map((opt) => (
-                      <li key={opt} className={opt === q.correctAnswer ? "flex items-center gap-1 font-medium text-green-700 dark:text-green-400" : "text-muted-foreground"}>
-                        {opt === q.correctAnswer && <CheckCircle2 className="h-4 w-4" />}
-                        {opt}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="font-medium">{i + 1}. {q.question} <span className="text-sm text-muted-foreground">({q.points} pt{q.points === 1 ? "" : "s"} · {q.type === "TRUE_FALSE" ? "True/False" : q.type === "SHORT_ANSWER" ? "Short answer" : "Multiple choice"})</span></p>
+                  {q.type === "SHORT_ANSWER" ? (
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Model answer (marking reference):{" "}
+                      <span className="font-medium text-foreground">{q.correctAnswer ?? "— none provided —"}</span>
+                    </p>
+                  ) : (
+                    <ul className="mt-2 space-y-1 text-sm">
+                      {q.options.map((opt) => (
+                        <li key={opt} className={opt === q.correctAnswer ? "flex items-center gap-1 font-medium text-green-700 dark:text-green-400" : "text-muted-foreground"}>
+                          {opt === q.correctAnswer && <CheckCircle2 className="h-4 w-4" />}
+                          {opt}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
             </ol>
@@ -84,20 +91,40 @@ export default async function AdminQuizDetailPage({ params }: { params: Promise<
                     <th className="px-4 py-3 font-medium">Score</th>
                     <th className="px-4 py-3 font-medium">%</th>
                     <th className="px-4 py-3 font-medium">Result</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium">Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   {quiz.attempts.map((a) => (
-                    <tr key={a.id} className="border-b border-border last:border-0">
-                      <td className="px-4 py-3">{a.studentName} <span className="text-muted-foreground">({a.studentCode})</span></td>
+                    <tr key={a.id} className="border-b border-border last:border-0 hover:bg-muted/40">
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/admin/quizzes/${quiz.id}/attempts/${a.id}`}
+                          className="font-medium text-primary hover:underline"
+                        >
+                          {a.studentName}
+                        </Link>{" "}
+                        <span className="text-muted-foreground">({a.studentCode})</span>
+                      </td>
                       <td className="px-4 py-3">#{a.attemptNumber}</td>
                       <td className="px-4 py-3">{a.score} / {quiz.totalPoints}</td>
                       <td className="px-4 py-3">{Math.round(a.percentage)}%</td>
                       <td className="px-4 py-3">
-                        <span className={a.passed ? "font-medium text-green-700 dark:text-green-400" : "font-medium text-destructive"}>
-                          {a.passed ? "Passed" : "Failed"}
-                        </span>
+                        {a.pendingMarking ? (
+                          <span className="text-muted-foreground">—</span>
+                        ) : (
+                          <span className={a.passed ? "font-medium text-green-700 dark:text-green-400" : "font-medium text-destructive"}>
+                            {a.passed ? "Passed" : "Failed"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {a.pendingMarking ? (
+                          <span className="font-medium text-amber-600 dark:text-amber-400">Pending marking</span>
+                        ) : (
+                          <span className="text-muted-foreground">Final</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">{a.completedAt ? formatDate(a.completedAt) : "—"}</td>
                     </tr>

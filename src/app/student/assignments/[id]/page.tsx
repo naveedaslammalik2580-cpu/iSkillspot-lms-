@@ -4,6 +4,7 @@ import { getStudentAssignmentDetail } from "@/lib/data/assignments";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { SubmissionForm } from "@/components/assignments/submission-form";
+import { TaskFileCard } from "@/components/assignments/task-file-card";
 import { formatDate } from "@/lib/utils";
 
 export default async function StudentAssignmentDetailPage({
@@ -56,6 +57,10 @@ export default async function StudentAssignmentDetailPage({
           )}
         </CardContent>
       </Card>
+
+      {assignment.taskAttachment && (
+        <TaskFileCard assignmentId={assignment.id} attachment={assignment.taskAttachment} />
+      )}
 
       <SubmissionForm
         assignmentId={assignment.id}

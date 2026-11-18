@@ -1,5 +1,11 @@
 import { db } from "@/lib/db";
 import type { Role, SubmissionStatus } from "@prisma/client";
+import {
+  parseAssignmentAttachment,
+  type AssignmentAttachment,
+} from "@/lib/assignment-attachment";
+
+export type { AssignmentAttachment };
 
 export interface CallerScope {
   role: Role;
@@ -182,6 +188,8 @@ export interface AssignmentDetail {
   moduleTitle: string | null;
   dueDate: Date | null;
   maxScore: number;
+  /** The practical-task PDF attachment, if one is set. */
+  taskAttachment: AssignmentAttachment | null;
   submissions: SubmissionRow[];
 }
 
@@ -213,6 +221,7 @@ export async function getAssignmentDetail(
     moduleTitle: assignment.module?.title ?? null,
     dueDate: assignment.dueDate,
     maxScore: assignment.maxScore,
+    taskAttachment: parseAssignmentAttachment(assignment.attachments),
     submissions: submissions.map((s) => ({
       id: s.id,
       studentId: s.student.id,
@@ -352,6 +361,8 @@ export interface StudentAssignmentDetail {
   courseTitle: string;
   dueDate: Date | null;
   maxScore: number;
+  /** The practical-task PDF attachment, if one is set. */
+  taskAttachment: AssignmentAttachment | null;
   isPastDue: boolean;
   submission: {
     id: string;
@@ -393,6 +404,7 @@ export async function getStudentAssignmentDetail(
     courseTitle: assignment.course.title,
     dueDate: assignment.dueDate,
     maxScore: assignment.maxScore,
+    taskAttachment: parseAssignmentAttachment(assignment.attachments),
     isPastDue: assignment.dueDate !== null && assignment.dueDate.getTime() < Date.now(),
     submission: submission
       ? {

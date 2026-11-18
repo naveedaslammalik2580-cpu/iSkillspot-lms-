@@ -74,6 +74,51 @@ export async function uploadSubmissionFile({
   };
 }
 
+/** True when the storage env vars are all present. Lets callers return
+ *  an honest "storage is not configured" error before attempting an
+ *  upload, instead of failing mid-request. */
+export function isStorageConfigured(): boolean {
+  return Boolean(
+    process.env.SUPABASE_URL &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY &&
+      process.env.SUPABASE_STORAGE_BUCKET
+  );
+}
+
+/**
+ * Upload an assignment's practical-task PDF (admin-provided). Same
+ * choke-point validation as submission files; the caller additionally
+ * enforces the PDF-only rule for task files.
+ */
+export async function uploadAssignmentTaskFile({
+  assignmentId,
+  file,
+  originalName,
+}: {
+  assignmentId: string;
+  file: File;
+  originalName: string;
+}): Promise<{ storageKey: string; sizeBytes: number; mimeType: string }> {
+  const validation = await validateUploadFile(file);
+  if (!validation.ok) throw new Error(validation.error);
+
+  const { client, bucket } = getClient();
+
+  const storageKey = `assignment-tasks/${assignmentId}/${randomUUID()}-${sanitizeFileName(originalName)}`;
+
+  const { error } = await client.storage.from(bucket).upload(storageKey, file, {
+    contentType: file.type || "application/pdf",
+    upsert: false,
+  });
+  if (error) throw new Error(`Upload failed: ${error.message}`);
+
+  return {
+    storageKey,
+    sizeBytes: file.size,
+    mimeType: file.type || "application/pdf",
+  };
+}
+
 export async function getSignedDownloadUrl(
   storageKey: string,
   { expiresInSeconds = 300 }: { expiresInSeconds?: number } = {}

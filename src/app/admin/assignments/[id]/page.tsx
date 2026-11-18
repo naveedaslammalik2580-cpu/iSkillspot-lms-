@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
 import { DeleteAssignmentButton } from "@/components/assignments/delete-assignment-button";
+import { TaskFileCard } from "@/components/assignments/task-file-card";
 import { formatDate } from "@/lib/utils";
 import { Pencil } from "lucide-react";
 
@@ -65,6 +66,10 @@ export default async function AdminAssignmentDetailPage({
           )}
         </CardContent>
       </Card>
+
+      {assignment.taskAttachment && (
+        <TaskFileCard assignmentId={assignment.id} attachment={assignment.taskAttachment} />
+      )}
 
       <Card>
         <CardHeader><CardTitle>Submissions</CardTitle></CardHeader>
