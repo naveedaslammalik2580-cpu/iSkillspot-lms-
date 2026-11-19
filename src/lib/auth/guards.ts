@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import type { Role } from "@prisma/client";
 import { getSession, type SessionPayload } from "./session";
 import { can, isStaff, type Permission } from "./permissions";
@@ -61,15 +62,22 @@ export async function requirePermission(
 }
 
 /**
+ * Per-request memoised Student lookup: the student layout AND the page
+ * below it both call requireStudentSelf() in the same request, which used
+ * to fetch the identical Student row twice per navigation.
+ */
+const getStudentByUserId = cache(async (userId: string) =>
+  db.student.findUnique({ where: { userId } }),
+);
+
+/**
  * Resolve the Student row that belongs to the current session, or null.
  * Students may only ever read their OWN student record.
  */
 export async function requireStudentSelf(options: { allowPasswordChange?: boolean } = {}) {
   const session = await requireSession(options);
   if (session.role !== "STUDENT") redirect("/forbidden");
-  const student = await db.student.findUnique({
-    where: { userId: session.userId },
-  });
+  const student = await getStudentByUserId(session.userId);
   if (!student) redirect("/forbidden");
   return { session, student };
 }

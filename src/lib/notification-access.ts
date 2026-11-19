@@ -1,10 +1,17 @@
 import type { Prisma } from "@prisma/client";
+import { cache } from "react";
 import { db } from "@/lib/db";
 
 // Re-evaluate stored notifications too, so suspending a course hides its old notices.
-export async function notificationVisibility(
+//
+// cache(): the bell asks for the unread count AND the recent list in the
+// same request, and each used to recompute this from scratch — for a
+// student that is user + enrollments + assignments queries, so the bell
+// alone cost 2x that chain per page render. Per-request memoisation keeps
+// the result identical within the request and fresh on the next one.
+export const notificationVisibility = cache(async (
   userId: string,
-): Promise<Prisma.NotificationWhereInput> {
+): Promise<Prisma.NotificationWhereInput> => {
   const user = await db.user.findUnique({
     where: { id: userId },
     select: {
@@ -54,4 +61,4 @@ export async function notificationVisibility(
       ]),
     ],
   };
-}
+});

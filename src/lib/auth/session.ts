@@ -1,5 +1,6 @@
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { cache } from "react";
 import { db } from "@/lib/db";
 import { COOKIE_NAME, getSecret, verifyToken, type SessionPayload } from "./token";
 export type { SessionPayload };
@@ -28,7 +29,19 @@ export async function createSession(
   });
 }
 
-export async function getSession(): Promise<SessionPayload | null> {
+/**
+ * Per-request de-duplication: the portal layout's guard, the page's own
+ * guard, and any server actions in the same request all call getSession().
+ * Without cache(), each call re-ran the user + teacher/student relation
+ * queries below (measured: 3 statements per call, 2+ calls per navigation —
+ * pure latency multiplication against a remote database). cache() scopes
+ * the result to a single request, so the "authorize from current DB state"
+ * guarantee is unchanged across requests; within one request the session
+ * cannot legitimately change underneath a reader (the one flow that bumps
+ * sessionVersion — password change — builds its new session from the update
+ * result, never from a getSession() re-read).
+ */
+export const getSession = cache(async (): Promise<SessionPayload | null> => {
   const store = await cookies();
   const token = store.get(COOKIE_NAME)?.value;
   if (!token) return null;
@@ -46,7 +59,7 @@ export async function getSession(): Promise<SessionPayload | null> {
       (user.mustChangePassword && user.passwordExpiresAt && user.passwordExpiresAt.getTime() <= Date.now())) return null;
   return { userId: user.id, username: user.username, role: user.role,
     mustChangePassword: user.mustChangePassword, sessionVersion: user.sessionVersion, admissionRequired: user.admissionRequired };
-}
+});
 
 export async function destroySession(): Promise<void> {
   const store = await cookies();

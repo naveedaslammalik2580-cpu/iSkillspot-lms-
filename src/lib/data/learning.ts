@@ -112,19 +112,26 @@ export async function getStudentCourses(studentId: string): Promise<StudentCours
 
   const courseIds = [...new Set(enrollments.map((e) => e.courseId))];
 
-  // Published-lesson totals per course (groupBy is per module; roll up
-  // to course via the module->course map).
-  const totals = await db.lesson
-    .groupBy({
-      by: ["moduleId"],
-      where: { isPublished: true, module: { courseId: { in: courseIds } } },
-      _count: { _all: true },
-    })
-    .then(async (byModule) => {
-      const modules = await db.module.findMany({
-        where: { courseId: { in: courseIds } },
-        select: { id: true, courseId: true },
-      });
+  // The three lookups below depend only on courseIds, not on each other —
+  // they used to run strictly one-after-another (groupBy -> modules ->
+  // progress), three sequential round trips on the student landing page's
+  // critical path. They now run concurrently; results are unchanged.
+  const [totals, done] = await Promise.all([
+    // Published-lesson totals per course (groupBy is per module; roll up
+    // to course via the module->course map). The module map does not
+    // depend on the groupBy result, so it is fetched in parallel with it.
+    (async () => {
+      const [byModule, modules] = await Promise.all([
+        db.lesson.groupBy({
+          by: ["moduleId"],
+          where: { isPublished: true, module: { courseId: { in: courseIds } } },
+          _count: { _all: true },
+        }),
+        db.module.findMany({
+          where: { courseId: { in: courseIds } },
+          select: { id: true, courseId: true },
+        }),
+      ]);
       const courseOf = new Map(modules.map((m) => [m.id, m.courseId]));
       const perCourse = new Map<string, number>();
       for (const row of byModule) {
@@ -132,19 +139,19 @@ export async function getStudentCourses(studentId: string): Promise<StudentCours
         if (cid) perCourse.set(cid, (perCourse.get(cid) ?? 0) + row._count._all);
       }
       return perCourse;
-    });
-
-  // Completed lessons per course (a lesson belongs to exactly one course,
-  // resolved through its module).
+    })(),
+    // Completed lessons per course (a lesson belongs to exactly one course,
+    // resolved through its module).
+    db.lessonProgress.findMany({
+      where: {
+        studentId,
+        completed: true,
+        lesson: { isPublished: true, module: { courseId: { in: courseIds } } },
+      },
+      select: { lesson: { select: { module: { select: { courseId: true } } } } },
+    }),
+  ]);
   const completedPerCourse = new Map<string, number>();
-  const done = await db.lessonProgress.findMany({
-    where: {
-      studentId,
-      completed: true,
-      lesson: { isPublished: true, module: { courseId: { in: courseIds } } },
-    },
-    select: { lesson: { select: { module: { select: { courseId: true } } } } },
-  });
   for (const row of done) {
     const cid = row.lesson.module.courseId;
     completedPerCourse.set(cid, (completedPerCourse.get(cid) ?? 0) + 1);
