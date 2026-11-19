@@ -45,7 +45,7 @@ export type NotificationSummaryDTO = {
 };
 
 const preferenceSchema = z.object({
-  type: z.enum(["LESSON", "ASSIGNMENT", "QUIZ", "ATTENDANCE", "ANNOUNCEMENT", "CERTIFICATE", "FEE", "SYSTEM"]),
+  type: z.enum(["LESSON", "ASSIGNMENT", "QUIZ", "ATTENDANCE", "ANNOUNCEMENT", "CERTIFICATE", "FEE", "SUPPORT", "SYSTEM"]),
   channel: z.enum(["inApp", "push"]),
   enabled: z.boolean(),
 });

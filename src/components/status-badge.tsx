@@ -25,6 +25,10 @@ const MAP: Record<string, "default" | "success" | "warning" | "danger" | "neutra
   UPCOMING: "default",
   ONGOING: "success",
   CANCELLED: "danger",
+  // Support tickets: OPEN waits on the admin team, ANSWERED waits on the student.
+  OPEN: "warning",
+  ANSWERED: "default",
+  CLOSED: "neutral",
 };
 
 export function StatusBadge({ status }: { status: string }) {

@@ -18,6 +18,7 @@ export const ADMIN_NAV: NavItem[] = [
   { label: "Fees", href: "/admin/fees", icon: "Wallet" },
   { label: "Payments", href: "/admin/payments", icon: "CreditCard" },
   { label: "Announcements", href: "/admin/announcements", icon: "Megaphone" },
+  { label: "Support", href: "/admin/support", icon: "LifeBuoy" },
   { label: "Reports", href: "/admin/reports", icon: "BarChart3" },
   { label: "Audit Logs", href: "/admin/audit-logs", icon: "ScrollText" },
 ];
@@ -26,6 +27,7 @@ export const STUDENT_NAV: NavItem[] = [
   { label: "My Courses", href: "/student/courses", icon: "BookOpen" },
   { label: "Quizzes", href: "/student/quizzes", icon: "ClipboardList" },
   { label: "Assignments", href: "/student/assignments", icon: "FileText" },
+  { label: "Help & Support", href: "/student/support", icon: "LifeBuoy" },
   { label: "Profile", href: "/student/profile", icon: "User" },
 ];
 

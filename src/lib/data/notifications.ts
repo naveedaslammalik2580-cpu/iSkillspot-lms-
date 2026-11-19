@@ -39,6 +39,7 @@ export const NOTIFICATION_TYPES: NotificationType[] = [
   "ANNOUNCEMENT",
   "CERTIFICATE",
   "FEE",
+  "SUPPORT",
   "SYSTEM",
 ];
 

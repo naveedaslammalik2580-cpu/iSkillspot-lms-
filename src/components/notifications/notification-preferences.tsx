@@ -13,6 +13,7 @@ const TYPE_LABELS: Record<string, string> = {
   ANNOUNCEMENT: "Announcements",
   CERTIFICATE: "Certificates",
   FEE: "Fees & payments",
+  SUPPORT: "Support tickets",
   SYSTEM: "Account & system",
 };
 

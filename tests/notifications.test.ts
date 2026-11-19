@@ -115,7 +115,9 @@ describe("preferences (Phase 2)", () => {
     const { getPreferencesForUser } = await import("@/lib/data/notifications");
     const u = await makeUser("STUDENT");
     const before = await getPreferencesForUser(u.id);
-    assert.equal(before.length, 8);
+    // One row per NotificationType — 9 since SUPPORT was added with the
+    // Help & Support ticket system.
+    assert.equal(before.length, 9);
     assert.ok(before.every((p) => p.inApp && p.push));
     await db.notificationPreference.create({ data: { userId: u.id, type: "ASSIGNMENT", inApp: false, push: true } });
     const after = await getPreferencesForUser(u.id);

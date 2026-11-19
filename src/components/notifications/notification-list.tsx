@@ -27,6 +27,7 @@ const TYPE_LABELS: Record<string, string> = {
   ANNOUNCEMENT: "Announcement",
   CERTIFICATE: "Certificate",
   FEE: "Fee",
+  SUPPORT: "Support",
   SYSTEM: "System",
 };
 

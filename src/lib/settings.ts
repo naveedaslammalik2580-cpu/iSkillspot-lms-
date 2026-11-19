@@ -5,6 +5,8 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   logoUrl: "",
   contactEmail: "info@iskillspot.com",
   contactPhone: "",
+  supportEmail: "",
+  supportWhatsApp: "",
   address: "",
   studentIdPrefix: "ISP",
   currency: "PKR",

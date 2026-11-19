@@ -10,6 +10,8 @@ const FIELDS: { key: string; label: string }[] = [
   { key: "instituteName", label: "Institute name" },
   { key: "contactEmail", label: "Contact email" },
   { key: "contactPhone", label: "Contact phone" },
+  { key: "supportEmail", label: "Support email (shown on student Help page)" },
+  { key: "supportWhatsApp", label: "Support WhatsApp (shown on student Help page)" },
   { key: "address", label: "Address" },
   { key: "studentIdPrefix", label: "Student ID prefix" },
   { key: "currency", label: "Currency" },

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { requireStudentSelf } from "@/lib/auth/guards";
 import { db } from "@/lib/db";
+import { getSupportContact } from "@/lib/data/support";
+import { SupportContactCard } from "@/components/support/contact-card";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +16,7 @@ export default async function StudentProfilePage() {
     include: { user: { select: { username: true, email: true } } },
   });
   if (!full) return null;
+  const supportContact = await getSupportContact();
 
   return (
     <>
@@ -35,6 +38,9 @@ export default async function StudentProfilePage() {
           <Row label="Admission date" value={formatDate(full.admissionDate)} />
         </CardContent>
       </Card>
+      <div className="mt-6">
+        <SupportContactCard contact={supportContact} showSupportLink />
+      </div>
     </>
   );
 }
