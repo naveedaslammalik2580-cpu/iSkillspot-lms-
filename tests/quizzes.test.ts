@@ -14,13 +14,18 @@ import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { db } from "@/lib/db";
 import {
+  attemptDeadline,
+  attemptRemainingSeconds,
   canAttempt,
   evaluateAttempt,
+  finalizeExpiredAttemptIfStale,
   getQuizForAdmin,
   getQuizAttemptForAdmin,
   getQuizForStudentAttempt,
   getQuizzesForStudent,
   getStudentAttemptReview,
+  isAttemptExpired,
+  isWithinSubmitWindow,
   parseAttemptAnswers,
   scoreQuizAnswers,
   serializeAttemptAnswers,
@@ -237,9 +242,10 @@ describe("attempt answers format (wrapped + legacy)", () => {
   });
 
   it("degrades invalid values to empty maps", () => {
-    assert.deepEqual(parseAttemptAnswers(null), { answers: {}, awarded: {} });
-    assert.deepEqual(parseAttemptAnswers("not json"), { answers: {}, awarded: {} });
-    assert.deepEqual(parseAttemptAnswers(JSON.stringify(["x"])), { answers: {}, awarded: {} });
+    // The parsed shape gained an `expired` flag with timed attempts (v3).
+    assert.deepEqual(parseAttemptAnswers(null), { answers: {}, awarded: {}, expired: false });
+    assert.deepEqual(parseAttemptAnswers("not json"), { answers: {}, awarded: {}, expired: false });
+    assert.deepEqual(parseAttemptAnswers(JSON.stringify(["x"])), { answers: {}, awarded: {}, expired: false });
     // Non-string answers / non-number awarded entries are dropped.
     const parsed = parseAttemptAnswers(
       JSON.stringify({ answers: { a: 5, b: "ok" }, awarded: { a: "3", b: 2 } })
@@ -407,6 +413,15 @@ describe("mixed quiz (DB): pending → marked lifecycle", () => {
     assert.equal(admin!.attempts.find((a) => a.id === attemptId)!.pendingMarking, false);
   });
 
+  it("the expired marker round-trips and defaults to false", () => {
+    const withMarker = parseAttemptAnswers(serializeAttemptAnswers({ a: "x" }, {}, { expired: true }));
+    assert.equal(withMarker.expired, true);
+    assert.deepEqual(withMarker.answers, { a: "x" });
+    assert.equal(parseAttemptAnswers(serializeAttemptAnswers({ a: "x" }, {})).expired, false);
+    assert.equal(parseAttemptAnswers(JSON.stringify({ a: "x" })).expired, false, "legacy flat shape has no marker");
+    assert.equal(parseAttemptAnswers(null).expired, false);
+  });
+
   it("legacy flat-shape attempts still render (and read as pending)", async () => {
     const legacy = await db.quizAttempt.create({
       data: {
@@ -421,5 +436,104 @@ describe("mixed quiz (DB): pending → marked lifecycle", () => {
     assert.equal(review.pendingMarking, true);
     assert.equal(review.questions.find((q) => q.id === mSa)!.yourAnswer, "legacy written answer");
     assert.equal(review.questions.find((q) => q.id === mMcq)!.isCorrect, false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// v3: timed attempts — deadline helpers + lazy expiry
+// ---------------------------------------------------------------------------
+
+describe("timer helpers", () => {
+  const started = new Date("2026-01-01T10:00:00.000Z");
+
+  it("deadline is startedAt + timeLimit minutes", () => {
+    assert.equal(attemptDeadline(started, 20).toISOString(), "2026-01-01T10:20:00.000Z");
+    assert.equal(attemptDeadline(started, 1).toISOString(), "2026-01-01T10:01:00.000Z");
+  });
+
+  it("remaining seconds counts down and clamps at zero", () => {
+    assert.equal(attemptRemainingSeconds(started, 20, started), 1200);
+    assert.equal(attemptRemainingSeconds(started, 20, new Date("2026-01-01T10:19:30.000Z")), 30);
+    assert.equal(attemptRemainingSeconds(started, 20, new Date("2026-01-01T10:20:00.000Z")), 0);
+    assert.equal(attemptRemainingSeconds(started, 20, new Date("2026-01-01T11:00:00.000Z")), 0);
+  });
+
+  it("the submit window includes the 60s grace, then closes", () => {
+    const at = (iso: string) => new Date(iso);
+    assert.equal(isWithinSubmitWindow(started, 20, at("2026-01-01T10:19:59.000Z")), true);
+    assert.equal(isWithinSubmitWindow(started, 20, at("2026-01-01T10:20:59.000Z")), true, "inside grace");
+    assert.equal(isWithinSubmitWindow(started, 20, at("2026-01-01T10:21:00.000Z")), true, "grace boundary is inclusive");
+    assert.equal(isWithinSubmitWindow(started, 20, at("2026-01-01T10:21:01.000Z")), false, "past grace");
+    assert.equal(isAttemptExpired(started, 20, at("2026-01-01T10:21:00.000Z")), false);
+    assert.equal(isAttemptExpired(started, 20, at("2026-01-01T10:21:01.000Z")), true);
+  });
+});
+
+describe("timed attempts (DB): start state + lazy expiry", () => {
+  let timedQuiz: string;
+  let timedQ: string;
+
+  before(async () => {
+    const quiz = await db.quiz.create({
+      data: { courseId: courseA, title: "Timed Quiz", passingScore: 70, attemptsAllowed: 3, timeLimit: 1, status: "PUBLISHED" },
+    });
+    timedQuiz = quiz.id;
+    const q = await db.quizQuestion.create({
+      data: {
+        quizId: timedQuiz, question: "Capital of France?", type: "MULTIPLE_CHOICE",
+        options: JSON.stringify(["Paris", "London", "Rome", "Berlin"]), correctAnswer: "Paris", points: 2, order: 0,
+      },
+    });
+    timedQ = q.id;
+  });
+
+  it("a fresh in-progress attempt is exposed with server remaining time and is not finalized", async () => {
+    const attempt = await db.quizAttempt.create({
+      data: { quizId: timedQuiz, studentId: student1, answers: null, attemptNumber: 1, completedAt: null },
+    });
+    assert.equal(await finalizeExpiredAttemptIfStale(timedQuiz, student1), false);
+
+    const dto = await getQuizForStudentAttempt(timedQuiz, student1);
+    assert.ok(dto);
+    assert.ok(dto.inProgressAttempt, "running attempt is exposed");
+    assert.equal(dto.inProgressAttempt!.attemptId, attempt.id);
+    assert.ok(dto.inProgressAttempt!.remainingSeconds > 0 && dto.inProgressAttempt!.remainingSeconds <= 60);
+    assert.equal(dto.myAttemptCount, 1, "a started attempt consumes an attempt");
+    assert.equal(dto.attemptsRemaining, 2);
+
+    await db.quizAttempt.delete({ where: { id: attempt.id } });
+  });
+
+  it("an attempt past deadline + grace finalizes as expired at the deadline, scoring 0", async () => {
+    const startedAt = new Date(Date.now() - 2 * 60 * 60 * 1000); // 2h ago, limit is 1 minute
+    const attempt = await db.quizAttempt.create({
+      data: { quizId: timedQuiz, studentId: student1, answers: null, attemptNumber: 1, startedAt, completedAt: null },
+    });
+
+    assert.equal(await finalizeExpiredAttemptIfStale(timedQuiz, student1), true);
+
+    const stored = await db.quizAttempt.findUnique({ where: { id: attempt.id } });
+    assert.ok(stored);
+    assert.equal(stored.completedAt?.getTime(), startedAt.getTime() + 60_000, "completedAt is the deadline itself");
+    assert.equal(stored.score, 0);
+    assert.equal(stored.percentage, 0);
+    assert.equal(stored.passed, false);
+    const parsed = parseAttemptAnswers(stored.answers);
+    assert.equal(parsed.expired, true, "expired marker is stored");
+    assert.deepEqual(parsed.answers, {});
+
+    // Finalizing is idempotent, and the review surfaces the expiry.
+    assert.equal(await finalizeExpiredAttemptIfStale(timedQuiz, student1), false);
+    const review = await getStudentAttemptReview(timedQuiz, student1, attempt.id);
+    assert.ok(review);
+    assert.equal(review.expired, true);
+    assert.equal(review.pendingMarking, false, "no written questions — expired attempt is final at 0");
+
+    const admin = await getQuizForAdmin(timedQuiz);
+    const row = admin!.attempts.find((a) => a.id === attempt.id)!;
+    assert.equal(row.expired, true);
+    assert.equal(row.inProgress, false);
+
+    void timedQ;
   });
 });

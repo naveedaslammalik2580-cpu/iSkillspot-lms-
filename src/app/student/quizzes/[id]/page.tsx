@@ -10,13 +10,20 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AttemptForm } from "@/components/quizzes/attempt-form";
-import { CheckCircle2, Clock, XCircle } from "lucide-react";
+import { StartAttemptButton } from "@/components/quizzes/start-attempt";
+import { CheckCircle2, Clock, TimerOff, XCircle } from "lucide-react";
 
 function ReviewView({ quizId, review, attemptsRemaining }: { quizId: string; review: StudentAttemptReview; attemptsRemaining: number }) {
   return (
     <div className="space-y-4">
       <Card>
         <CardContent className="pt-6">
+          {review.expired && (
+            <p className="mb-3 flex items-center gap-1 rounded-md bg-destructive/10 px-3 py-2 font-medium text-destructive">
+              <TimerOff className="h-5 w-5" />
+              Time expired — this attempt was closed automatically.
+            </p>
+          )}
           {review.pendingMarking ? (
             <>
               <p className="text-sm text-muted-foreground">Attempt #{review.attemptNumber} — marking in progress</p>
@@ -129,8 +136,73 @@ export default async function StudentQuizPage({
     }
   }
 
-  // Attempts left: show the attempt form. Correct answers are never part
-  // of this payload — the DTO strips them by construction.
+  // A timed attempt is already running: resume it with its true
+  // remaining time — the clock never restarts. (Opening this page has
+  // already finalized the attempt if its deadline + grace had passed,
+  // so a running attempt here is always still submittable.)
+  if (quiz.inProgressAttempt) {
+    const running = quiz.inProgressAttempt;
+    return (
+      <>
+        <PageHeader
+          title={quiz.title}
+          description={`${quiz.courseTitle}${quiz.moduleTitle ? ` · ${quiz.moduleTitle}` : ""}`}
+        />
+        <Card className="mb-4">
+          <CardContent className="flex flex-wrap gap-x-6 gap-y-1 pt-6 text-sm text-muted-foreground">
+            <span>Attempt: <span className="font-medium text-foreground">#{running.attemptNumber} in progress</span></span>
+            <span>Pass mark: <span className="font-medium text-foreground">{quiz.passingScore}%</span></span>
+            <span>Time limit: <span className="font-medium text-foreground">{quiz.timeLimit} minutes</span></span>
+          </CardContent>
+        </Card>
+        {quiz.description && (
+          <Card className="mb-4"><CardContent className="whitespace-pre-wrap pt-6 text-sm">{quiz.description}</CardContent></Card>
+        )}
+        <AttemptForm
+          quiz={quiz}
+          timed={{ attemptId: running.attemptId, remainingSeconds: running.remainingSeconds }}
+        />
+      </>
+    );
+  }
+
+  // Attempts left on a TIMED quiz: the student starts explicitly. The
+  // clock starts at the start click — not at publish, not at page view.
+  if (quiz.attemptsRemaining > 0 && quiz.timeLimit !== null) {
+    return (
+      <>
+        <PageHeader
+          title={quiz.title}
+          description={`${quiz.courseTitle}${quiz.moduleTitle ? ` · ${quiz.moduleTitle}` : ""}`}
+        />
+        <Card className="mb-4">
+          <CardContent className="flex flex-wrap gap-x-6 gap-y-1 pt-6 text-sm text-muted-foreground">
+            <span>Pass mark: <span className="font-medium text-foreground">{quiz.passingScore}%</span></span>
+            <span>Attempts: <span className="font-medium text-foreground">{quiz.myAttemptCount} of {quiz.attemptsAllowed} used</span></span>
+            <span>Time limit: <span className="font-medium text-foreground">{quiz.timeLimit} minutes</span></span>
+          </CardContent>
+        </Card>
+        {quiz.description && (
+          <Card className="mb-4"><CardContent className="whitespace-pre-wrap pt-6 text-sm">{quiz.description}</CardContent></Card>
+        )}
+        <Card>
+          <CardContent className="space-y-3 pt-6">
+            <p className="font-medium">This is a timed quiz.</p>
+            <p className="text-sm text-muted-foreground">
+              You get {quiz.timeLimit} minutes from the moment you start — the clock does not
+              start before that, and once started it cannot be paused. When time runs out, your
+              answers are submitted automatically. Starting uses one of your attempts.
+            </p>
+            <StartAttemptButton quizId={quiz.id} />
+          </CardContent>
+        </Card>
+      </>
+    );
+  }
+
+  // Attempts left on an untimed quiz: show the attempt form directly.
+  // Correct answers are never part of this payload — the DTO strips
+  // them by construction.
   if (quiz.attemptsRemaining > 0) {
     return (
       <>
@@ -142,9 +214,6 @@ export default async function StudentQuizPage({
           <CardContent className="flex flex-wrap gap-x-6 gap-y-1 pt-6 text-sm text-muted-foreground">
             <span>Pass mark: <span className="font-medium text-foreground">{quiz.passingScore}%</span></span>
             <span>Attempts: <span className="font-medium text-foreground">{quiz.myAttemptCount} of {quiz.attemptsAllowed} used</span></span>
-            {quiz.timeLimit !== null && (
-              <span>Suggested time: <span className="font-medium text-foreground">{quiz.timeLimit} minutes</span></span>
-            )}
           </CardContent>
         </Card>
         {quiz.description && (

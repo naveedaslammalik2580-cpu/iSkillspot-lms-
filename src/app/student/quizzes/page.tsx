@@ -43,6 +43,8 @@ export default async function StudentQuizzesPage() {
                     <td className="px-4 py-3">
                       {q.myAttemptCount === 0 ? (
                         "Not attempted"
+                      ) : q.latestInProgress ? (
+                        <span className="font-medium text-primary">In progress</span>
                       ) : q.latestPendingMarking ? (
                         <span className="font-medium text-amber-600 dark:text-amber-400">Pending marking</span>
                       ) : (

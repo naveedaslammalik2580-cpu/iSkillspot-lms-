@@ -6,7 +6,7 @@ import { PageHeader, EmptyState } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { StatusBadge } from "@/components/status-badge";
-import { Plus } from "lucide-react";
+import { Library, Plus } from "lucide-react";
 
 export default async function AdminQuizzesPage({
   searchParams,
@@ -27,11 +27,18 @@ export default async function AdminQuizzesPage({
         title="Quizzes"
         description={`${quizzes.length} total`}
         action={
-          <Button asChild>
-            <Link href="/admin/quizzes/new">
-              <Plus className="h-4 w-4" /> New quiz
-            </Link>
-          </Button>
+          <div className="flex items-start gap-2">
+            <Button asChild variant="outline">
+              <Link href="/admin/quizzes/bank">
+                <Library className="h-4 w-4" /> Question Bank
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link href="/admin/quizzes/new">
+                <Plus className="h-4 w-4" /> New quiz
+              </Link>
+            </Button>
+          </div>
         }
       />
 

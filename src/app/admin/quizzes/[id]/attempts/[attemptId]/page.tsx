@@ -35,11 +35,19 @@ export default async function AdminQuizAttemptMarkingPage({
         }
       />
 
+      {attempt.expired && (
+        <p className="mb-4 rounded-md bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">
+          This attempt was closed automatically when the time limit expired — the student did not submit it.
+        </p>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Status</p>
-            {ev.pendingMarking ? (
+            {attempt.inProgress ? (
+              <p className="text-lg font-semibold">In progress</p>
+            ) : ev.pendingMarking ? (
               <p className="text-lg font-semibold text-amber-600 dark:text-amber-400">Pending marking</p>
             ) : (
               <p className="text-lg font-semibold">Final</p>
@@ -71,7 +79,16 @@ export default async function AdminQuizAttemptMarkingPage({
       </div>
 
       <div className="mt-6">
-        <MarkingForm quizId={id} attemptId={attemptId} questions={attempt.questions} />
+        {attempt.inProgress ? (
+          <Card>
+            <CardContent className="pt-6 text-sm text-muted-foreground">
+              This timed attempt is still in progress — the student has not submitted yet, so
+              there is nothing to mark. Check back after they submit or the time limit expires.
+            </CardContent>
+          </Card>
+        ) : (
+          <MarkingForm quizId={id} attemptId={attemptId} questions={attempt.questions} />
+        )}
       </div>
     </>
   );

@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { addQuestion, updateQuestion, deleteQuestion, moveQuestion } from "@/lib/actions/quizzes";
+import { saveQuizQuestionToBank } from "@/lib/actions/question-bank";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowDown, ArrowUp, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Library, Trash2 } from "lucide-react";
 
 type QuestionData = {
   id: string;
@@ -19,7 +20,10 @@ type QuestionData = {
   order: number;
 };
 
-type Draft = {
+/** The editable question fields. Exported (with QuestionFields below)
+ *  so the question-bank form edits questions through the exact same UI
+ *  and field semantics as the quiz editor. */
+export type Draft = {
   question: string;
   type: "MULTIPLE_CHOICE" | "TRUE_FALSE" | "SHORT_ANSWER";
   options: string[];
@@ -37,7 +41,7 @@ const emptyDraft = (): Draft => ({
   points: 1,
 });
 
-function QuestionFields({
+export function QuestionFields({
   draft,
   setDraft,
   prefix,
@@ -189,6 +193,7 @@ function ExistingQuestion({ quizId, q, isFirst, isLast }: { quizId: string; q: Q
   });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [bankSaved, setBankSaved] = useState(false);
 
   async function run(fn: () => Promise<{ ok: boolean; error?: string }>) {
     setPending(true);
@@ -199,11 +204,22 @@ function ExistingQuestion({ quizId, q, isFirst, isLast }: { quizId: string; q: Q
     else setError(res.error ?? "Something went wrong.");
   }
 
+  async function onSaveToBank() {
+    setPending(true);
+    setError(null);
+    setBankSaved(false);
+    const res = await saveQuizQuestionToBank(q.id, quizId);
+    setPending(false);
+    if (res.ok) setBankSaved(true);
+    else setError(res.error ?? "Something went wrong.");
+  }
+
   return (
     <Card>
       <CardContent className="space-y-4 pt-6">
         <QuestionFields draft={draft} setDraft={setDraft} prefix={`q-${q.id}`} />
         {error && <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>}
+        {bankSaved && <p className="rounded-md bg-green-700/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">Saved a copy to the question bank.</p>}
         <div className="flex flex-wrap gap-2">
           <Button
             type="button"
@@ -212,6 +228,9 @@ function ExistingQuestion({ quizId, q, isFirst, isLast }: { quizId: string; q: Q
             onClick={() => run(() => updateQuestion({ id: q.id, quizId, ...draft }))}
           >
             Save question
+          </Button>
+          <Button type="button" size="sm" variant="outline" disabled={pending} onClick={onSaveToBank}>
+            <Library className="h-4 w-4" /> Save to bank
           </Button>
           <Button type="button" size="sm" variant="outline" disabled={pending || isFirst} onClick={() => run(() => moveQuestion(q.id, quizId, "up"))}>
             <ArrowUp className="h-4 w-4" /> Up

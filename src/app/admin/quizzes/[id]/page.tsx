@@ -108,10 +108,10 @@ export default async function AdminQuizDetailPage({ params }: { params: Promise<
                         <span className="text-muted-foreground">({a.studentCode})</span>
                       </td>
                       <td className="px-4 py-3">#{a.attemptNumber}</td>
-                      <td className="px-4 py-3">{a.score} / {quiz.totalPoints}</td>
-                      <td className="px-4 py-3">{Math.round(a.percentage)}%</td>
+                      <td className="px-4 py-3">{a.inProgress ? "—" : `${a.score} / ${quiz.totalPoints}`}</td>
+                      <td className="px-4 py-3">{a.inProgress ? "—" : `${Math.round(a.percentage)}%`}</td>
                       <td className="px-4 py-3">
-                        {a.pendingMarking ? (
+                        {a.inProgress || a.pendingMarking ? (
                           <span className="text-muted-foreground">—</span>
                         ) : (
                           <span className={a.passed ? "font-medium text-green-700 dark:text-green-400" : "font-medium text-destructive"}>
@@ -120,10 +120,21 @@ export default async function AdminQuizDetailPage({ params }: { params: Promise<
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        {a.pendingMarking ? (
-                          <span className="font-medium text-amber-600 dark:text-amber-400">Pending marking</span>
+                        {a.inProgress ? (
+                          <span className="text-muted-foreground">In progress</span>
                         ) : (
-                          <span className="text-muted-foreground">Final</span>
+                          <>
+                            {a.expired && (
+                              <span className="mr-2 rounded bg-destructive/10 px-1.5 py-0.5 text-xs font-semibold text-destructive">
+                                Expired
+                              </span>
+                            )}
+                            {a.pendingMarking ? (
+                              <span className="font-medium text-amber-600 dark:text-amber-400">Pending marking</span>
+                            ) : (
+                              <span className="text-muted-foreground">Final</span>
+                            )}
+                          </>
                         )}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">{a.completedAt ? formatDate(a.completedAt) : "—"}</td>

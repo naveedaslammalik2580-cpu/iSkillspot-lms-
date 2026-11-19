@@ -142,7 +142,7 @@ export function QuizForm({
           <div className="space-y-2">
             <Label htmlFor="timeLimit">Time limit (minutes, optional)</Label>
             <Input id="timeLimit" name="timeLimit" type="number" min={1} max={600} defaultValue={quiz?.timeLimit ?? ""} placeholder="No limit" />
-            <p className="text-xs text-muted-foreground">Shown to students as information in v1 — no countdown is enforced.</p>
+            <p className="text-xs text-muted-foreground">Enforced: the countdown starts when the student starts the attempt (never before), and the attempt is submitted automatically at zero.</p>
           </div>
         </CardContent>
       </Card>

@@ -31,6 +31,7 @@ model User {
   notificationPreferences NotificationPreference[]
   pushSubscriptions  PushSubscription[]
   passwordResetTokens PasswordResetToken[]
+  supportMessages    SupportMessage[] @relation("SupportMessageAuthor")
   student            Student?
   teacher            Teacher?
 
@@ -101,6 +102,7 @@ model Student {
   lessonProgress   LessonProgress[]
   payments         Payment[]
   quizAttempts     QuizAttempt[]
+  supportTickets   SupportTicket[]
   user             User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([status])
@@ -149,6 +151,7 @@ model Course {
   grades       Grade[]
   modules      Module[]
   quizzes      Quiz[]
+  questionBankItems QuestionBankItem[]
 
   @@index([status])
 }
@@ -165,6 +168,7 @@ model Module {
   lessons     Lesson[]
   course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   quizzes     Quiz[]
+  questionBankItems QuestionBankItem[]
 
   @@index([courseId])
 }
@@ -367,6 +371,32 @@ model QuizAttempt {
   @@index([studentId])
 }
 
+/**
+ * A reusable question in the question bank, scoped to a course (and
+ * optionally one of its modules). Adding a bank item to a quiz COPIES it
+ * into a QuizQuestion — the copy is fully independent, so later edits or
+ * deletion of the bank item never change existing quizzes. Field
+ * conventions mirror QuizQuestion exactly (options is the same JSON
+ * shape; correctAnswer stores the correct option TEXT, or the optional
+ * model answer for SHORT_ANSWER).
+ */
+model QuestionBankItem {
+  id            String           @id @default(cuid())
+  courseId      String
+  moduleId      String?
+  type          QuizQuestionType
+  question      String
+  options       String?
+  correctAnswer String?
+  points        Int              @default(1)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  course        Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  module        Module?          @relation(fields: [moduleId], references: [id])
+
+  @@index([courseId])
+}
+
 model Grade {
   id         String   @id @default(cuid())
   studentId  String
@@ -517,6 +547,38 @@ model PushSubscription {
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// Help & Support tickets (agency model: students <-> admins only).
+// A ticket is one student's one issue; the thread is the full record.
+// Status semantics: OPEN = waiting for admin, ANSWERED = admin replied
+// (waiting for student), CLOSED = resolved. Replies reopen closed tickets.
+model SupportTicket {
+  id            String              @id @default(cuid())
+  studentId     String
+  subject       String
+  category      SupportCategory
+  status        SupportTicketStatus @default(OPEN)
+  lastMessageAt DateTime            @default(now())
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  student       Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  messages      SupportMessage[]
+
+  @@index([studentId])
+  @@index([status])
+}
+
+model SupportMessage {
+  id        String        @id @default(cuid())
+  ticketId  String
+  authorId  String
+  body      String
+  createdAt DateTime      @default(now())
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author    User          @relation("SupportMessageAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
 }
 
 model AuditLog {
@@ -708,7 +770,22 @@ enum NotificationType {
   ANNOUNCEMENT
   CERTIFICATE
   FEE
+  SUPPORT
   SYSTEM
+}
+
+enum SupportTicketStatus {
+  OPEN
+  ANSWERED
+  CLOSED
+}
+
+enum SupportCategory {
+  COURSE_ACCESS
+  PAYMENT
+  TECHNICAL
+  QUIZ_ASSIGNMENT
+  OTHER
 }
 
 enum Gender {

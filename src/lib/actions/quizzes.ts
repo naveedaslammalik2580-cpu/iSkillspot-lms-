@@ -9,11 +9,14 @@ import { notifyStudent, notifyUsers } from "@/lib/notifications";
 import {
   canAttempt,
   evaluateAttempt,
+  finalizeExpiredAttemptIfStale,
   isShortAnswer,
+  isWithinSubmitWindow,
   parseAttemptAnswers,
   parseOptions,
   serializeAttemptAnswers,
 } from "@/lib/data/quizzes";
+import { questionFieldsSchema, validateQuestionFields } from "@/lib/quiz-questions";
 
 /**
  * Quizzes (agency model). Admin (quiz.manage) builds and publishes;
@@ -200,45 +203,14 @@ export async function deleteQuiz(id: string): Promise<QuizResult> {
 // Questions
 // ---------------------------------------------------------------------------
 
-const questionSchema = z.object({
+// The field schema + validation live in src/lib/quiz-questions.ts and
+// are SHARED with the question bank — one set of rules for a question,
+// wherever it is created.
+const questionSchema = questionFieldsSchema.extend({
   quizId: z.string().min(1),
-  question: z.string().min(1, "Question text is required").max(2000),
-  type: z.enum(["MULTIPLE_CHOICE", "TRUE_FALSE", "SHORT_ANSWER"]),
-  options: z.array(z.string().max(500)).optional(),
-  // For MULTIPLE_CHOICE / TRUE_FALSE this is the correct option text and
-  // is required (enforced in validateQuestion). For SHORT_ANSWER it is
-  // the optional model answer used as a marking reference — never shown
-  // to students.
-  correctAnswer: z.string().max(5000).optional(),
-  points: z.coerce.number().int().min(1, "Points must be at least 1").max(100),
 });
 
-function validateQuestion(
-  d: z.infer<typeof questionSchema>
-): { options: string[] | null; correctAnswer: string | null } | { error: string } {
-  if (d.type === "SHORT_ANSWER") {
-    const modelAnswer = d.correctAnswer?.trim() ?? "";
-    return { options: null, correctAnswer: modelAnswer || null };
-  }
-  if (!d.correctAnswer) return { error: "Select the correct answer." };
-  if (d.type === "TRUE_FALSE") {
-    if (d.correctAnswer !== "True" && d.correctAnswer !== "False") {
-      return { error: "Correct answer must be True or False." };
-    }
-    return { options: ["True", "False"], correctAnswer: d.correctAnswer };
-  }
-  const options = (d.options ?? []).map((o) => o.trim());
-  if (options.length !== 4 || options.some((o) => o.length === 0)) {
-    return { error: "Multiple choice questions need exactly 4 non-empty options." };
-  }
-  if (new Set(options).size !== options.length) {
-    return { error: "Options must all be different." };
-  }
-  if (!options.includes(d.correctAnswer)) {
-    return { error: "The correct answer must be one of the options." };
-  }
-  return { options, correctAnswer: d.correctAnswer };
-}
+const validateQuestion = validateQuestionFields;
 
 export async function addQuestion(input: z.infer<typeof questionSchema>): Promise<QuizResult> {
   const session = await requirePermission("quiz.manage");
@@ -387,21 +359,90 @@ export type SubmitAttemptResult =
       /** True when written answers still need admin marking — score,
        *  percentage and passed then cover only the auto-scored part. */
       pendingMarking: boolean;
+      /** True when the timer closed this attempt (deadline + grace
+       *  passed) — the submitted payload was NOT scored. */
+      expired: boolean;
     }
   | { ok: false; error: string };
 
 const submitSchema = z.object({
   quizId: z.string().min(1),
+  // TIMED quizzes only: the in-progress attempt created by
+  // startQuizAttempt. Untimed quizzes omit it (the attempt row is
+  // created at submit time, as before).
+  attemptId: z.string().min(1).optional(),
   // Written (SHORT_ANSWER) answers can be long; option texts are short
   // but share the same map, so the cap is generous for both.
   answers: z.record(z.string(), z.string().max(5000)),
 });
 
+export type StartAttemptResult =
+  | { ok: true; attemptId: string; resumed: boolean }
+  | { ok: false; error: string };
+
+/**
+ * Start (or resume) a TIMED attempt. The clock starts HERE — when the
+ * student starts — never when the quiz was created or published; a
+ * student who opens the quiz days later gets the full timeLimit from
+ * their own start. Starting consumes one attempt (attemptsAllowed counts
+ * completed attempts plus this in-progress one). An already-running
+ * attempt is resumed as-is: its deadline never moves.
+ */
+export async function startQuizAttempt(quizId: string): Promise<StartAttemptResult> {
+  const { student } = await requireStudentSelf();
+
+  const quiz = await db.quiz.findUnique({
+    where: { id: quizId },
+    select: { id: true, status: true, courseId: true, timeLimit: true, attemptsAllowed: true },
+  });
+  if (!quiz || quiz.status !== "PUBLISHED") {
+    return { ok: false, error: "This quiz is not available." };
+  }
+  if (quiz.timeLimit === null) {
+    return { ok: false, error: "This quiz has no time limit — just answer the questions and submit." };
+  }
+
+  const enrollment = await db.enrollment.findFirst({
+    where: { studentId: student.id, courseId: quiz.courseId, status: "ACTIVE" },
+    select: { id: true },
+  });
+  if (!enrollment) return { ok: false, error: "You are not enrolled in this course." };
+
+  // A previous attempt whose deadline + grace has passed is finalized
+  // as expired first — it can no longer be resumed.
+  await finalizeExpiredAttemptIfStale(quizId, student.id);
+
+  const running = await db.quizAttempt.findFirst({
+    where: { quizId, studentId: student.id, completedAt: null },
+    select: { id: true },
+  });
+  if (running) return { ok: true, attemptId: running.id, resumed: true };
+
+  const used = await db.quizAttempt.count({ where: { quizId, studentId: student.id } });
+  if (!canAttempt(used, quiz.attemptsAllowed)) {
+    return { ok: false, error: "You have used all attempts for this quiz." };
+  }
+
+  const attempt = await db.quizAttempt.create({
+    data: {
+      quizId,
+      studentId: student.id,
+      answers: null,
+      attemptNumber: used + 1,
+      completedAt: null,
+    },
+  });
+
+  revalidatePath("/student/quizzes");
+  revalidatePath(`/student/quizzes/${quizId}`);
+  return { ok: true, attemptId: attempt.id, resumed: false };
+}
+
 export async function submitQuizAttempt(input: z.infer<typeof submitSchema>): Promise<SubmitAttemptResult> {
   const { student } = await requireStudentSelf();
   const parsed = submitSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Invalid submission." };
-  const { quizId, answers } = parsed.data;
+  const { quizId, attemptId, answers } = parsed.data;
 
   const quiz = await db.quiz.findUnique({
     where: { id: quizId },
@@ -417,16 +458,111 @@ export async function submitQuizAttempt(input: z.infer<typeof submitSchema>): Pr
   });
   if (!enrollment) return { ok: false, error: "You are not enrolled in this course." };
 
-  const used = await db.quizAttempt.count({ where: { quizId, studentId: student.id } });
-  if (!canAttempt(used, quiz.attemptsAllowed)) {
-    return { ok: false, error: "You have used all attempts for this quiz." };
-  }
-
   // Only accept answers for this quiz's own questions.
   const questionIds = new Set(quiz.questions.map((q) => q.id));
   const cleanAnswers: Record<string, string> = {};
   for (const [qid, value] of Object.entries(answers)) {
     if (questionIds.has(qid)) cleanAnswers[qid] = value;
+  }
+
+  const revalidate = () => {
+    revalidatePath("/student/quizzes");
+    revalidatePath(`/student/quizzes/${quizId}`);
+    revalidatePath(`/admin/quizzes/${quizId}`);
+  };
+
+  // ---- TIMED quizzes: the attempt row already exists (startQuizAttempt)
+  // and the SERVER deadline — startedAt + timeLimit, plus a short grace
+  // window — decides whether this submission counts. The browser
+  // countdown is only a UX aid; it is never trusted here.
+  if (quiz.timeLimit !== null) {
+    if (!attemptId) {
+      return {
+        ok: false,
+        error: "This is a timed quiz — start the attempt first so the clock can run.",
+      };
+    }
+    const attempt = await db.quizAttempt.findFirst({
+      where: { id: attemptId, quizId, studentId: student.id },
+    });
+    if (!attempt) return { ok: false, error: "Attempt not found." };
+
+    if (attempt.completedAt !== null) {
+      const stored = parseAttemptAnswers(attempt.answers);
+      if (stored.expired) {
+        // Already closed by the timer (e.g. a page view in another tab
+        // finalized it before this auto-submit landed). Report the
+        // stored outcome so the UI routes to the review, which
+        // explains the expiry.
+        const ev = evaluateAttempt(quiz.questions, stored.answers, stored.awarded, quiz.passingScore);
+        return {
+          ok: true,
+          attemptId: attempt.id,
+          score: attempt.score,
+          totalPoints: ev.totalPoints,
+          percentage: attempt.percentage,
+          passed: attempt.passed,
+          pendingMarking: ev.pendingMarking,
+          expired: true,
+        };
+      }
+      return { ok: false, error: "This attempt has already been submitted." };
+    }
+
+    if (!isWithinSubmitWindow(attempt.startedAt, quiz.timeLimit, new Date())) {
+      // Past deadline + grace: the late payload is NOT scored. The
+      // attempt is finalized as expired with whatever it already holds
+      // (answers are only ever written at submit time, so: nothing).
+      await finalizeExpiredAttemptIfStale(quizId, student.id);
+      const finalized = await db.quizAttempt.findUnique({ where: { id: attempt.id } });
+      const stored = parseAttemptAnswers(finalized?.answers);
+      const ev = evaluateAttempt(quiz.questions, stored.answers, stored.awarded, quiz.passingScore);
+      revalidate();
+      return {
+        ok: true,
+        attemptId: attempt.id,
+        score: finalized?.score ?? 0,
+        totalPoints: ev.totalPoints,
+        percentage: finalized?.percentage ?? 0,
+        passed: finalized?.passed ?? false,
+        pendingMarking: ev.pendingMarking,
+        expired: true,
+      };
+    }
+
+    // In window: score and complete the EXISTING attempt row.
+    const result = evaluateAttempt(quiz.questions, cleanAnswers, {}, quiz.passingScore);
+    await db.quizAttempt.update({
+      where: { id: attempt.id },
+      data: {
+        answers: serializeAttemptAnswers(cleanAnswers, {}),
+        score: result.score,
+        percentage: result.percentage,
+        passed: result.passed,
+        completedAt: new Date(),
+      },
+    });
+    revalidate();
+    return {
+      ok: true,
+      attemptId: attempt.id,
+      score: result.score,
+      totalPoints: result.totalPoints,
+      percentage: result.percentage,
+      passed: result.passed,
+      pendingMarking: result.pendingMarking,
+      expired: false,
+    };
+  }
+
+  // ---- UNTIMED quizzes: the original flow — the attempt row is created
+  // at submit time.
+  if (attemptId) {
+    return { ok: false, error: "This quiz has no timer — submit without starting an attempt." };
+  }
+  const used = await db.quizAttempt.count({ where: { quizId, studentId: student.id } });
+  if (!canAttempt(used, quiz.attemptsAllowed)) {
+    return { ok: false, error: "You have used all attempts for this quiz." };
   }
 
   // Auto-score the objective questions now; SHORT_ANSWER questions are
@@ -448,9 +584,7 @@ export async function submitQuizAttempt(input: z.infer<typeof submitSchema>): Pr
     },
   });
 
-  revalidatePath("/student/quizzes");
-  revalidatePath(`/student/quizzes/${quizId}`);
-  revalidatePath(`/admin/quizzes/${quizId}`);
+  revalidate();
   return {
     ok: true,
     attemptId: attempt.id,
@@ -459,6 +593,7 @@ export async function submitQuizAttempt(input: z.infer<typeof submitSchema>): Pr
     percentage: result.percentage,
     passed: result.passed,
     pendingMarking: result.pendingMarking,
+    expired: false,
   };
 }
 
@@ -492,6 +627,9 @@ export async function markQuizAttempt(input: z.infer<typeof markAttemptSchema>):
 
   const attempt = await db.quizAttempt.findFirst({ where: { id: d.attemptId, quizId: d.quizId } });
   if (!attempt) return { ok: false, error: "Attempt not found." };
+  if (attempt.completedAt === null) {
+    return { ok: false, error: "This attempt is still in progress — it cannot be marked yet." };
+  }
 
   const quiz = await db.quiz.findUnique({
     where: { id: d.quizId },
@@ -518,7 +656,8 @@ export async function markQuizAttempt(input: z.infer<typeof markAttemptSchema>):
   await db.quizAttempt.update({
     where: { id: attempt.id },
     data: {
-      answers: serializeAttemptAnswers(answers, nextAwarded),
+      // Preserve the timer's "expired" marker when re-serializing.
+      answers: serializeAttemptAnswers(answers, nextAwarded, { expired: stored.expired }),
       score: after.score,
       percentage: after.percentage,
       passed: after.passed,
