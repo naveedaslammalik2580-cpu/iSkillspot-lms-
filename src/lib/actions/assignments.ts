@@ -8,7 +8,6 @@ import {
   requirePermission,
   requireSession,
   requireStudentSelf,
-  assertTeacherOwnsCourse,
   AuthError,
 } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
@@ -161,7 +160,7 @@ export type AssignmentResult =
 
 /**
  * Section: create an assignment. Course-wide (no per-batch link) — any
- * teacher assigned to a batch of the course, or any staff member, may create.
+ * staff member with assignment.manage may create.
  */
 export async function createAssignment(
   input: z.infer<typeof createAssignmentSchema> & { taskFile?: File | null }

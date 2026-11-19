@@ -61,8 +61,8 @@ export async function getAllFees(filters?: {
 }
 
 /**
- * Paginated fee listing, same shape as listStudents/listCourses/listBatches/
- * listTeachers — page/pageSize in, { rows, total, page, pageSize, pages }
+ * Paginated fee listing, same shape as listStudents/listCourses/listBatches
+ * — page/pageSize in, { rows, total, page, pageSize, pages }
  * out. For the admin fee list specifically. `getAllFees` above stays
  * unpaginated and untouched — it also backs getFeesForStudent(), a single
  * student's own (small, unbounded-by-need) fee list, which must not be

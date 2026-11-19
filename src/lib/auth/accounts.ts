@@ -111,7 +111,7 @@ export async function sendAccountResetLink(
       throw new AccountError("Invalid linked account role.");
     const user = await tx.user.findUniqueOrThrow({
       where: { id: userId },
-      include: { student: true, teacher: true },
+      include: { student: true },
     });
     if (!accountEligibleForRecovery(user))
       throw new AccountError(

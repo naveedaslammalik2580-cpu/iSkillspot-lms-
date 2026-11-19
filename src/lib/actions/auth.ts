@@ -47,7 +47,7 @@ export async function loginAction(
         { student: { studentId: { equals: identifier, mode: "insensitive" } } },
       ],
     },
-    include: { teacher: { select: { status: true } }, student: { select: { status: true } } },
+    include: { student: { select: { status: true } } },
     take: 2,
   });
 
@@ -56,7 +56,6 @@ export async function loginAction(
   dummyHash ??= hashPassword(randomBytes(24).toString("base64url"));
   const valid = await verifyPassword(password, user?.passwordHash ?? await dummyHash);
   if (!user || !valid || user.status !== "ACTIVE" ||
-      (user.role === "TEACHER" && (!user.teacher || user.teacher.status !== "ACTIVE")) ||
       (user.role === "STUDENT" && (!user.student || ["SUSPENDED", "DROPPED"].includes(user.student.status))) ||
       (user.mustChangePassword && user.passwordExpiresAt && user.passwordExpiresAt.getTime() <= Date.now())) {
     if (user) {

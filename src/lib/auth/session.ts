@@ -32,7 +32,7 @@ export async function createSession(
 /**
  * Per-request de-duplication: the portal layout's guard, the page's own
  * guard, and any server actions in the same request all call getSession().
- * Without cache(), each call re-ran the user + teacher/student relation
+ * Without cache(), each call re-ran the user + student relation
  * queries below (measured: 3 statements per call, 2+ calls per navigation —
  * pure latency multiplication against a remote database). cache() scopes
  * the result to a single request, so the "authorize from current DB state"
@@ -51,10 +51,9 @@ export const getSession = cache(async (): Promise<SessionPayload | null> => {
   const user = await db.user.findUnique({ where: { id: claims.userId }, select: {
     id: true, username: true, role: true, status: true, sessionVersion: true,
     mustChangePassword: true, passwordExpiresAt: true, admissionRequired: true,
-    teacher: { select: { status: true } }, student: { select: { status: true } },
+    student: { select: { status: true } },
   } });
   if (!user || user.status !== "ACTIVE" || user.role !== claims.role || user.sessionVersion !== claims.sessionVersion ||
-      (user.role === "TEACHER" && (!user.teacher || user.teacher.status !== "ACTIVE")) ||
       (user.role === "STUDENT" && (!user.student || ["SUSPENDED", "DROPPED"].includes(user.student.status))) ||
       (user.mustChangePassword && user.passwordExpiresAt && user.passwordExpiresAt.getTime() <= Date.now())) return null;
   return { userId: user.id, username: user.username, role: user.role,

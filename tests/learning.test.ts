@@ -4,7 +4,7 @@
  * Run against a DISPOSABLE database only (refuses to run unless the
  * database name contains "test"). All fixtures are created here and
  * deleted afterwards via cascade (deleting the fixture users/courses
- * removes students/teachers/enrollments/progress/notifications).
+ * removes students/enrollments/progress/notifications).
  *
  * Session-bound server actions (setLessonCompleted, course-content CRUD,
  * resource access) are covered by browser E2E; this suite covers the
@@ -21,9 +21,6 @@ import {
   getStudentCourse,
   getStudentCourses,
   getStudentLesson,
-  getTeacherCourse,
-  getTeacherCourses,
-  getTeacherStudents,
 } from "@/lib/data/learning";
 import { parseVideoUrl } from "@/components/learning/video-embed";
 import { notifyUsers } from "@/lib/notifications";
@@ -36,7 +33,6 @@ let modA1: string, modA2: string;
 let lessonA1: string, lessonA2: string, lessonA3: string, lessonDraft: string;
 let student1: string, student2: string; // Student record ids
 let student1User: string;
-let teacher1: string; // Teacher record id
 
 async function makeStudentUser() {
   const suffix = Math.random().toString(36).slice(2, 10);
@@ -60,13 +56,6 @@ before(async () => {
   student1User = s1.user.id;
   student2 = s2.student.id;
 
-  const tUser = await db.user.create({
-    data: { username: `lt_t_${Math.random().toString(36).slice(2, 8)}`, email: "lt_t@test.local", passwordHash: "x", role: "TEACHER", status: "ACTIVE" },
-  });
-  userIds.push(tUser.id);
-  const teacher = await db.teacher.create({ data: { userId: tUser.id, fullName: "Teacher One" } });
-  teacher1 = teacher.id;
-
   const cA = await db.course.create({ data: { title: "Course A", slug: `course-a-${Date.now()}`, status: "PUBLISHED" } });
   const cB = await db.course.create({ data: { title: "Course B", slug: `course-b-${Date.now()}`, status: "PUBLISHED" } });
   courseA = cA.id; courseB = cB.id;
@@ -82,7 +71,7 @@ before(async () => {
   lessonA1 = l1.id; lessonA2 = l2.id; lessonA3 = l3.id; lessonDraft = ld.id;
   await db.lessonResource.create({ data: { lessonId: lessonA1, title: "Slides", fileUrl: "https://example.com/slides.pdf", fileType: "PDF" } });
 
-  const batchA = await db.batch.create({ data: { name: "Batch A", code: `BA-${Date.now()}`, courseId: courseA, teacherId: teacher1, status: "ONGOING" } });
+  const batchA = await db.batch.create({ data: { name: "Batch A", code: `BA-${Date.now()}`, courseId: courseA, status: "ONGOING" } });
   const batchB = await db.batch.create({ data: { name: "Batch B", code: `BB-${Date.now()}`, courseId: courseB, status: "ONGOING" } });
   await db.enrollment.create({ data: { studentId: student1, courseId: courseA, batchId: batchA.id, status: "ACTIVE" } });
   await db.enrollment.create({ data: { studentId: student2, courseId: courseB, batchId: batchB.id, status: "ACTIVE" } });
@@ -184,29 +173,6 @@ describe("progress storage guarantees", () => {
     const after3 = await getStudentCourse(student1, courseA);
     assert.equal(after3?.progress.completedLessons, 0);
     await db.lessonProgress.deleteMany({ where: { studentId: student2, lessonId: lessonA1 } });
-  });
-});
-
-describe("teacher scoping", () => {
-  it("teacher courses include only assigned courses with counts", async () => {
-    const courses = await getTeacherCourses(teacher1);
-    assert.equal(courses.length, 1);
-    assert.equal(courses[0].courseId, courseA);
-    assert.equal(courses[0].studentCount, 1);
-    assert.equal(courses[0].lessonCount, 4); // incl. draft — teacher inspection view
-    assert.equal(await getTeacherCourse(teacher1, courseB), null);
-  });
-
-  it("teacher students are limited to own batches; forged filters yield nothing", async () => {
-    const all = await getTeacherStudents(teacher1);
-    assert.equal(all.rows.length, 1);
-    assert.equal(all.rows[0].studentId, student1);
-    // fields are privacy-minimal: no phone/email/dob keys exist on the DTO
-    assert.deepEqual(Object.keys(all.rows[0]).sort(), ["batchCode", "batchId", "batchName", "courseId", "courseTitle", "fullName", "studentCode", "studentId"]);
-    const forged = await getTeacherStudents(teacher1, { batchId: "not-theirs" });
-    assert.equal(forged.rows.length, 0);
-    const searched = await getTeacherStudents(teacher1, { q: "no-such-person" });
-    assert.equal(searched.rows.length, 0);
   });
 });
 

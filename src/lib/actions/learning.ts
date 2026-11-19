@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { requireSession, requireStudentSelf, assertTeacherOwnsCourse } from "@/lib/auth/guards";
+import { requireSession, requireStudentSelf } from "@/lib/auth/guards";
 import { classifyResourceUrl } from "@/lib/data/learning";
 import { getSignedDownloadUrl } from "@/lib/storage/supabase";
 
@@ -10,7 +10,7 @@ import { getSignedDownloadUrl } from "@/lib/storage/supabase";
  * Student lesson-progress actions and lesson-resource access.
  *
  * The acting identity always comes from the server-side session — a
- * client can never name a student, teacher or course it is acting for.
+ * client can never name a student or course it is acting for.
  */
 
 export type LearningResult = { ok: true } | { ok: false; error: string };
@@ -61,7 +61,6 @@ export async function setLessonCompleted(lessonId: string, completed: boolean): 
  *
  * - Students: must be enrolled in the lesson's course and the lesson
  *   must be published.
- * - Teachers: must be assigned to the lesson's course (any publish state).
  * - Staff (SUPER_ADMIN / ADMIN): allowed.
  * - External fileUrls are validated http(s) URLs, returned as stored.
  * - Storage keys are exchanged for short-lived signed URLs via the

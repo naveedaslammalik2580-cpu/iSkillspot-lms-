@@ -168,7 +168,7 @@ export async function deleteBatch(
 
   const existing = await db.batch.findUnique({
     where: { id },
-    include: { _count: { select: { enrollments: true, attendance: true, announcements: true } } },
+    include: { _count: { select: { enrollments: true, announcements: true } } },
   });
   if (!existing) return { ok: false, error: "Batch not found." };
 
@@ -178,14 +178,13 @@ export async function deleteBatch(
       error: "Cannot delete a batch that has enrollments. Set its status to CANCELLED instead.",
     };
   }
-  // Attendance history and announcements reference the batch directly
-  // (onDelete: Cascade) and can outlive enrollments — never silently
-  // cascade-delete them with the batch.
-  if (existing._count.attendance > 0 || existing._count.announcements > 0) {
+  // Announcements reference the batch directly and can outlive
+  // enrollments — never silently cascade-delete them with the batch.
+  if (existing._count.announcements > 0) {
     return {
       ok: false,
       error:
-        "Cannot delete a batch that has attendance or announcement records. Set its status to CANCELLED instead.",
+        "Cannot delete a batch that has announcement records. Set its status to CANCELLED instead.",
     };
   }
 

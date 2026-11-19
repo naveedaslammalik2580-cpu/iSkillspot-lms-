@@ -6,7 +6,7 @@
  *   DIRECT_URL=postgresql://postgres@localhost:54329/iskillspot_test \
  *   npx tsx --test tests/notifications.test.ts
  * All fixtures are created inside this file and deleted afterwards
- * (User deletion cascades to notifications/students/teachers/enrollments).
+ * (User deletion cascades to notifications/students/enrollments).
  */
 import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
@@ -23,7 +23,7 @@ import {
 const createdUserIds: string[] = [];
 const createdCourseIds: string[] = [];
 
-async function makeUser(role: "STUDENT" | "TEACHER" | "SUPER_ADMIN", status: "ACTIVE" | "INACTIVE" = "ACTIVE") {
+async function makeUser(role: "STUDENT" | "SUPER_ADMIN", status: "ACTIVE" | "INACTIVE" = "ACTIVE") {
   const suffix = Math.random().toString(36).slice(2, 10);
   const u = await db.user.create({
     data: { username: `t_${suffix}`, email: `t_${suffix}@test.local`, passwordHash: "x", role, status },
@@ -278,14 +278,12 @@ describe("reminders (Phase 4)", () => {
 });
 
 describe("announcement audience resolution", () => {
-  it("resolves COURSE and BATCH audiences via enrollments and batch teachers", async () => {
+  it("resolves COURSE and BATCH audiences via enrollments (students only)", async () => {
     const stamp = Date.now();
     const course = await db.course.create({ data: { title: "T Course", slug: `t-course-${stamp}` } });
     createdCourseIds.push(course.id);
-    const teacherUser = await makeUser("TEACHER");
-    const teacher = await db.teacher.create({ data: { userId: teacherUser.id, fullName: "T Teacher" } });
     const batch = await db.batch.create({
-      data: { name: "B1", code: `B-${stamp}`, courseId: course.id, teacherId: teacher.id },
+      data: { name: "B1", code: `B-${stamp}`, courseId: course.id },
     });
     const studentUser = await makeUser("STUDENT");
     const student = await db.student.create({ data: { userId: studentUser.id, fullName: "T Student", studentId: `ST-${stamp}` } });
@@ -294,16 +292,18 @@ describe("announcement audience resolution", () => {
 
     const courseRes = await resolveAnnouncementRecipients({ audience: "COURSE", targetBatchId: null, targetCourseId: course.id });
     assert.deepEqual(courseRes.studentUserIds, [studentUser.id]);
-    assert.deepEqual(courseRes.teacherUserIds, [teacherUser.id]);
 
     const batchRes = await resolveAnnouncementRecipients({ audience: "BATCH", targetBatchId: batch.id, targetCourseId: null });
     assert.deepEqual(batchRes.studentUserIds, [studentUser.id]);
-    assert.deepEqual(batchRes.teacherUserIds, [teacherUser.id]);
 
     const studentsRes = await resolveAnnouncementRecipients({ audience: "STUDENTS", targetBatchId: null, targetCourseId: null });
     assert.ok(studentsRes.studentUserIds.includes(studentUser.id));
     assert.ok(studentsRes.studentUserIds.includes(outsider.id));
-    assert.equal(studentsRes.teacherUserIds.length, 0);
+
+    // Legacy TEACHERS audience: no teacher accounts exist in the agency
+    // model, so it resolves to nobody.
+    const teachersRes = await resolveAnnouncementRecipients({ audience: "TEACHERS", targetBatchId: null, targetCourseId: null });
+    assert.deepEqual(teachersRes.studentUserIds, []);
   });
 
   it("publishing twice (both publish paths) notifies exactly once, with role-correct links", async () => {

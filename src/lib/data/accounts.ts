@@ -14,7 +14,7 @@ export async function listAccounts(search = "", page = 1) {
   const [rows, total] = await Promise.all([
     db.user.findMany({ where, select: { id: true, username: true, email: true, role: true, status: true,
       createdAt: true, lastLogin: true, mustChangePassword: true, passwordExpiresAt: true,
-      teacher: { select: { id: true, fullName: true } }, student: { select: { id: true, fullName: true, studentId: true } } },
+      student: { select: { id: true, fullName: true, studentId: true } } },
       orderBy: [{ createdAt: "desc" }, { id: "asc" }], take: 20, skip: (currentPage - 1) * 20 }),
     db.user.count({ where }),
   ]);

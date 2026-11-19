@@ -19,7 +19,7 @@ export function getSecret() {
 export async function verifyToken(token: string): Promise<SessionPayload> {
   const { payload } = await jwtVerify(token, getSecret(), { algorithms: ["HS256"] });
   if (typeof payload.userId !== "string" || !payload.userId || typeof payload.username !== "string" ||
-      !["SUPER_ADMIN", "ADMIN", "TEACHER", "STUDENT"].includes(String(payload.role)) ||
+      !["SUPER_ADMIN", "ADMIN", "STUDENT"].includes(String(payload.role)) ||
       typeof payload.mustChangePassword !== "boolean" || !Number.isInteger(payload.sessionVersion) ||
       Number(payload.sessionVersion) < 0 || typeof payload.exp !== "number" || typeof payload.iat !== "number") {
     throw new Error("Invalid session");

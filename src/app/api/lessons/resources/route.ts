@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getLessonResourceAccess } from "@/lib/actions/learning";
 
 // Lesson-resource access point. Authorization happens inside
-// getLessonResourceAccess (enrolled student / assigned teacher / staff)
+// getLessonResourceAccess (enrolled student / staff)
 // before any redirect target is produced: external fileUrls are validated
 // http(s) links, storage keys become short-lived signed URLs. Mirrors the
 // assignment-file download route's pattern.

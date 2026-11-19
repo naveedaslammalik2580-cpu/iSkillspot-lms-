@@ -24,7 +24,10 @@ function resolveTargets(
     case "STUDENTS":
       return { targetRole: "STUDENT", targetBatchId: null, targetCourseId: null };
     case "TEACHERS":
-      return { targetRole: "TEACHER", targetBatchId: null, targetCourseId: null };
+      // Legacy audience (no longer offered in the form): the TEACHER role
+      // was removed in the Phase 2 cleanup, so there is no target role —
+      // the audience value alone carries the legacy targeting.
+      return { targetRole: null, targetBatchId: null, targetCourseId: null };
     case "BATCH":
       return { targetRole: null, targetBatchId: targetBatchId!, targetCourseId: null };
     case "COURSE":

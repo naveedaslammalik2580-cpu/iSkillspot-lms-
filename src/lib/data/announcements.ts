@@ -98,7 +98,7 @@ async function toDetail(a: {
 }
 
 /**
- * Staff can see any announcement. Students/teachers may only see PUBLISHED
+ * Staff can see any announcement. Students may only see PUBLISHED
  * announcements that are actually in their audience — re-checked here, not
  * just trusted from the caller, matching the rest of src/lib/data/*.
  */
@@ -127,18 +127,6 @@ export async function getAnnouncementById(
       a.audience === "STUDENTS" ||
       (a.audience === "BATCH" && enrollments.some((e) => e.batchId === a.targetBatchId)) ||
       (a.audience === "COURSE" && enrollments.some((e) => e.courseId === a.targetCourseId));
-    return inAudience ? toDetail(a) : null;
-  }
-
-  if (scope.role === "TEACHER") {
-    const teacher = await db.teacher.findUnique({ where: { userId: scope.userId } });
-    if (!teacher) return null;
-    const batches = await db.batch.findMany({ where: { teacherId: teacher.id }, select: { id: true, courseId: true } });
-    const inAudience =
-      a.audience === "ALL" ||
-      a.audience === "TEACHERS" ||
-      (a.audience === "BATCH" && batches.some((b) => b.id === a.targetBatchId)) ||
-      (a.audience === "COURSE" && batches.some((b) => b.courseId === a.targetCourseId));
     return inAudience ? toDetail(a) : null;
   }
 

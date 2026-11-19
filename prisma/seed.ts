@@ -13,7 +13,7 @@ const rand = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 // --- Demo-account credentials -------------------------------------------------
 // Passwords are never hardcoded in this file. For repeatable local setup, set
-// SEED_ADMIN_PASSWORD / SEED_TEACHER_PASSWORD / SEED_STUDENT_PASSWORD in your
+// SEED_ADMIN_PASSWORD / SEED_STUDENT_PASSWORD in your
 // (gitignored) .env. If they are unset in a non-production environment, strong
 // one-time passwords are generated and written to .seed-credentials.local.json
 // (gitignored, owner-only) -- they are never printed to logs. In production the
@@ -45,7 +45,6 @@ async function main() {
   }
 
   const adminPassword = seedPassword("SEED_ADMIN_PASSWORD", "admin");
-  const teacherPassword = seedPassword("SEED_TEACHER_PASSWORD", "teacher1..3");
   const studentPassword = seedPassword("SEED_STUDENT_PASSWORD", "students");
 
   console.log("Seeding iSkillSpot…");
@@ -55,13 +54,11 @@ async function main() {
   await db.payment.deleteMany();
   await db.fee.deleteMany();
   await db.certificate.deleteMany();
-  await db.grade.deleteMany();
   await db.quizAttempt.deleteMany();
   await db.quizQuestion.deleteMany();
   await db.quiz.deleteMany();
   await db.assignmentSubmission.deleteMany();
   await db.assignment.deleteMany();
-  await db.attendance.deleteMany();
   await db.lessonProgress.deleteMany();
   await db.lessonResource.deleteMany();
   await db.lesson.deleteMany();
@@ -72,7 +69,6 @@ async function main() {
   await db.announcement.deleteMany();
   await db.notification.deleteMany();
   await db.student.deleteMany();
-  await db.teacher.deleteMany();
   await db.user.deleteMany();
   await db.setting.deleteMany();
 
@@ -82,7 +78,6 @@ async function main() {
     studentIdPrefix: "ISP",
     currency: "PKR",
     timezone: "Asia/Karachi",
-    attendanceThreshold: "75",
     passingScore: "70",
   };
   for (const [key, value] of Object.entries(settings)) {
@@ -100,31 +95,6 @@ async function main() {
       mustChangePassword: true,
     },
   });
-
-  // Teachers
-  const teacherSpecs = [
-    { name: "Bilal Ahmed", spec: "Video Editing & Motion" },
-    { name: "Sana Khan", spec: "Graphic Design" },
-    { name: "Usman Tariq", spec: "Digital Marketing & SEO" },
-  ];
-  const teachers = [];
-  for (let i = 0; i < teacherSpecs.length; i++) {
-    const t = teacherSpecs[i];
-    const user = await db.user.create({
-      data: {
-        username: `teacher${i + 1}`,
-        email: `teacher${i + 1}@iskillspot.com`,
-        passwordHash: await hash(teacherPassword),
-        role: "TEACHER",
-        status: "ACTIVE",
-        mustChangePassword: true,
-      },
-    });
-    const teacher = await db.teacher.create({
-      data: { userId: user.id, fullName: t.name, specialization: t.spec, email: user.email, status: "ACTIVE" },
-    });
-    teachers.push(teacher);
-  }
 
   // Courses
   const courseTitles = [
@@ -171,7 +141,6 @@ async function main() {
           name: `${courses[c].title} — Batch 0${b}`,
           code,
           courseId: courses[c].id,
-          teacherId: teachers[c % teachers.length].id,
           status: "ONGOING",
           schedule: "Mon/Wed/Fri",
           startTime: "18:00",
@@ -227,18 +196,6 @@ async function main() {
       },
     });
 
-    // Attendance (14 days, varied)
-    for (let d = 0; d < 14; d++) {
-      const date = new Date();
-      date.setDate(date.getDate() - d);
-      date.setHours(0, 0, 0, 0);
-      const r = Math.random();
-      const attStatus = r < 0.7 ? "PRESENT" : r < 0.85 ? "LATE" : "ABSENT";
-      await db.attendance.create({
-        data: { studentId: student.id, batchId: batch.id, date, status: attStatus as never },
-      });
-    }
-
     // Fee (varied)
     const total = 25000;
     const paid = rand([0, 10000, 25000]);
@@ -254,18 +211,6 @@ async function main() {
       },
     });
 
-    // A couple of grades
-    await db.grade.create({
-      data: {
-        studentId: student.id,
-        courseId: batch.courseId,
-        type: "QUIZ",
-        title: "Module 1 Quiz",
-        score: 60 + Math.floor(Math.random() * 40),
-        maxScore: 100,
-        percentage: 60 + Math.floor(Math.random() * 40),
-      },
-    });
   }
 
   // Announcement
@@ -284,7 +229,7 @@ async function main() {
     writeFileSync(".seed-credentials.local.json", JSON.stringify(generatedPasswords, null, 2) + "\n", { mode: 0o600 });
     console.log("Generated demo passwords were written to .seed-credentials.local.json (gitignored) - read them there, then delete the file.");
   }
-  console.log("Demo usernames: admin, teacher1-3, and each student's generated username. All seeded accounts must change their password at first login.");
+  console.log("Demo usernames: admin and each student's generated username. All seeded accounts must change their password at first login.");
 }
 
 main()

@@ -37,9 +37,6 @@ export function navFor(role: Role): NavItem[] {
       return [...ADMIN_NAV, { label: "Settings", href: "/admin/settings", icon: "Settings" }];
     case "ADMIN":
       return ADMIN_NAV;
-    case "TEACHER":
-      // Agency model: the TEACHER role no longer has a portal.
-      return [];
     case "STUDENT":
       return STUDENT_NAV;
   }

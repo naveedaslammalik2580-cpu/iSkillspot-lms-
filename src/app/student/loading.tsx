@@ -3,8 +3,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * Default fallback for student routes without a more specific loading.tsx
- * (courses, assignments, quizzes, attendance, grades, certificates, fees).
- * The dashboard has its own loading.tsx with a matching shape instead.
+ * (courses, assignments, quizzes, support, profile).
+ * The courses landing page has its own loading.tsx with a matching shape instead.
  */
 export default function StudentSectionLoading() {
   return (

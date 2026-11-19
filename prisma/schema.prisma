@@ -33,7 +33,6 @@ model User {
   passwordResetTokens PasswordResetToken[]
   supportMessages    SupportMessage[] @relation("SupportMessageAuthor")
   student            Student?
-  teacher            Teacher?
 
   @@index([role])
   @@index([status])
@@ -94,11 +93,9 @@ model Student {
   createdAt        DateTime               @default(now())
   updatedAt        DateTime               @updatedAt
   submissions      AssignmentSubmission[]
-  attendance       Attendance[]
   certificates     Certificate[]
   enrollments      Enrollment[]
   fees             Fee[]
-  grades           Grade[]
   lessonProgress   LessonProgress[]
   payments         Payment[]
   quizAttempts     QuizAttempt[]
@@ -107,25 +104,6 @@ model Student {
 
   @@index([status])
   @@index([fullName])
-}
-
-model Teacher {
-  id             String         @id @default(cuid())
-  userId         String         @unique
-  fullName       String
-  phone          String?
-  email          String?
-  specialization String?
-  profileImage   String?
-  status         AccountStatus  @default(ACTIVE)
-  joiningDate    DateTime       @default(now())
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  announcements  Announcement[] @relation("TeacherAnnouncements")
-  batches        Batch[]
-  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([status])
 }
 
 model Course {
@@ -148,7 +126,6 @@ model Course {
   certificates Certificate[]
   enrollments  Enrollment[]
   fees         Fee[]
-  grades       Grade[]
   modules      Module[]
   quizzes      Quiz[]
   questionBankItems QuestionBankItem[]
@@ -225,7 +202,6 @@ model Batch {
   name          String
   code          String         @unique
   courseId      String
-  teacherId     String?
   startDate     DateTime?
   endDate       DateTime?
   schedule      String?
@@ -235,14 +211,11 @@ model Batch {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   announcements Announcement[]
-  attendance    Attendance[]
   course        Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  teacher       Teacher?       @relation(fields: [teacherId], references: [id])
   enrollments   Enrollment[]
   admissions    Admission[]
 
   @@index([courseId])
-  @@index([teacherId])
 }
 
 model Enrollment {
@@ -262,22 +235,6 @@ model Enrollment {
   @@unique([studentId, batchId])
   @@index([courseId])
   @@index([batchId])
-}
-
-model Attendance {
-  id        String           @id @default(cuid())
-  studentId String
-  batchId   String
-  date      DateTime         @db.Date
-  status    AttendanceStatus
-  remarks   String?
-  markedBy  String?
-  createdAt DateTime         @default(now())
-  batch     Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  student   Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@unique([studentId, batchId, date])
-  @@index([batchId, date])
 }
 
 model Assignment {
@@ -397,25 +354,6 @@ model QuestionBankItem {
   @@index([courseId])
 }
 
-model Grade {
-  id         String   @id @default(cuid())
-  studentId  String
-  courseId   String
-  type       String
-  refId      String?
-  title      String
-  score      Float
-  maxScore   Float    @default(100)
-  percentage Float    @default(0)
-  feedback   String?
-  createdAt  DateTime @default(now())
-  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@index([studentId])
-  @@index([courseId])
-}
-
 model Fee {
   id               String    @id @default(cuid())
   studentId        String
@@ -490,7 +428,6 @@ model Announcement {
   targetRole     Role?
   targetBatchId  String?
   targetCourseId String?
-  teacherId      String?
   audience       AnnouncementAudience @default(ALL)
   createdAt      DateTime      @default(now())
   publishedAt    DateTime?
@@ -498,7 +435,6 @@ model Announcement {
   updatedAt      DateTime      @updatedAt
   author         User          @relation("AnnouncementAuthor", fields: [createdBy], references: [id], onDelete: Cascade)
   batch          Batch?        @relation(fields: [targetBatchId], references: [id])
-  teacher        Teacher?      @relation("TeacherAnnouncements", fields: [teacherId], references: [id])
 
   @@index([targetRole])
   @@index([targetBatchId])
@@ -668,7 +604,6 @@ enum AdmissionStatus {
 enum Role {
   SUPER_ADMIN
   ADMIN
-  TEACHER
   STUDENT
 }
 
@@ -717,13 +652,6 @@ enum EnrollmentStatus {
   ACTIVE
   COMPLETED
   DROPPED
-}
-
-enum AttendanceStatus {
-  PRESENT
-  ABSENT
-  LATE
-  EXCUSED
 }
 
 enum SubmissionStatus {

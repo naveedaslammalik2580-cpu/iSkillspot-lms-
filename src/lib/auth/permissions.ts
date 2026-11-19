@@ -16,19 +16,16 @@ export type Permission =
   | "student.edit"
   | "student.delete"
   | "student.viewAll"
-  | "teacher.manage"
   // Learning
   | "course.manage"
   | "batch.manage"
   | "lesson.manage"
   | "enrollment.manage"
   // Academics
-  | "attendance.manage"
   | "assignment.manage"
   | "assignment.grade"
   | "quiz.manage"
   | "quiz.grade"
-  | "grade.manage"
   // Finance
   | "fee.manage"
   | "payment.manage"
@@ -91,11 +88,6 @@ const ADMIN: Permission[] = [
   // NOTE: no settings.manage / admin.manage / audit.view — reserved for SUPER_ADMIN
 ];
 
-const TEACHER: Permission[] = [
-  // Agency model: the TEACHER role no longer exists as a portal role.
-  // The Role enum value remains in the schema until the Phase 2 cleanup.
-];
-
 const STUDENT: Permission[] = [
   "self.viewOwn",
   "self.submitAssignment",
@@ -106,7 +98,6 @@ const STUDENT: Permission[] = [
 export const PERMISSIONS: Record<Role, Permission[]> = {
   SUPER_ADMIN,
   ADMIN,
-  TEACHER,
   STUDENT,
 };
 
@@ -123,8 +114,6 @@ export function homePathFor(role: Role): string {
     case "SUPER_ADMIN":
     case "ADMIN":
       return "/admin/dashboard";
-    case "TEACHER":
-      return "/forbidden";
     case "STUDENT":
       return "/student/courses";
     default:

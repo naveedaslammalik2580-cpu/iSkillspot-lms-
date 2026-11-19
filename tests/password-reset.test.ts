@@ -45,7 +45,7 @@ import type { SessionPayload } from "@/lib/auth/token";
 const userIds: string[] = [];
 const NEW_PASSWORD = "BrandNew#Pass2026";
 
-async function mkUser(role: "SUPER_ADMIN" | "ADMIN" | "TEACHER" | "STUDENT") {
+async function mkUser(role: "SUPER_ADMIN" | "ADMIN" | "STUDENT") {
   const s = Math.random().toString(36).slice(2, 10);
   const u = await db.user.create({
     data: {
@@ -356,18 +356,13 @@ describe("staff-initiated reset links", () => {
     );
   });
 
-  it("TEACHER cannot initiate resets for anyone", async () => {
-    const teacher = await mkUser("TEACHER");
-    await db.teacher.create({
-      data: {
-        userId: teacher.id,
-        fullName: "Reset Test Teacher",
-        email: teacher.email,
-      },
-    });
+  it("STUDENT cannot initiate resets for anyone", async () => {
+    // Only account managers (admins) may send reset links; a student
+    // session must be rejected by authorizeActor's permission check.
+    const initiator = await mkStudentUser();
     const student = await mkStudentUser();
     await assert.rejects(
-      sendAccountResetLink(sessionOf(teacher), student.id, "STUDENT"),
+      sendAccountResetLink(sessionOf(initiator), student.id, "STUDENT"),
     );
   });
 
@@ -382,7 +377,7 @@ describe("staff-initiated reset links", () => {
     const admin = await mkUser("ADMIN");
     const student = await mkStudentUser();
     await assert.rejects(
-      sendAccountResetLink(sessionOf(admin), student.id, "TEACHER"),
+      sendAccountResetLink(sessionOf(admin), student.id, "ADMIN"),
     );
   });
 });

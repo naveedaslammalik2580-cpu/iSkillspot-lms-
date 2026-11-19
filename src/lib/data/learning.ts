@@ -1,16 +1,14 @@
 import { db } from "@/lib/db";
 
 /**
- * Learning data layer: student course/lesson views, teacher course/student
- * views, and progress computation.
+ * Learning data layer: student course/lesson views, the admin content
+ * management view, and progress computation.
  *
  * Authorization model: every function here takes the ALREADY-AUTHENTICATED
- * principal's own id (studentId / teacherId resolved by the page or action
- * from the session via requireStudentSelf / requireTeacherSelf) and scopes
- * every query by it. A student id can therefore only ever read that
- * student's enrollments, lessons and progress; a teacher id only batches
- * assigned to that teacher. Callers must never pass an id taken from
- * request input.
+ * principal's own id (studentId resolved by the page or action from the
+ * session via requireStudentSelf) and scopes every query by it. A student
+ * id can therefore only ever read that student's enrollments, lessons and
+ * progress. Callers must never pass an id taken from request input.
  *
  * Visibility rules:
  * - Students see a course only while enrolled (ACTIVE or COMPLETED
@@ -102,7 +100,6 @@ export async function getStudentCourses(studentId: string): Promise<StudentCours
       batch: {
         select: {
           id: true, name: true, code: true,
-          teacher: { select: { fullName: true } },
         },
       },
     },
@@ -341,234 +338,7 @@ export async function getStudentLesson(studentId: string, lessonId: string): Pro
 }
 
 // ---------------------------------------------------------------------------
-// Teacher views
-// ---------------------------------------------------------------------------
-
-export interface TeacherCourseCard {
-  courseId: string;
-  title: string;
-  slug: string;
-  description: string | null;
-  level: string;
-  status: string;
-  moduleCount: number;
-  lessonCount: number;
-  studentCount: number;
-  batches: { id: string; name: string; code: string; status: string; studentCount: number }[];
-}
-
-export async function getTeacherCourses(teacherId: string): Promise<TeacherCourseCard[]> {
-  const batches = await db.batch.findMany({
-    where: { teacherId },
-    include: {
-      course: { select: { id: true, title: true, slug: true, description: true, level: true, status: true } },
-      enrollments: { where: { status: "ACTIVE" }, select: { studentId: true } },
-      _count: { select: { enrollments: true } },
-    },
-    orderBy: { createdAt: "asc" },
-  });
-  if (batches.length === 0) return [];
-
-  const courseIds = [...new Set(batches.map((b) => b.courseId))];
-  const [moduleCounts, lessonCounts] = await Promise.all([
-    db.module.groupBy({ by: ["courseId"], where: { courseId: { in: courseIds } }, _count: { _all: true } }),
-    db.lesson.groupBy({
-      by: ["moduleId"],
-      where: { module: { courseId: { in: courseIds } } },
-      _count: { _all: true },
-    }).then(async (rows) => {
-      const modules = await db.module.findMany({ where: { courseId: { in: courseIds } }, select: { id: true, courseId: true } });
-      const courseOf = new Map(modules.map((m) => [m.id, m.courseId]));
-      const perCourse = new Map<string, number>();
-      for (const r of rows) {
-        const cid = courseOf.get(r.moduleId);
-        if (cid) perCourse.set(cid, (perCourse.get(cid) ?? 0) + r._count._all);
-      }
-      return perCourse;
-    }),
-  ]);
-  const moduleCountOf = new Map(moduleCounts.map((r) => [r.courseId, r._count._all]));
-
-  const byCourse = new Map<string, TeacherCourseCard>();
-  for (const b of batches) {
-    let card = byCourse.get(b.courseId);
-    if (!card) {
-      card = {
-        courseId: b.course.id,
-        title: b.course.title,
-        slug: b.course.slug,
-        description: b.course.description,
-        level: b.course.level,
-        status: b.course.status,
-        moduleCount: moduleCountOf.get(b.courseId) ?? 0,
-        lessonCount: lessonCounts.get(b.courseId) ?? 0,
-        studentCount: 0,
-        batches: [],
-      };
-      byCourse.set(b.courseId, card);
-    }
-    const activeStudents = new Set(b.enrollments.map((e) => e.studentId));
-    card.batches.push({
-      id: b.id,
-      name: b.name,
-      code: b.code,
-      status: b.status,
-      studentCount: activeStudents.size,
-    });
-    card.studentCount += activeStudents.size;
-  }
-  return [...byCourse.values()];
-}
-
-export interface TeacherCourseDetail {
-  course: { id: string; title: string; slug: string; description: string | null; level: string; status: string; duration: string | null };
-  batches: { id: string; name: string; code: string; status: string; studentCount: number }[];
-  modules: {
-    id: string;
-    title: string;
-    description: string | null;
-    order: number;
-    lessons: { id: string; title: string; order: number; isPublished: boolean; resourceCount: number }[];
-  }[];
-}
-
-/** Returns null when the teacher has no batch for the course. */
-export async function getTeacherCourse(teacherId: string, courseId: string): Promise<TeacherCourseDetail | null> {
-  const batches = await db.batch.findMany({
-    where: { teacherId, courseId },
-    include: {
-      course: { select: { id: true, title: true, slug: true, description: true, level: true, status: true, duration: true } },
-      enrollments: { where: { status: "ACTIVE" }, select: { studentId: true } },
-    },
-    orderBy: { createdAt: "asc" },
-  });
-  if (batches.length === 0) return null;
-
-  const modules = await db.module.findMany({
-    where: { courseId },
-    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-    include: {
-      lessons: {
-        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-        select: { id: true, title: true, order: true, isPublished: true, _count: { select: { resources: true } } },
-      },
-    },
-  });
-
-  return {
-    course: batches[0].course,
-    batches: batches.map((b) => ({
-      id: b.id,
-      name: b.name,
-      code: b.code,
-      status: b.status,
-      studentCount: new Set(b.enrollments.map((e) => e.studentId)).size,
-    })),
-    modules: modules.map((m) => ({
-      id: m.id,
-      title: m.title,
-      description: m.description,
-      order: m.order,
-      lessons: m.lessons.map((l) => ({
-        id: l.id,
-        title: l.title,
-        order: l.order,
-        isPublished: l.isPublished,
-        resourceCount: l._count.resources,
-      })),
-    })),
-  };
-}
-
-export interface TeacherStudentRow {
-  studentId: string;
-  fullName: string;
-  studentCode: string;
-  courseId: string;
-  courseTitle: string;
-  batchId: string;
-  batchName: string;
-  batchCode: string;
-}
-
-export interface TeacherStudentsResult {
-  rows: TeacherStudentRow[];
-  /** The teacher's own batches/courses, for filter controls. */
-  batches: { id: string; name: string; code: string; courseId: string; courseTitle: string }[];
-}
-
-/**
- * Students enrolled (ACTIVE) in the teacher's batches. Only basic,
- * teaching-relevant fields are selected — no contact details, DOB or
- * other private student data. Filters are validated against the
- * teacher's own batches, so a forged batchId/courseId yields nothing.
- */
-export async function getTeacherStudents(
-  teacherId: string,
-  filters?: { q?: string; batchId?: string; courseId?: string }
-): Promise<TeacherStudentsResult> {
-  const myBatches = await db.batch.findMany({
-    where: { teacherId },
-    select: { id: true, name: true, code: true, courseId: true, course: { select: { title: true } } },
-    orderBy: { createdAt: "asc" },
-  });
-  const batchOptions = myBatches.map((b) => ({
-    id: b.id, name: b.name, code: b.code, courseId: b.courseId, courseTitle: b.course.title,
-  }));
-  if (myBatches.length === 0) return { rows: [], batches: [] };
-
-  let batchIds = myBatches.map((b) => b.id);
-  if (filters?.batchId) {
-    batchIds = batchIds.filter((id) => id === filters.batchId);
-  } else if (filters?.courseId) {
-    batchIds = myBatches.filter((b) => b.courseId === filters.courseId).map((b) => b.id);
-  }
-  if (batchIds.length === 0) return { rows: [], batches: batchOptions };
-
-  const q = filters?.q?.trim();
-  const enrollments = await db.enrollment.findMany({
-    where: {
-      batchId: { in: batchIds },
-      status: "ACTIVE",
-      ...(q
-        ? {
-            student: {
-              OR: [
-                { fullName: { contains: q, mode: "insensitive" as const } },
-                { studentId: { contains: q, mode: "insensitive" as const } },
-              ],
-            },
-          }
-        : {}),
-    },
-    include: {
-      student: { select: { id: true, fullName: true, studentId: true } },
-      batch: { select: { id: true, name: true, code: true, courseId: true, course: { select: { title: true } } } },
-    },
-    orderBy: [{ batch: { code: "asc" } }, { student: { fullName: "asc" } }],
-  });
-
-  // A student enrolled twice with the same teacher (two batches of the
-  // same course) appears once per enrollment — that is the teaching
-  // reality (they attend both batches) — but collapse exact duplicates
-  // of student+batch, which the unique constraint already prevents.
-  return {
-    rows: enrollments.map((e) => ({
-      studentId: e.student.id,
-      fullName: e.student.fullName,
-      studentCode: e.student.studentId,
-      courseId: e.batch.courseId,
-      courseTitle: e.batch.course.title,
-      batchId: e.batch.id,
-      batchName: e.batch.name,
-      batchCode: e.batch.code,
-    })),
-    batches: batchOptions,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Content management view (admin / scoped teacher)
+// Content management view (admin)
 // ---------------------------------------------------------------------------
 
 export interface CourseContent {

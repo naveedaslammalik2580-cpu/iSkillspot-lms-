@@ -160,26 +160,11 @@ export async function userIdForStudent(studentId: string): Promise<string | null
   return s?.userId ?? null;
 }
 
-/** Resolve a Teacher row id to its login user id (null if not found). */
-export async function userIdForTeacher(teacherId: string): Promise<string | null> {
-  const t = await db.teacher.findUnique({ where: { id: teacherId }, select: { userId: true } });
-  return t?.userId ?? null;
-}
-
 /** Notify a student (by Student row id). */
 export async function notifyStudent(studentId: string, input: NotifyInput): Promise<NotifyResult> {
   const userId = await userIdForStudent(studentId);
   if (!userId) return { created: 0, skipped: 1 };
   return notifyUser(userId, input);
-}
-
-/** User ids of teachers assigned to any batch of a course. */
-export async function teacherUserIdsForCourse(courseId: string): Promise<string[]> {
-  const batches = await db.batch.findMany({
-    where: { courseId, teacherId: { not: null } },
-    select: { teacher: { select: { userId: true } } },
-  });
-  return [...new Set(batches.map((b) => b.teacher?.userId).filter((x): x is string => Boolean(x)))];
 }
 
 /** User ids of students with approved access to a course. */
@@ -193,28 +178,24 @@ export async function studentUserIdsForCourse(courseId: string): Promise<string[
 
 /**
  * Recipient resolution for announcements — mirrors the display predicates
- * in src/lib/data/announcements.ts exactly:
- * - students see ALL / STUDENTS, plus BATCH/COURSE via their enrollments
- * - teachers see ALL / TEACHERS, plus BATCH/COURSE via batches they teach
- * Staff (admin) authors are not notified of their own announcements.
+ * in src/lib/data/announcements.ts exactly. Agency model: announcements
+ * reach STUDENTS only (ALL / STUDENTS, plus BATCH/COURSE via their
+ * enrollments). Staff (admin) authors are not notified of their own
+ * announcements. Legacy announcements with the TEACHERS audience resolve
+ * to no recipients — there are no teacher accounts anymore.
  * Final ACTIVE-account filtering happens inside notifyUsers.
  */
 export async function resolveAnnouncementRecipients(announcement: {
   audience: "ALL" | "STUDENTS" | "TEACHERS" | "BATCH" | "COURSE";
   targetBatchId: string | null;
   targetCourseId: string | null;
-}): Promise<{ studentUserIds: string[]; teacherUserIds: string[] }> {
+}): Promise<{ studentUserIds: string[] }> {
   const { audience, targetBatchId, targetCourseId } = announcement;
   let studentUserIds: string[] = [];
-  let teacherUserIds: string[] = [];
 
   if (audience === "ALL" || audience === "STUDENTS") {
     const students = await db.user.findMany({ where: { role: "STUDENT", admissionRequired: false }, select: { id: true } });
     studentUserIds = students.map((u) => u.id);
-  }
-  if (audience === "ALL" || audience === "TEACHERS") {
-    const teachers = await db.user.findMany({ where: { role: "TEACHER" }, select: { id: true } });
-    teacherUserIds = teachers.map((u) => u.id);
   }
   if (audience === "BATCH" && targetBatchId) {
     const enrollments = await db.enrollment.findMany({
@@ -222,17 +203,11 @@ export async function resolveAnnouncementRecipients(announcement: {
       select: { student: { select: { userId: true } } },
     });
     studentUserIds = enrollments.map((e) => e.student.userId);
-    const batch = await db.batch.findUnique({
-      where: { id: targetBatchId },
-      select: { teacher: { select: { userId: true } } },
-    });
-    teacherUserIds = batch?.teacher?.userId ? [batch.teacher.userId] : [];
   }
   if (audience === "COURSE" && targetCourseId) {
     studentUserIds = await studentUserIdsForCourse(targetCourseId);
-    teacherUserIds = await teacherUserIdsForCourse(targetCourseId);
   }
-  return { studentUserIds: [...new Set(studentUserIds)], teacherUserIds: [...new Set(teacherUserIds)] };
+  return { studentUserIds: [...new Set(studentUserIds)] };
 }
 
 /**

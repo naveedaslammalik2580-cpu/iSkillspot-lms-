@@ -12,25 +12,6 @@ export interface CallerScope {
   userId: string;
 }
 
-async function teacherOwnsCourse(userId: string, courseId: string): Promise<boolean> {
-  const teacher = await db.teacher.findUnique({ where: { userId } });
-  if (!teacher) return false;
-  const batch = await db.batch.findFirst({
-    where: { courseId, teacherId: teacher.id },
-    select: { id: true },
-  });
-  return Boolean(batch);
-}
-
-/**
- * Every function below re-checks this itself — callers (pages/actions) may
- * already have guarded, but this file doesn't trust that.
- */
-async function canAccessCourse(scope: CallerScope, courseId: string): Promise<boolean> {
-  if (scope.role !== "TEACHER") return true;
-  return teacherOwnsCourse(scope.userId, courseId);
-}
-
 function parseFiles(fileUrl: string | null): SubmissionFile[] {
   if (!fileUrl) return [];
   try {
@@ -66,29 +47,8 @@ export async function getCoursesForAdmin(): Promise<CourseOption[]> {
   });
 }
 
-export async function getCoursesForTeacher(
-  teacherId: string,
-  precomputedCourseIds?: string[]
-): Promise<CourseOption[]> {
-  const courseIds =
-    precomputedCourseIds ??
-    (
-      await db.batch.findMany({ where: { teacherId }, select: { courseId: true }, distinct: ["courseId"] })
-    ).map((b) => b.courseId);
-  if (courseIds.length === 0) return [];
-  return db.course.findMany({
-    where: { id: { in: courseIds } },
-    select: {
-      id: true,
-      title: true,
-      modules: { select: { id: true, title: true }, orderBy: { order: "asc" } },
-    },
-    orderBy: { title: "asc" },
-  });
-}
-
 // ---------------------------------------------------------------------------
-// Teacher / admin: list + detail
+// Admin: list + detail
 // ---------------------------------------------------------------------------
 
 export interface AssignmentListRow {
@@ -143,31 +103,6 @@ export async function getAllAssignmentsForAdmin(filters?: { courseId?: string })
   return withCounts(assignments);
 }
 
-export async function getAssignmentsForTeacher(
-  teacherId: string,
-  filters?: { courseId?: string },
-  precomputedCourseIds?: string[]
-): Promise<AssignmentListRow[]> {
-  const courseIds =
-    precomputedCourseIds ??
-    (
-      await db.batch.findMany({ where: { teacherId }, select: { courseId: true }, distinct: ["courseId"] })
-    ).map((b) => b.courseId);
-  if (courseIds.length === 0) return [];
-
-  // If a specific course was requested, only honor it when it's actually one
-  // of this teacher's own courses — same rule assertTeacherOwnsCourse enforces.
-  const scopedCourseIds =
-    filters?.courseId && courseIds.includes(filters.courseId) ? [filters.courseId] : courseIds;
-
-  const assignments = await db.assignment.findMany({
-    where: { courseId: { in: scopedCourseIds } },
-    include: { course: { select: { title: true } } },
-    orderBy: { dueDate: "asc" },
-  });
-  return withCounts(assignments);
-}
-
 export interface SubmissionRow {
   id: string;
   studentId: string;
@@ -193,7 +128,7 @@ export interface AssignmentDetail {
   submissions: SubmissionRow[];
 }
 
-/** For the teacher/admin assignment detail + roster page. */
+/** For the admin assignment detail + roster page. */
 export async function getAssignmentDetail(
   assignmentId: string,
   scope: CallerScope
@@ -203,7 +138,6 @@ export async function getAssignmentDetail(
     include: { course: { select: { title: true } }, module: { select: { title: true } } },
   });
   if (!assignment) return null;
-  if (!(await canAccessCourse(scope, assignment.courseId))) return null;
 
   const submissions = await db.assignmentSubmission.findMany({
     where: { assignmentId },
@@ -258,7 +192,7 @@ export interface SubmissionDetail {
   gradedAt: Date | null;
 }
 
-/** For the teacher/admin grading page. */
+/** For the admin grading page. */
 export async function getSubmissionDetail(
   submissionId: string,
   scope: CallerScope
@@ -271,7 +205,6 @@ export async function getSubmissionDetail(
     },
   });
   if (!submission) return null;
-  if (!(await canAccessCourse(scope, submission.assignment.courseId))) return null;
 
   return {
     id: submission.id,

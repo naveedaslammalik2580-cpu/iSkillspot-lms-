@@ -18,14 +18,12 @@ export function accountEligibleForRecovery(user: {
   status: string;
   role: string;
   student: { status: string } | null;
-  teacher: { status: string } | null;
 }) {
   return (
     user.status === "ACTIVE" &&
     (user.role !== "STUDENT" ||
       (!!user.student &&
-        !["SUSPENDED", "DROPPED"].includes(user.student.status))) &&
-    (user.role !== "TEACHER" || user.teacher?.status === "ACTIVE")
+        !["SUSPENDED", "DROPPED"].includes(user.student.status)))
   );
 }
 
@@ -40,7 +38,7 @@ export async function issueAuthToken(
   await tx.$queryRaw`SELECT id FROM "User" WHERE id=${principal.id} FOR UPDATE`;
   const user = await tx.user.findUniqueOrThrow({
     where: { id: principal.id },
-    include: { student: true, teacher: true },
+    include: { student: true },
   });
   if (
     !accountEligibleForRecovery(user) ||
@@ -94,7 +92,7 @@ export async function issueAuthToken(
       ? "Verify your iSkillSpot email"
       : "Reset your iSkillSpot password",
     html: emailTemplate(
-      user.student?.fullName || user.teacher?.fullName || user.username,
+      user.student?.fullName || user.username,
       verify ? "Verify your email" : "Password recovery",
       `Use this single-use link within ${verify ? 60 : 30} minutes. If you did not request it, you can ignore this email.`,
       verify ? "Verify Email" : "Reset Password",
@@ -141,7 +139,7 @@ export async function verifyAuthToken(raw: string, purpose: TokenPurpose) {
   if (!/^[A-Za-z0-9_-]{43}$/.test(raw)) return null;
   const row = await db.authToken.findUnique({
     where: { digest: hashAuthToken(raw) },
-    include: { user: { include: { student: true, teacher: true } } },
+    include: { user: { include: { student: true } } },
   });
   if (
     !row ||
@@ -173,7 +171,7 @@ export async function consumeAuthToken(
     await tx.$queryRaw`SELECT id FROM "User" WHERE id=${row.userId} FOR UPDATE`;
     const user = await tx.user.findUniqueOrThrow({
       where: { id: row.userId },
-      include: { student: true, teacher: true },
+      include: { student: true },
     });
     if (!accountEligibleForRecovery(user)) throw new TokenError("ineligible");
     if (row.usedAt) throw new TokenError("used");

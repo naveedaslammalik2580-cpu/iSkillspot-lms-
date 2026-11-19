@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { requirePermission, assertTeacherOwnsCourse } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
 import { classifyResourceUrl } from "@/lib/data/learning";
 import { notifyUsers } from "@/lib/notifications";
@@ -12,9 +12,7 @@ import { notifyUsers } from "@/lib/notifications";
  * Module / lesson / resource management.
  *
  * Authorization: the existing permission matrix grants `lesson.manage`
- * to SUPER_ADMIN, ADMIN and TEACHER. Staff manage any course; teachers
- * are additionally scoped — at this data layer, on every call — to
- * courses they are assigned to via batches (assertTeacherOwnsCourse).
+ * to SUPER_ADMIN and ADMIN. Staff manage any course.
  * No permission was broadened to implement this module.
  *
  * Safe-delete rules (learning history is never collateral damage):

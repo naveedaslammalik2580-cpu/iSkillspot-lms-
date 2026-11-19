@@ -106,7 +106,7 @@ function buildPaymentsWhere(filters?: PaymentListFilters): Prisma.PaymentWhereIn
 
 /**
  * Paginated payment listing, same shape as listStudents/listCourses/
- * listBatches/listTeachers/listFees — page/pageSize in,
+ * listBatches/listFees — page/pageSize in,
  * { rows, total, page, pageSize, pages } out. For the daily reconciliation
  * list. Table is empty in current seed data, so this is verified by build/
  * type-check correctness rather than measured row-count performance.
