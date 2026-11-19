@@ -27,8 +27,8 @@ test('generated temporary credentials meet the policy and expire in 24 hours', (
   assert.ok(Math.abs(passwords.temporaryPasswordExpiry().getTime() - Date.now() - 86400000) < 1000);
 });
 test('manageable roles enforce the approved hierarchy', () => {
-  assert.deepEqual(policy.manageableRoles('SUPER_ADMIN'), ['ADMIN','TEACHER','STUDENT']);
-  assert.deepEqual(policy.manageableRoles('ADMIN'), ['TEACHER','STUDENT']);
+  assert.deepEqual(policy.manageableRoles('SUPER_ADMIN'), ['ADMIN','STUDENT']);
+  assert.deepEqual(policy.manageableRoles('ADMIN'), ['STUDENT']);
   assert.deepEqual(policy.manageableRoles('TEACHER'), []);
   assert.deepEqual(policy.manageableRoles('STUDENT'), []);
 });

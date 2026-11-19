@@ -322,7 +322,7 @@ describe("announcement audience resolution", () => {
       1
     );
     const row = await db.notification.findFirst({ where: { userId: studentUser.id, dedupeKey: `announcement:${announcement.id}` } });
-    assert.equal(row?.linkUrl, `/student/announcements/${announcement.id}`);
+    assert.equal(row?.linkUrl, "/student/notifications");
     await db.announcement.delete({ where: { id: announcement.id } });
   });
 });
