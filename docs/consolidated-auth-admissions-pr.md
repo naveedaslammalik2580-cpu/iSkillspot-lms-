@@ -1,3 +1,5 @@
+> **ARCHIVED — historical record.** This is a point-in-time document from 2026-11-13/14. It predates the agency-model pivot (2026-11-18) that removed the teacher role, attendance and grades, and the cleanup work that followed. It is retained for project history and does **not** describe the current system. For current operational guidance see `docs/SUPABASE-AUTH-DEPLOYMENT.md`, `docs/PHASE2-DB-CLEANUP-DEPLOYMENT.md` and `docs/deployment/`.
+>
 This consolidates #5 and #6 into one compatible implementation and supersedes the remaining standalone admissions PR. Both feature histories are retained. PR #5 was independently merged into main during verification; that baseline is included here. This work has not pushed to or merged main.
 
 Students can register, verify email, select a database course, follow manual payment instructions and sign in to a restricted status page. Staff verify the actual transaction and atomically approve payment/enrollment/activation/audit/confirmation. Existing students and academic records retain access and balances.

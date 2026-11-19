@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/status-badge";
 import { AccountControls, CreateAdminForm } from "./controls";
+import { formatDate } from "@/lib/utils";
 
 export default async function AccountsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const session = await requirePermission("account.manage");
   const sp = await searchParams;
   const result = await listAccounts(sp.q, Number(sp.page ?? 1));
   function href(page: number) { return `/admin/accounts?${new URLSearchParams({ q: sp.q ?? "", page: String(page) })}`; }
-  function date(value: Date | null) { return value ? value.toLocaleDateString("en-GB", { timeZone: "Asia/Karachi" }) : "Never"; }
+  function date(value: Date | null) { return value ? formatDate(value, { timeZone: "Asia/Karachi" }) : "Never"; }
   return <>
     <PageHeader title="User Accounts" description={`${result.total} accounts you can manage`} />
     <Card className="mb-4 flex flex-wrap gap-3 p-4">

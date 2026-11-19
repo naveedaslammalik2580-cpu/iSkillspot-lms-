@@ -50,7 +50,7 @@ export async function createStudentAction(
     Object.fromEntries(formData.entries())
   );
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const d = parsed.data;
 
@@ -170,7 +170,7 @@ export async function updateStudentAction(formData: FormData) {
   const session = await requirePermission("student.edit");
   const parsed = updateStudentSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const d = parsed.data;
 

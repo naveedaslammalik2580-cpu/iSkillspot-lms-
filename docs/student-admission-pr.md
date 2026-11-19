@@ -1,3 +1,5 @@
+> **ARCHIVED — historical record.** This is a point-in-time document from 2026-11-13/14. It predates the agency-model pivot (2026-11-18) that removed the teacher role, attendance and grades, and the cleanup work that followed. It is retained for project history and does **not** describe the current system. For current operational guidance see `docs/SUPABASE-AUTH-DEPLOYMENT.md`, `docs/PHASE2-DB-CLEANUP-DEPLOYMENT.md` and `docs/deployment/`.
+>
 Public students can now register with their own password, verify their email, choose an open database course and follow official manual payment instructions. Pending accounts can sign in to an admission status page; academic pages and APIs remain restricted until ADMIN/SUPER_ADMIN verifies the actual transaction and approves the application.
 
 Approval atomically records the existing fee/payment, enrollment, activation, audit and confirmation-email queue entry. Adds course-level suspension, tighter enrollment scope across student views, branded email/recovery infrastructure and additive SQL deployment/preflight/postflight/history instructions. Existing accounts retain access by default; public admissions start closed.

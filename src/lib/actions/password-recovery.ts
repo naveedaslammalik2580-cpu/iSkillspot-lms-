@@ -1,7 +1,7 @@
 "use server";
 import { z } from "zod";
 import { strongPassword } from "@/lib/auth/password";
-import { getSession } from "@/lib/auth/session";
+import { requirePermission } from "@/lib/auth/guards";
 import { sendAccountResetLink } from "@/lib/auth/accounts";
 import { consumeAuthToken } from "@/lib/auth/tokens";
 import { publicLimit } from "@/lib/auth/public-limit";
@@ -26,7 +26,7 @@ export async function resetPasswordAction(
       confirmPassword: form.get("confirmPassword"),
     });
   if (!parsed.success)
-    return { error: parsed.error.errors[0]?.message || "Invalid request" };
+    return { error: parsed.error.issues[0]?.message || "Invalid request" };
   if (await publicLimit("reset"))
     return { error: "Too many attempts. Try again in 15 minutes." };
   try {
@@ -47,9 +47,11 @@ export type StaffResetLinkResult = { ok: true } | { ok: false; error: string };
 export async function sendResetLinkAction(
   userId: string,
 ): Promise<StaffResetLinkResult> {
-  const session = await getSession();
-  if (!session)
-    return { ok: false, error: "Your session has expired. Sign in again." };
+  // Explicit action-layer authorization (defence in depth): the downstream
+  // service enforces the same permission plus the manageable-target
+  // hierarchy, but the requirement is declared here like every other
+  // guarded action. Redirects to /login or /forbidden when not permitted.
+  const session = await requirePermission("account.manage");
   try {
     const result = await sendAccountResetLink(session, userId);
     if (result === "not-configured")

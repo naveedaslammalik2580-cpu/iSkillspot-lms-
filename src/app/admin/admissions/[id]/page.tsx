@@ -9,6 +9,7 @@ import {
   resendAdmissionAction,
   setEnrollmentAccessAction,
 } from "@/lib/actions/admissions";
+import { formatDateTime } from "@/lib/utils";
 export default async function AdmissionDetailPage({
   params,
 }: {
@@ -79,7 +80,7 @@ export default async function AdmissionDetailPage({
               "Course fee": app.totalFee,
               "Required payment": app.requiredPayment,
               Status: app.status,
-              "Application date": app.createdAt.toLocaleString("en-GB", {
+              "Application date": formatDateTime(app.createdAt, {
                 timeZone: "Asia/Karachi",
               }),
               "Payment verified": app.payment

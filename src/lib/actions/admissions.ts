@@ -43,7 +43,7 @@ const errorState = (e: unknown): AdmissionActionState => ({
     e instanceof AccountError
       ? e.message
       : e instanceof z.ZodError
-        ? e.errors[0].message
+        ? e.issues[0].message
         : "Unable to complete this request. Please try again.",
 });
 export async function registerStudentAction(

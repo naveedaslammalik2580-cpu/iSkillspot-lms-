@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Bell, CheckCheck } from "lucide-react";
 import { fetchNotificationSummary, markAllNotificationsRead, markNotificationRead, type NotificationSummaryDTO } from "@/lib/actions/notifications";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 
 const POLL_MS = 45_000;
 
@@ -19,7 +19,7 @@ function timeAgo(iso: string): string {
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days}d ago`;
-  return new Date(iso).toLocaleDateString();
+  return formatDate(iso);
 }
 
 export function NotificationBell({ initial, notificationsPath }: { initial: NotificationSummaryDTO; notificationsPath: string }) {

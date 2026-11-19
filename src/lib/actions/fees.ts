@@ -2,25 +2,13 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import type { FeeStatus, Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
 import { notifyStudent } from "@/lib/notifications";
+import { computeStatus } from "@/lib/data/fees";
 
 export type FeeResult = { ok: true; feeId: string } | { ok: false; error: string };
-
-/**
- * Pure status decision shared by createFee and recomputeFeeStatus, so both
- * paths agree on how PENDING/PARTIAL/PAID/OVERDUE (per the schema's actual
- * FeeStatus values: UNPAID/PARTIAL/PAID/OVERDUE) are derived.
- */
-function computeStatus(amountPaid: number, finalFee: number, dueDate: Date | null): FeeStatus {
-  const isPastDue = dueDate !== null && dueDate.getTime() < Date.now();
-  if (amountPaid >= finalFee && finalFee > 0) return "PAID";
-  if (amountPaid > 0) return isPastDue ? "OVERDUE" : "PARTIAL";
-  return isPastDue ? "OVERDUE" : "UNPAID";
-}
 
 const createFeeSchema = z.object({
   studentId: z.string().min(1, "Select a student"),
@@ -39,7 +27,7 @@ export async function createFee(
 
   const parsed = createFeeSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const d = parsed.data;
 
@@ -108,7 +96,7 @@ export async function updateFee(
 
   const parsed = updateFeeSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const d = parsed.data;
 
@@ -185,7 +173,7 @@ export async function waiveFee(
 
   const parsed = waiveFeeSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const d = parsed.data;
 
@@ -243,33 +231,4 @@ export async function deleteFee(
 
   revalidatePath("/admin/fees");
   return { ok: true };
-}
-
-/**
- * Internal — called from payments.ts inside the same transaction after a
- * payment is recorded or voided. Sums active payments and updates
- * amountPaid/remainingBalance/status to match.
- */
-export async function recomputeFeeStatus(
-  tx: Prisma.TransactionClient,
-  feeId: string
-): Promise<void> {
-  const fee = await tx.fee.findUniqueOrThrow({ where: { id: feeId } });
-  if (fee.status === "WAIVED") return;
-
-  const sum = await tx.payment.aggregate({
-    where: { feeId, voidedAt: null },
-    _sum: { amount: true },
-  });
-  const amountPaid = sum._sum.amount ?? 0;
-  const remainingBalance = Math.max(0, fee.finalFee - amountPaid);
-
-  await tx.fee.update({
-    where: { id: feeId },
-    data: {
-      amountPaid,
-      remainingBalance,
-      status: computeStatus(amountPaid, fee.finalFee, fee.dueDate),
-    },
-  });
 }

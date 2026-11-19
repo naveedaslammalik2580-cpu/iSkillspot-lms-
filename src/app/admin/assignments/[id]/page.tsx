@@ -16,9 +16,9 @@ export default async function AdminAssignmentDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await requirePermission("assignment.manage");
+  await requirePermission("assignment.manage");
   const { id } = await params;
-  const assignment = await getAssignmentDetail(id, session);
+  const assignment = await getAssignmentDetail(id);
   if (!assignment) notFound();
 
   return (

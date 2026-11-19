@@ -64,7 +64,7 @@ export async function createAnnouncement(
 
   const parsed = createAnnouncementSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const d = parsed.data;
 
@@ -148,7 +148,7 @@ export async function updateAnnouncement(
   if (existing.status === "PUBLISHED") {
     const parsed = editPublishedSchema.safeParse(input);
     if (!parsed.success) {
-      return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+      return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
     }
     const changed = existing.content !== parsed.data.body;
     await db.announcement.update({ where: { id }, data: { content: parsed.data.body } });
@@ -164,7 +164,7 @@ export async function updateAnnouncement(
   } else {
     const parsed = editDraftSchema.safeParse(input);
     if (!parsed.success) {
-      return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+      return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
     }
     const d = parsed.data;
     if (d.audience === "BATCH") {

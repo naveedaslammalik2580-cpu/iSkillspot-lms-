@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import type { FeeStatus } from "@prisma/client";
+import type { FeeStatus, Prisma } from "@prisma/client";
 
 export interface FeeListRow {
   id: string;
@@ -260,4 +260,49 @@ export async function getCoursesWithDefaultFee(): Promise<CourseFeeOption[]> {
     orderBy: { title: "asc" },
   });
   return courses.map((c) => ({ id: c.id, name: c.title, defaultFee: c.defaultFee }));
+}
+
+// ---------------------------------------------------------------------------
+// Fee status maintenance (transactional writes used by payments/admissions)
+// ---------------------------------------------------------------------------
+
+/**
+ * Pure status decision shared by the fee actions and recomputeFeeStatus, so
+ * both paths agree on how PENDING/PARTIAL/PAID/OVERDUE (per the schema's
+ * actual FeeStatus values: UNPAID/PARTIAL/PAID/OVERDUE) are derived.
+ */
+export function computeStatus(amountPaid: number, finalFee: number, dueDate: Date | null): FeeStatus {
+  const isPastDue = dueDate !== null && dueDate.getTime() < Date.now();
+  if (amountPaid >= finalFee && finalFee > 0) return "PAID";
+  if (amountPaid > 0) return isPastDue ? "OVERDUE" : "PARTIAL";
+  return isPastDue ? "OVERDUE" : "UNPAID";
+}
+
+/**
+ * Internal — called from the payment actions and admissions inside the same
+ * transaction after a payment is recorded or voided. Sums active payments
+ * and updates amountPaid/remainingBalance/status to match.
+ */
+export async function recomputeFeeStatus(
+  tx: Prisma.TransactionClient,
+  feeId: string
+): Promise<void> {
+  const fee = await tx.fee.findUniqueOrThrow({ where: { id: feeId } });
+  if (fee.status === "WAIVED") return;
+
+  const sum = await tx.payment.aggregate({
+    where: { feeId, voidedAt: null },
+    _sum: { amount: true },
+  });
+  const amountPaid = sum._sum.amount ?? 0;
+  const remainingBalance = Math.max(0, fee.finalFee - amountPaid);
+
+  await tx.fee.update({
+    where: { id: feeId },
+    data: {
+      amountPaid,
+      remainingBalance,
+      status: computeStatus(amountPaid, fee.finalFee, fee.dueDate),
+    },
+  });
 }

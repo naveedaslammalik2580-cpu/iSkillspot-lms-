@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
 import { notifyStudent } from "@/lib/notifications";
-import { recomputeFeeStatus } from "@/lib/actions/fees";
+import { recomputeFeeStatus } from "@/lib/data/fees";
 import { authorizeActor } from "@/lib/auth/account-policy";
 import { paymentReferenceKey, validMoney } from "@/lib/admission-policy";
 import { assertPaymentReferenceUnused } from "@/lib/payment-reference";
@@ -17,7 +17,7 @@ const recordPaymentSchema = z.object({
   feeId: z.string().min(1),
   amount: z.coerce.number().positive("Amount must be greater than 0"),
   paidAt: z.string().min(1, "Payment date is required"),
-  method: z.enum(PAYMENT_METHODS, { errorMap: () => ({ message: "Select a valid payment method" }) }),
+  method: z.enum(PAYMENT_METHODS, { error: "Select a valid payment method" }),
   reference: z.string().max(200).optional(),
   notes: z.string().max(1000).optional(),
 });
@@ -36,7 +36,7 @@ export async function recordPayment(
 
   const parsed = recordPaymentSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const d = parsed.data;
 
@@ -120,7 +120,7 @@ export async function voidPayment(
 
   const parsed = voidPaymentSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const d = parsed.data;
 

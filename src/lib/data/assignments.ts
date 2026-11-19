@@ -1,16 +1,11 @@
 import { db } from "@/lib/db";
-import type { Role, SubmissionStatus } from "@prisma/client";
+import type { SubmissionStatus } from "@prisma/client";
 import {
   parseAssignmentAttachment,
   type AssignmentAttachment,
 } from "@/lib/assignment-attachment";
 
 export type { AssignmentAttachment };
-
-export interface CallerScope {
-  role: Role;
-  userId: string;
-}
 
 function parseFiles(fileUrl: string | null): SubmissionFile[] {
   if (!fileUrl) return [];
@@ -130,8 +125,7 @@ export interface AssignmentDetail {
 
 /** For the admin assignment detail + roster page. */
 export async function getAssignmentDetail(
-  assignmentId: string,
-  scope: CallerScope
+  assignmentId: string
 ): Promise<AssignmentDetail | null> {
   const assignment = await db.assignment.findUnique({
     where: { id: assignmentId },
@@ -194,8 +188,7 @@ export interface SubmissionDetail {
 
 /** For the admin grading page. */
 export async function getSubmissionDetail(
-  submissionId: string,
-  scope: CallerScope
+  submissionId: string
 ): Promise<SubmissionDetail | null> {
   const submission = await db.assignmentSubmission.findUnique({
     where: { id: submissionId },

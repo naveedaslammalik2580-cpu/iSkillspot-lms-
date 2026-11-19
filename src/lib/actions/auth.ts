@@ -30,7 +30,7 @@ export async function loginAction(
     remember: formData.get("remember") === "on",
   });
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
   const { identifier, password, remember } = parsed.data;
 
@@ -129,7 +129,7 @@ export async function changePasswordAction(
     confirmPassword: formData.get("confirmPassword"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
   const user = await db.user.findUnique({ where: { id: session.userId } });

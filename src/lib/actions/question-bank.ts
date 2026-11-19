@@ -33,7 +33,7 @@ async function assertModuleInCourse(courseId: string, moduleId?: string): Promis
 export async function createBankItem(input: z.infer<typeof bankItemSchema>): Promise<BankResult> {
   const session = await requirePermission("quiz.manage");
   const parsed = bankItemSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
   const v = validateQuestionFields(d);
   if ("error" in v) return { ok: false, error: v.error };
@@ -72,7 +72,7 @@ const updateBankItemSchema = bankItemSchema.extend({ id: z.string().min(1) });
 export async function updateBankItem(input: z.infer<typeof updateBankItemSchema>): Promise<BankResult> {
   const session = await requirePermission("quiz.manage");
   const parsed = updateBankItemSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
   const v = validateQuestionFields(d);
   if ("error" in v) return { ok: false, error: v.error };

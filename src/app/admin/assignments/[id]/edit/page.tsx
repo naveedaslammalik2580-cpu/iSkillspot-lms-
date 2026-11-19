@@ -9,10 +9,10 @@ export default async function EditAssignmentPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await requirePermission("assignment.manage");
+  await requirePermission("assignment.manage");
   const { id } = await params;
   const [assignment, courses] = await Promise.all([
-    getAssignmentDetail(id, session),
+    getAssignmentDetail(id),
     getCoursesForAdmin(),
   ]);
   if (!assignment) notFound();

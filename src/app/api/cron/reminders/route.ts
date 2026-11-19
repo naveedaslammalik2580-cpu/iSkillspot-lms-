@@ -23,7 +23,11 @@ function secretMatches(provided: string | null, expected: string): boolean {
 
 export async function POST(req: Request) {
   const secret = process.env.CRON_SECRET;
-  if (!secret) {
+  // Same minimum-length policy as the emails cron route (and as documented
+  // in .env.example): a CRON_SECRET shorter than 32 characters counts as
+  // not configured, so a weak secret can never silently protect this
+  // endpoint. The secret value itself is never logged.
+  if (!secret || secret.length < 32) {
     return NextResponse.json({ ok: false, error: "Reminders endpoint is not configured." }, { status: 503 });
   }
   if (!secretMatches(req.headers.get("x-cron-secret"), secret)) {

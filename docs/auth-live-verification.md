@@ -1,3 +1,5 @@
+> **ARCHIVED — historical record.** This is a point-in-time document from 2026-11-13/14. It predates the agency-model pivot (2026-11-18) that removed the teacher role, attendance and grades, and the cleanup work that followed. It is retained for project history and does **not** describe the current system. For current operational guidance see `docs/SUPABASE-AUTH-DEPLOYMENT.md`, `docs/PHASE2-DB-CLEANUP-DEPLOYMENT.md` and `docs/deployment/`.
+>
 # Live authentication verification — 2026-11-14
 
 Scope: verify the operator-applied migration and existing accounts without

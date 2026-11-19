@@ -24,7 +24,7 @@ import {
   validMoney,
   paymentMethodsSchema,
 } from "@/lib/admission-policy";
-import { recomputeFeeStatus } from "@/lib/actions/fees";
+import { recomputeFeeStatus } from "@/lib/data/fees";
 import { assertPaymentReferenceUnused } from "@/lib/payment-reference";
 
 export const registrationSchema = z
@@ -260,9 +260,7 @@ export const approvalSchema = z.object({
     .min(3, "Enter the verified transaction reference")
     .max(200),
   verified: z.literal(true, {
-    errorMap: () => ({
-      message: "Verify the actual transaction before approval",
-    }),
+    error: "Verify the actual transaction before approval",
   }),
   installments: z.boolean(),
 });

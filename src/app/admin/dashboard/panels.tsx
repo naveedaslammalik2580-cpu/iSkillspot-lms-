@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatCard } from "@/components/stat-card";
-import { EnrollmentChart } from "./enrollment-chart";
+import { EnrollmentChartLazy } from "./enrollment-chart-lazy";
 import type {
   getAtRiskStudents,
   getStudentStatusBreakdown,
@@ -65,7 +65,7 @@ export async function EnrollmentPanel({
       </CardHeader>
       <CardContent>
         {enrollment.length ? (
-          <EnrollmentChart data={enrollment} />
+          <EnrollmentChartLazy data={enrollment} />
         ) : (
           <p className="py-12 text-center text-sm text-muted-foreground">No enrollment data yet.</p>
         )}

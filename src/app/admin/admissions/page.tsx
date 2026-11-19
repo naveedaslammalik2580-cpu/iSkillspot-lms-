@@ -4,6 +4,7 @@ import { requireStaff } from "@/lib/auth/guards";
 import { db } from "@/lib/db";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils";
 export default async function AdmissionsPage({
   searchParams,
 }: {
@@ -152,9 +153,7 @@ export default async function AdmissionsPage({
                   {a.user.emailVerifiedAt ? "Verified" : "Unverified"}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3">
-                  {a.createdAt.toLocaleDateString("en-GB", {
-                    timeZone: "Asia/Karachi",
-                  })}
+                  {formatDate(a.createdAt, { timeZone: "Asia/Karachi" })}
                 </td>
                 <td className="px-4 py-3">
                   {a.payment

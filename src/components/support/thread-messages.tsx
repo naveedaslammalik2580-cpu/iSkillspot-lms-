@@ -1,15 +1,5 @@
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 import type { SupportThreadMessage } from "@/lib/data/support";
-
-function formatDateTime(d: Date): string {
-  return d.toLocaleString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 /**
  * Ticket thread, chat-style: the viewer's own side is right-aligned,

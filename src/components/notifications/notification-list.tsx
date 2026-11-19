@@ -7,7 +7,7 @@ import { markAllNotificationsRead, markNotificationRead } from "@/lib/actions/no
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 
 export type NotificationItemDTO = {
   id: string;
@@ -80,7 +80,7 @@ export function NotificationList({ initialItems }: { initialItems: NotificationI
               <div className="flex shrink-0 flex-col items-end gap-1.5">
                 <Badge variant="neutral">{TYPE_LABELS[n.type] ?? n.type}</Badge>
                 <span className="text-xs text-muted-foreground">
-                  {new Date(n.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
+                  {formatDateTime(n.createdAt)}
                 </span>
               </div>
             </div>

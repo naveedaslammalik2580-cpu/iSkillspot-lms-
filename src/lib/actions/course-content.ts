@@ -96,7 +96,7 @@ const moduleSchema = z.object({
 export async function createModule(courseId: string, input: z.infer<typeof moduleSchema>): Promise<Result<{ id: string }>> {
   const session = await requireContentManager(courseId);
   const parsed = moduleSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const course = await db.course.findUnique({ where: { id: courseId }, select: { id: true } });
   if (!course) return { ok: false, error: "Course not found." };
 
@@ -118,7 +118,7 @@ export async function updateModule(moduleId: string, input: z.infer<typeof modul
   if (!courseId) return { ok: false, error: "Module not found." };
   const session = await requireContentManager(courseId);
   const parsed = moduleSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
 
   await db.module.update({
     where: { id: moduleId },
@@ -180,7 +180,7 @@ export async function createLesson(moduleId: string, input: z.infer<typeof lesso
   if (!courseId) return { ok: false, error: "Module not found." };
   const session = await requireContentManager(courseId);
   const parsed = lessonSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
 
   const lesson = await db.lesson.create({
@@ -206,7 +206,7 @@ export async function updateLesson(lessonId: string, input: z.infer<typeof lesso
   if (!located) return { ok: false, error: "Lesson not found." };
   const session = await requireContentManager(located.courseId);
   const parsed = lessonSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
 
   const before = await db.lesson.findUnique({ where: { id: lessonId }, select: { isPublished: true } });
@@ -270,7 +270,7 @@ export async function createResource(lessonId: string, input: z.infer<typeof res
   if (!located) return { ok: false, error: "Lesson not found." };
   const session = await requireContentManager(located.courseId);
   const parsed = resourceSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
 
   const resource = await db.lessonResource.create({
     data: {

@@ -17,7 +17,7 @@
 import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { db } from "@/lib/db";
-import { recomputeFeeStatus } from "@/lib/actions/fees";
+import { recomputeFeeStatus } from "@/lib/data/fees";
 import { generateVerificationCode } from "@/lib/ids";
 import { notifyUsers } from "@/lib/notifications";
 import { getNotificationsPage, getRecentNotifications } from "@/lib/data/notifications";

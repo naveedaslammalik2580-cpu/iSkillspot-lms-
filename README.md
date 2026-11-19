@@ -17,12 +17,16 @@ CRUD, real server-side authorization — not a static prototype.
 - **Tailwind + shadcn-style UI primitives** in `src/components/ui`.
 
 ### 2. Database schema
-See `prisma/schema.prisma`. Covers users, students, teachers, courses, modules,
-lessons, batches, enrollments, attendance, assignments, submissions, quizzes,
-questions, attempts, grades, fees, payments, certificates, announcements,
-notifications, audit logs, and settings. Key integrity rules:
-- `Student.studentId`, `User.username/email`, `Certificate.certificateNumber` unique.
-- Attendance uniqueness on `(studentId, batchId, date)` — prevents duplicates.
+See `prisma/schema.prisma` (32 models). Covers users, students, courses,
+modules, lessons, batches, enrollments, assignments, submissions, quizzes,
+questions, a question bank, attempts, fees, payments, certificates,
+announcements, notifications (incl. Web Push subscriptions), support
+tickets, admissions, auth tokens/throttles, email outbox, audit logs, and
+settings. The system runs an **agency model** (staff ↔ students): there is
+no teacher role, no attendance, and no grades module — those were removed
+in the 2026-11-18 pivot and the Phase 2 database cleanup. Key integrity rules:
+- `Student.studentId`, `User.username/email`, `Certificate.certificateNumber`
+  and `Certificate.verificationCode` unique.
 - Enrollment uniqueness on `(studentId, batchId)`.
 - Indexes on hot lookup/filter columns.
 
@@ -31,44 +35,47 @@ notifications, audit logs, and settings. Key integrity rules:
 - `src/lib/auth/session.ts` — signed session cookie, expiry, remember-me.
 - `src/lib/auth/permissions.ts` — the **role/permission matrix** (single source of truth).
 - `src/lib/auth/guards.ts` — server guards: `requireSession`, `requireRole`,
-  `requireStaff`, `requirePermission`, `requireStudentSelf`, `requireTeacherSelf`,
-  and teacher-scope assertions (`assertTeacherOwnsBatch/Student`).
+  `requireStaff`, `requirePermission`, `requireStudentSelf`.
 - `src/middleware.ts` — edge route gating per role + forced password change.
 
 **Security model:** the UI hides what a role can't do, but every server action
 and page loader re-checks permission on the server. Students resolve only their
-**own** `Student` row; teachers are scoped to assigned batches. Nothing trusts
-the client.
+**own** `Student` row. Nothing trusts the client.
 
 ### 4. Role / permission matrix
-| Capability group | SUPER_ADMIN | ADMIN | TEACHER | STUDENT |
-|---|:-:|:-:|:-:|:-:|
-| System settings / admin mgmt / audit logs | ✓ | — | — | — |
-| Students, teachers, courses, batches, enroll | ✓ | ✓ | — | — |
-| Attendance / assignments / quizzes / grades | ✓ | ✓ | scoped | — |
-| Fees / payments / certificates / reports | ✓ | ✓ | — | view own |
-| View own data only | — | — | — | ✓ |
+| Capability group | SUPER_ADMIN | ADMIN | STUDENT |
+|---|:-:|:-:|:-:|
+| System settings / admin mgmt / audit logs | ✓ | — | — |
+| Students, courses, batches, enroll | ✓ | ✓ | — |
+| Assignments / quizzes (incl. grading & marking) | ✓ | ✓ | own only |
+| Fees / payments / certificates / reports | ✓ | ✓ | — |
+| View own data only | — | — | ✓ |
+
+The full per-permission matrix lives in `src/lib/auth/permissions.ts`.
 
 ### 5. Navigation
-Role-driven in `src/lib/nav.ts`, rendered by the responsive shell
-`src/components/app-shell.tsx` (Sections 23–25).
+Role-driven in `src/lib/nav.ts`, rendered by the responsive app shells.
 
 ### 6. Route / component structure
-`src/app/{login,admin,teacher,student,verify}` matching Section 5. Each area has
-a layout that applies the correct guard. Public `/verify/[certificateNumber]`.
+`src/app/{login,register,admission,forgot-password,reset-password,
+change-password,verify-email,admin,student,verify,certificates,forbidden}`.
+Each portal area has a layout that applies the correct guard. Public
+certificate verification lives at `/verify/[verificationCode]`.
 
 ### 7. Server-action structure
 `src/lib/actions/*` (auth, students, settings). `src/lib/data/*` for read
 aggregations. All mutating actions call a guard + `logAction` (audit).
 
-### 8. Milestones
-Stages 1–7 per Section 37. **Implemented now:** Stage 1 fully (project, DB, auth,
-roles, permissions, layout, nav), plus Stage 2's core — the complete Add-Student
-workflow (Section 26), student list + search/filters (Section 16), Student 360°
-profile (Section 8), admin dashboard with live stats/at-risk/charts (Section 7),
-student dashboard (Section 9), settings (Section 31), audit logs (Section 30),
-and public certificate verification (Section 15). Remaining modules are stubbed
-as guarded, labeled pages ready to fill against the existing schema.
+### 8. Current state
+Fully implemented: accounts and role-based access, public student
+registration + admissions with staff approval, courses/modules/lessons,
+batches and enrollments, assignments (incl. PDF task files and grading),
+quizzes (timed attempts, question bank, short-answer marking), fees and
+payments, notifications (in-app + Web Push) and announcements, support
+tickets, settings, audit logs, and the admin dashboard. The Certificates
+module is **parked** by product decision: its code and schema are retained
+and its admin pages remain routable, but it is unlinked from navigation
+pending a separate integration decision.
 
 ---
 
@@ -91,26 +98,34 @@ requires the private interactive procedure documented in the deployment guide.
 
 Run `npm run dev` locally after the schema is ready. All roles share `/login`.
 SUPER_ADMIN can create ADMIN accounts in `/admin/accounts`; staff create
-teachers and students through their existing forms. No public registration.
+student accounts from the admin portal, and prospective students can also
+self-register via `/register` and complete the admissions flow (staff
+approval required before full access).
 
 Temporary credentials expire in 24 hours and require a first-login password
 change. Share them privately; no default or bootstrap passwords are published.
 
-Run `npm run test:auth` for focused checks, and
-`npm run test:auth:integration` for a separate disposable PostgreSQL cluster,
-real Prisma lifecycle tests and headless Edge checks. The latter requires local
-PostgreSQL binaries and the installed Playwright package/system Edge.
+Run `npm test` for the full suite (TypeScript suites plus the auth checks;
+requires a disposable local PostgreSQL database whose name contains "test",
+with migrations applied). Run `npm run test:auth` for the focused auth
+checks, and `npm run test:auth:integration` for a separate disposable
+PostgreSQL cluster, real Prisma lifecycle tests and headless Edge checks.
+The latter requires local PostgreSQL binaries and the installed Playwright
+package/system Edge.
 
 ---
 
 ## What's verified
 - `npx tsc --noEmit` — passes (0 errors).
-- `npx next build` — passes (all routes + middleware compile).
+- `npx eslint .` — passes (0 errors).
+- `npm test` — full suite passes against a disposable test database.
+- `npm run build` — passes (all routes + middleware compile).
 
 ## Notes for continued development
-- Add the remaining module UIs (assignments, quizzes, attendance marking, fees,
-  certificates issuance) against the existing schema and the `requirePermission`
-  guards — the data model and authorization are already in place.
-- File/video storage is intentionally abstracted (store URLs, not blobs) so S3,
-  R2, Supabase, or Cloudinary can be plugged in later (Section 4).
-# iSkillspot-lms-
+- File storage uses Supabase Storage via `src/lib/storage/supabase.ts`
+  (private bucket; signed URLs). Lesson videos are embedded from
+  allowlisted external providers (YouTube/Vimeo).
+- Deployment-only configuration (external cron scheduler for
+  `/api/cron/emails` + `/api/cron/reminders`, VAPID keys, storage bucket,
+  email provider) is covered in `.env.example` and the runbooks under
+  `docs/`; none of it is verifiable from the repository alone.

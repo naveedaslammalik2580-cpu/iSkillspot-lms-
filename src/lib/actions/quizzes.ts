@@ -52,7 +52,7 @@ async function assertModuleInCourse(courseId: string, moduleId?: string): Promis
 export async function createQuiz(input: z.infer<typeof quizSchema>): Promise<QuizResult> {
   const session = await requirePermission("quiz.manage");
   const parsed = quizSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
 
   const course = await db.course.findUnique({ where: { id: d.courseId }, select: { id: true } });
@@ -91,7 +91,7 @@ const updateQuizSchema = quizSchema.omit({ courseId: true, moduleId: true }).ext
 export async function updateQuiz(input: z.infer<typeof updateQuizSchema>): Promise<QuizResult> {
   const session = await requirePermission("quiz.manage");
   const parsed = updateQuizSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
 
   const quiz = await db.quiz.findUnique({ where: { id: d.id }, select: { id: true } });
@@ -215,7 +215,7 @@ const validateQuestion = validateQuestionFields;
 export async function addQuestion(input: z.infer<typeof questionSchema>): Promise<QuizResult> {
   const session = await requirePermission("quiz.manage");
   const parsed = questionSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
   const v = validateQuestion(d);
   if ("error" in v) return { ok: false, error: v.error };
@@ -256,7 +256,7 @@ const updateQuestionSchema = questionSchema.extend({ id: z.string().min(1) });
 export async function updateQuestion(input: z.infer<typeof updateQuestionSchema>): Promise<QuizResult> {
   const session = await requirePermission("quiz.manage");
   const parsed = updateQuestionSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
   const v = validateQuestion(d);
   if ("error" in v) return { ok: false, error: v.error };

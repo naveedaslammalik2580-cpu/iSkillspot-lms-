@@ -10,9 +10,9 @@ export default async function AdminGradingPage({
 }: {
   params: Promise<{ id: string; submissionId: string }>;
 }) {
-  const session = await requirePermission("assignment.grade");
+  await requirePermission("assignment.grade");
   const { submissionId } = await params;
-  const submission = await getSubmissionDetail(submissionId, session);
+  const submission = await getSubmissionDetail(submissionId);
   if (!submission) notFound();
 
   return (

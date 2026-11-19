@@ -1,3 +1,5 @@
+> **ARCHIVED — historical record.** This is a point-in-time document from 2026-11-13/14. It predates the agency-model pivot (2026-11-18) that removed the teacher role, attendance and grades, and the cleanup work that followed. It is retained for project history and does **not** describe the current system. For current operational guidance see `docs/SUPABASE-AUTH-DEPLOYMENT.md`, `docs/PHASE2-DB-CLEANUP-DEPLOYMENT.md` and `docs/deployment/`.
+>
 # Authentication, recovery and student admissions reconciliation
 
 Date: 14 November 2026 (Asia/Karachi). This report supersedes the separate PR #5/#6 deployment recommendations. Deploy only the consolidated pull request. This work does not push to or merge main. During verification, PR #5 was independently merged into main at `f543a5c`; that baseline merge is included in the consolidated branch. Its code was already present through the retained PR #5 history, so incorporating the main merge introduced no source changes.
