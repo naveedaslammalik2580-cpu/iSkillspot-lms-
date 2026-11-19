@@ -8,7 +8,6 @@ import {
   requirePermission,
   requireSession,
   requireStudentSelf,
-  AuthError,
 } from "@/lib/auth/guards";
 import { logAction } from "@/lib/audit";
 import { notifyStudent, notifyUsers, studentUserIdsForCourse } from "@/lib/notifications";

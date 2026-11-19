@@ -84,16 +84,6 @@ export function parseAttemptAnswers(raw: string | null | undefined): ParsedAttem
   }
 }
 
-/** Just the student's answer texts, from either stored shape. */
-export function parseAnswers(answers: string | null | undefined): Record<string, string> {
-  return parseAttemptAnswers(answers).answers;
-}
-
-/** Just the admin-awarded points (SHORT_ANSWER questions only). */
-export function parseAwarded(answers: string | null | undefined): Record<string, number> {
-  return parseAttemptAnswers(answers).awarded;
-}
-
 /** Serialize an attempt's answers + awarded points in the v2 wrapped shape.
  *  Pass `expired: true` only when finalizing an attempt whose time ran
  *  out — and preserve the flag when re-serializing such an attempt. */
@@ -849,19 +839,4 @@ export async function getStudentAttemptReview(
       };
     }),
   };
-}
-
-export async function getStudentAttemptHistory(studentId: string, quizId: string) {
-  return db.quizAttempt.findMany({
-    where: { studentId, quizId },
-    orderBy: { attemptNumber: "asc" },
-    select: {
-      id: true,
-      attemptNumber: true,
-      score: true,
-      percentage: true,
-      passed: true,
-      completedAt: true,
-    },
-  });
 }

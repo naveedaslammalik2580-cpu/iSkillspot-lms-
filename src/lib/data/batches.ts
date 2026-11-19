@@ -56,21 +56,6 @@ function buildBatchWhere(filters?: BatchFilters): Prisma.BatchWhereInput {
 }
 
 /**
- * Unpaginated — returns every matching batch. Used where the full set is
- * genuinely needed by internal aggregations. For the admin batch
- * listing (which does want pagination), use listBatches below instead.
- */
-export async function getAllBatches(filters?: BatchFilters): Promise<BatchListRow[]> {
-  const batches = await db.batch.findMany({
-    where: buildBatchWhere(filters),
-    include: batchInclude,
-    orderBy: { createdAt: "desc" },
-  });
-
-  return batches.map(mapBatchRow);
-}
-
-/**
  * Paginated batch listing, same shape as listStudents/listCourses — page/
  * pageSize in, { rows, total, page, pageSize, pages } out. At current seed
  * volume (10 batches) this makes no measurable difference; it's here so the

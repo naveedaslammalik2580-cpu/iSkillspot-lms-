@@ -5,17 +5,7 @@ import { getSession } from "@/lib/auth/session";
 import { sendAccountResetLink } from "@/lib/auth/accounts";
 import { consumeAuthToken } from "@/lib/auth/tokens";
 import { publicLimit } from "@/lib/auth/public-limit";
-import { requestAuthEmailAction } from "@/lib/actions/admissions";
 export type RecoveryState = { error?: string; ok?: boolean; message?: string };
-export async function requestPasswordResetAction(
-  prev: RecoveryState,
-  form: FormData,
-): Promise<RecoveryState> {
-  const request = new FormData();
-  request.set("email", String(form.get("email") || ""));
-  request.set("purpose", "RESET_PASSWORD");
-  return requestAuthEmailAction(prev, request);
-}
 export async function resetPasswordAction(
   _: RecoveryState,
   form: FormData,

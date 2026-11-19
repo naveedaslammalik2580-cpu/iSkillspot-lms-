@@ -133,35 +133,3 @@ export async function getAnnouncementById(
   return null;
 }
 
-/** PUBLISHED announcements in this student's audience, newest first. */
-export async function getAnnouncementsForStudent(studentId: string): Promise<AnnouncementListRow[]> {
-  const enrollments = await db.enrollment.findMany({
-    where: { studentId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } },
-    select: { batchId: true, courseId: true },
-  });
-  const batchIds = enrollments.map((e) => e.batchId);
-  const courseIds = enrollments.map((e) => e.courseId);
-
-  const rows = await db.announcement.findMany({
-    where: {
-      status: "PUBLISHED",
-      OR: [
-        { audience: "ALL" },
-        { audience: "STUDENTS" },
-        { audience: "BATCH", targetBatchId: { in: batchIds } },
-        { audience: "COURSE", targetCourseId: { in: courseIds } },
-      ],
-    },
-    orderBy: { publishedAt: "desc" },
-  });
-  return rows.map((a) => ({
-    id: a.id,
-    title: a.title,
-    audience: a.audience,
-    audienceLabel: audienceLabel(a.audience),
-    status: a.status,
-    publishedAt: a.publishedAt,
-    createdAt: a.createdAt,
-  }));
-}
-

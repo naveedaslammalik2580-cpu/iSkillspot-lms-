@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import type { Prisma, StudentStatus } from "@prisma/client";
-import { pct } from "@/lib/utils";
 
 export interface StudentOption {
   id: string;

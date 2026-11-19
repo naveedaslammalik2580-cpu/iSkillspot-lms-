@@ -246,15 +246,6 @@ export async function getFeesForStudent(studentId: string): Promise<FeeListRow[]
   return (await getAllFees({ studentId })).filter(f => courses.has(f.courseId));
 }
 
-/** Course.defaultFee for fee-form auto-fill. Null if unset. */
-export async function getCourseDefaultFee(courseId: string): Promise<number | null> {
-  const course = await db.course.findUnique({
-    where: { id: courseId },
-    select: { defaultFee: true },
-  });
-  return course?.defaultFee ?? null;
-}
-
 export interface CourseFeeOption {
   id: string;
   name: string;

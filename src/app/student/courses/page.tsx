@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Clock, Layers, User } from "lucide-react";
+import { BookOpen, Clock, Layers } from "lucide-react";
 import { requireStudentSelf } from "@/lib/auth/guards";
 import { getStudentCourses } from "@/lib/data/learning";
 import { PageHeader, EmptyState } from "@/components/page-header";

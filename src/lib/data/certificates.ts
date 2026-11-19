@@ -59,14 +59,6 @@ export async function getAllCertificates(filters?: {
   }));
 }
 
-/** A student's own certificates. Callers must resolve studentId from an
- *  already-guarded session first, matching src/lib/data/student-self.ts. */
-export async function getCertificatesForStudent(studentId: string): Promise<CertificateListRow[]> {
-  const enrollments = await db.enrollment.findMany({ where: { studentId, accessSuspended: false, status: { in: ["ACTIVE", "COMPLETED"] } }, select: { courseId: true } });
-  const courses = new Set(enrollments.map(e => e.courseId));
-  return (await getAllCertificates({ studentId })).filter(c => courses.has(c.courseId));
-}
-
 export interface CertificateDetail {
   id: string;
   studentId: string;
