@@ -26,18 +26,6 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/forbidden", req.url));
     }
 
-    // Force password change on first login before anything else.
-    if (
-      payload.mustChangePassword === true &&
-      !pathname.startsWith("/student/change-password") &&
-      !pathname.startsWith("/change-password")
-    ) {
-      const target = role === "STUDENT" ? "/student/change-password" : "/change-password";
-      if (pathname !== target) {
-        return NextResponse.redirect(new URL(target, req.url));
-      }
-    }
-
     return NextResponse.next();
   } catch {
     // A cookie was presented but did not verify (expired or no longer

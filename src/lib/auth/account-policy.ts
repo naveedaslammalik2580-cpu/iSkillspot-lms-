@@ -12,10 +12,10 @@ export function manageableRoles(role: Role): Role[] {
 export async function authorizeActor(tx: Prisma.TransactionClient, session: SessionPayload, permission: Permission) {
   await tx.$queryRaw`SELECT id FROM "User" WHERE id=${session.userId} FOR UPDATE`;
   const actor = await tx.user.findUnique({ where: { id: session.userId }, select: {
-    id: true, status: true, role: true, sessionVersion: true, mustChangePassword: true,
+    id: true, status: true, role: true, sessionVersion: true,
   } });
   if (!actor || actor.status !== "ACTIVE" || actor.role !== session.role ||
-      actor.sessionVersion !== session.sessionVersion || actor.mustChangePassword || !can(actor.role, permission)) {
+      actor.sessionVersion !== session.sessionVersion || !can(actor.role, permission)) {
     throw new AccountError("Account management is not permitted.");
   }
   return actor;

@@ -5,7 +5,7 @@ import { STUDENT_NAV } from "@/lib/nav";
 import { NotificationBellServer, NotificationBellFallback } from "@/components/notifications/notification-bell-server";
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {
-  const { session, student } = await requireStudentSelf({ allowPasswordChange: true });
+  const { session, student } = await requireStudentSelf();
   return (
     <AppShell nav={STUDENT_NAV} role={session.role} displayName={student.fullName} notificationBell={(
       <Suspense fallback={<NotificationBellFallback />}>

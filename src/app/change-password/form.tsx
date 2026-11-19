@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 
 const initial: ActionState = {};
 
-export function ChangePasswordForm({ forced }: { forced?: boolean }) {
+export function ChangePasswordForm() {
   const [state, action, pending] = useActionState(
     changePasswordAction,
     initial,
@@ -17,9 +17,7 @@ export function ChangePasswordForm({ forced }: { forced?: boolean }) {
     <div className="mx-auto mt-16 w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-sm">
       <h1 className="mb-1 text-lg font-semibold">Change your password</h1>
       <p className="mb-6 text-sm text-muted-foreground">
-        {forced
-          ? "You must set a new password before continuing."
-          : "Update your account password."}
+        Update your account password.
       </p>
       <form action={action} className="space-y-4">
         <div className="space-y-2">

@@ -87,9 +87,6 @@ export async function loginAction(
     Boolean(remember)
   );
 
-  if (user.mustChangePassword) {
-    redirect(user.role === "STUDENT" ? "/student/change-password" : "/change-password");
-  }
   if (current.role === "STUDENT" && current.admissionRequired) redirect("/admission");
   redirect(homePathFor(user.role));
 }

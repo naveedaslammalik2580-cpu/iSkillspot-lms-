@@ -22,13 +22,10 @@ export class AuthError extends Error {
 }
 
 /** Require any authenticated session. Redirects to /login if absent. */
-export async function requireSession(options: { allowPasswordChange?: boolean; allowAdmission?: boolean } = {}): Promise<SessionPayload> {
+export async function requireSession(options: { allowAdmission?: boolean } = {}): Promise<SessionPayload> {
   const session = await getSession();
   if (!session) redirect("/login");
   if (session.role === "STUDENT" && session.admissionRequired && !options.allowAdmission) redirect("/admission");
-  if (session.mustChangePassword && !options.allowPasswordChange) {
-    redirect(session.role === "STUDENT" ? "/student/change-password" : "/change-password");
-  }
   return session;
 }
 
@@ -74,7 +71,7 @@ const getStudentByUserId = cache(async (userId: string) =>
  * Resolve the Student row that belongs to the current session, or null.
  * Students may only ever read their OWN student record.
  */
-export async function requireStudentSelf(options: { allowPasswordChange?: boolean } = {}) {
+export async function requireStudentSelf(options: { allowAdmission?: boolean } = {}) {
   const session = await requireSession(options);
   if (session.role !== "STUDENT") redirect("/forbidden");
   const student = await getStudentByUserId(session.userId);
