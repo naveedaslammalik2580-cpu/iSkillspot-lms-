@@ -30,9 +30,9 @@ function LoginForm() {
           <Image
             src="/logo.png"
             alt="iSkillSpot"
-            width={599}
-            height={177}
-            className="mb-3 h-16 w-auto rounded-xl"
+            width={640}
+            height={640}
+            className="mb-4 h-28 w-28 rounded-2xl"
             priority
           />
           <h1 className="sr-only">iSkillSpot</h1>

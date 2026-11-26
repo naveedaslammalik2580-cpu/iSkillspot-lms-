@@ -14,9 +14,9 @@ export function PublicShell({
           <Image
             src="/logo.png"
             alt="iSkillSpot"
-            width={599}
-            height={177}
-            className="h-12 w-auto rounded-lg"
+            width={640}
+            height={640}
+            className="h-20 w-20 rounded-xl"
           />
         </Link>
         <section className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-8">

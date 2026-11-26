@@ -37,16 +37,17 @@ export function AppShell({
 
   const SidebarInner = (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center border-b border-border px-5">
+      <div className="flex h-16 items-center gap-3 border-b border-border px-5">
+        <Image
+          src="/logo.png"
+          alt="iSkillSpot"
+          width={640}
+          height={640}
+          className="h-11 w-11 rounded-lg"
+        />
         <div className="leading-tight">
-          <Image
-            src="/logo.png"
-            alt="iSkillSpot"
-            width={599}
-            height={177}
-            className="h-9 w-auto rounded-md"
-          />
-          <div className="mt-1 text-[11px] capitalize text-muted-foreground">{roleLabel}</div>
+          <div className="text-sm font-bold">iSkillSpot</div>
+          <div className="text-[11px] capitalize text-muted-foreground">{roleLabel}</div>
         </div>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
