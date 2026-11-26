@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enroll — iSkillSpot | Shujabad</title>
+<meta name="description" content="Apply online for an iSkillSpot course. Fill the form, pay the admission amount, send your payment screenshot on WhatsApp, and get your student portal access after approval.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  .enroll-wrap{max-width:680px;margin:0 auto}
+  .enroll-card{background:var(--navy-card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:32px 28px}
+  .enroll-card label{display:block;font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--ink);margin:18px 0 6px}
+  .enroll-card label:first-of-type{margin-top:0}
+  .enroll-card input,.enroll-card select{width:100%;box-sizing:border-box;background:var(--navy);border:1px solid rgba(255,255,255,.16);border-radius:10px;color:var(--ink);font-family:var(--body);font-size:1rem;padding:12px 14px}
+  .enroll-card input:focus,.enroll-card select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+  .enroll-hint{color:var(--muted);font-size:.85rem;margin-top:6px}
+  .enroll-fee{color:var(--gold);font-family:var(--display);font-weight:600;margin-top:10px;min-height:1.4em}
+  .enroll-error{display:none;background:rgba(255,90,90,.12);border:1px solid rgba(255,90,90,.45);color:#ffb4b4;border-radius:10px;padding:12px 14px;margin-top:18px;font-size:.95rem}
+  .enroll-submit{margin-top:24px;width:100%;text-align:center;border:none;font-size:1rem}
+  .enroll-submit:disabled{opacity:.55;cursor:wait;transform:none;box-shadow:none}
+  .pay-method{background:var(--navy);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;margin-top:12px}
+  .pay-method h3{color:var(--gold);font-size:1rem;margin-bottom:4px}
+  .pay-method p{color:var(--soft);white-space:pre-wrap;word-break:break-word;font-size:.95rem}
+  .pay-line{color:var(--soft);margin-top:8px}
+  .pay-line strong{color:var(--ink)}
+  .enroll-note{color:var(--muted);font-size:.9rem;margin-top:16px;line-height:1.6}
+  .wa-btn{display:block;text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="iSkillSpot"></a>
+    <button class="menu-btn" aria-label="Open menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <div class="nav-links">
+      <a href="courses.html">Our Courses</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#why">Why us</a>
+      <a href="index.html#stories">Success stories</a>
+      <a href="enroll.html" class="btn btn-gold">Enroll now</a>
+    </div>
+  </div>
+</nav>
+
+<section class="courses">
+  <div class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Admissions</div>
+      <h2 class="sec-title">Enroll at iSkillSpot</h2>
+      <p class="sec-lead" style="margin:0 auto">Fill the form below to create your student account and submit your application. Then pay the admission amount and send us the screenshot on WhatsApp — your portal access arrives by email once we approve it.</p>
+    </div>
+
+    <div class="enroll-wrap reveal" style="margin-top:40px">
+      <div class="enroll-card">
+
+        <p id="loadingMsg" class="pay-line">Loading courses…</p>
+        <p id="closedMsg" class="pay-line" style="display:none">Admissions are currently closed. Please message us on WhatsApp or visit the institute for assistance.</p>
+
+        <!-- Step 1: application form -->
+        <form id="enrollForm" style="display:none" novalidate>
+          <label for="fullName">Full name</label>
+          <input id="fullName" name="fullName" type="text" autocomplete="name" required>
+
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+          <p class="enroll-hint">Your approval and portal access email will be sent to this address — double-check it.</p>
+
+          <label for="phone">WhatsApp / phone number</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+92 300 1234567" required>
+
+          <label for="password">Create a password</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required>
+          <p class="enroll-hint">At least 12 characters, with uppercase, lowercase, a number and a symbol. You will use it to sign in to your student portal.</p>
+
+          <label for="courseId">Choose your course</label>
+          <select id="courseId" name="courseId" required></select>
+          <p class="enroll-fee" id="feeLine"></p>
+
+          <div class="enroll-error" id="formError" role="alert"></div>
+          <button type="submit" class="btn btn-gold enroll-submit" id="submitBtn">Submit application</button>
+        </form>
+
+        <!-- Step 2: payment instructions -->
+        <div id="step2" style="display:none">
+          <h3 style="font-size:1.3rem">Application received ✔</h3>
+          <p class="pay-line">Application ID: <strong id="appId"></strong></p>
+          <p class="pay-line">Course: <strong id="appCourse"></strong></p>
+          <p class="pay-line">Total course fee: <strong id="appTotal"></strong></p>
+          <p class="pay-line">Required admission payment: <strong id="appRequired"></strong></p>
+          <div id="payMethods"></div>
+          <p class="pay-line" id="appInstructions" style="white-space:pre-wrap"></p>
+          <a class="btn btn-gold wa-btn" id="waBtn" href="#" target="_blank" rel="noopener" style="display:none">Send payment screenshot on WhatsApp</a>
+          <p class="enroll-note">Pay the required admission payment using any method above, then send the payment screenshot to our WhatsApp number <strong id="waNumber"></strong>. Your admission stays pending until we verify the payment and approve it — after approval you will receive an email with the link to your student portal.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img src="assets/logo.png" alt="iSkillSpot">
+    <div>© 2026 iSkillSpot, Shujabad — Seekho • Kamao • Aagay Barho</div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+// ============================================================
+// LMS connection: base URL of the iSkillSpot LMS.
+// Local checking: the LMS runs on http://localhost:3000.
+// At deployment this becomes https://lms.iskillspot.com
+// ============================================================
+const LMS_BASE = "http://localhost:3000";
+
+const loadingMsg = document.getElementById("loadingMsg");
+const closedMsg = document.getElementById("closedMsg");
+const form = document.getElementById("enrollForm");
+const formError = document.getElementById("formError");
+const submitBtn = document.getElementById("submitBtn");
+const courseSelect = document.getElementById("courseId");
+const feeLine = document.getElementById("feeLine");
+const step2 = document.getElementById("step2");
+
+let courses = [];
+let currency = "PKR";
+const money = (n) => currency + " " + Number(n).toLocaleString();
+
+function showError(message) {
+  formError.textContent = message;
+  formError.style.display = "block";
+}
+
+function updateFeeLine() {
+  const course = courses.find((c) => c.id === courseSelect.value);
+  feeLine.textContent = course
+    ? "Required admission payment: " + money(course.requiredPayment)
+    : "";
+}
+
+async function loadCourses() {
+  try {
+    const res = await fetch(LMS_BASE + "/api/enroll");
+    if (!res.ok) throw new Error("bad response");
+    const data = await res.json();
+    loadingMsg.style.display = "none";
+    if (!data.admissionsOpen) {
+      closedMsg.style.display = "block";
+      return;
+    }
+    courses = data.courses || [];
+    currency = data.currency || "PKR";
+    if (!courses.length) {
+      closedMsg.textContent = "No courses are currently accepting admissions. Please message us on WhatsApp or visit the institute for assistance.";
+      closedMsg.style.display = "block";
+      return;
+    }
+    courseSelect.innerHTML = courses
+      .map((c) => '<option value="' + c.id + '">' + c.name + "</option>")
+      .join("");
+    updateFeeLine();
+    form.style.display = "block";
+  } catch (e) {
+    loadingMsg.textContent = "We could not load the enrollment form. Please check your connection and refresh the page, or message us on WhatsApp to enroll.";
+  }
+}
+
+courseSelect.addEventListener("change", updateFeeLine);
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  formError.style.display = "none";
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting…";
+  try {
+    const res = await fetch(LMS_BASE + "/api/enroll", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fullName: document.getElementById("fullName").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        password: document.getElementById("password").value,
+        courseId: courseSelect.value,
+      }),
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data || !data.ok) {
+      showError((data && data.error) || "Unable to complete this request. Please try again.");
+      return;
+    }
+    // Step 2: payment details returned by the LMS.
+    currency = data.payment.currency || currency;
+    document.getElementById("appId").textContent = data.applicationId;
+    document.getElementById("appCourse").textContent = data.courseName;
+    document.getElementById("appTotal").textContent = money(data.payment.totalFee);
+    document.getElementById("appRequired").textContent = money(data.payment.requiredPayment);
+    document.getElementById("payMethods").innerHTML = (data.payment.methods || [])
+      .map((m) => '<div class="pay-method"><h3></h3><p></p></div>')
+      .join("");
+    Array.prototype.forEach.call(
+      document.querySelectorAll("#payMethods .pay-method"),
+      (el, i) => {
+        el.querySelector("h3").textContent = data.payment.methods[i].name;
+        el.querySelector("p").textContent = data.payment.methods[i].account;
+      }
+    );
+    document.getElementById("appInstructions").textContent = data.payment.instructions || "";
+    document.getElementById("waNumber").textContent = data.payment.whatsapp || "";
+    if (data.payment.whatsappUrl) {
+      const waBtn = document.getElementById("waBtn");
+      waBtn.href = data.payment.whatsappUrl;
+      waBtn.style.display = "block";
+    }
+    form.style.display = "none";
+    step2.style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (e) {
+    showError("We could not submit your application. Please check your connection and try again.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit application";
+  }
+});
+
+loadCourses();
+</script>
+</body>
+</html>

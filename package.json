@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "postinstall": "node scripts/prisma-generate.cjs",
     "auth:bootstrap": "tsx scripts/bootstrap-super-admin.ts",
-    "test:auth": "node --test tests/auth.test.cjs tests/password-recovery-action.test.cjs tests/login-flow.test.cjs",
+    "test:auth": "node --test tests/auth.test.cjs tests/password-recovery-action.test.cjs tests/login-flow.test.cjs tests/website-enroll.test.cjs",
     "test:auth:integration": "node scripts/test-auth-local.cjs",
     "test:admissions": "node scripts/test-auth-local.cjs",
     "test": "tsx --test --test-concurrency=1 tests/*.test.ts && npm run test:auth",

@@ -449,7 +449,7 @@ export async function queueAdmissionConfirmation(
     html: emailTemplate(
       name,
       "Welcome to iSkillSpot",
-      `Your admission is confirmed.\nApproved course: ${course}\nAssigned batch: ${batch}\nYour student portal is now active. Sign in with your registered email and password.`,
+      `Your admission is confirmed.\nApproved course: ${course}\nAssigned batch: ${batch}\nYour student portal is now active.\nSign-in email: ${email}\nUse the button below to open your portal and sign in with this email and the password you registered with.`,
     ),
   });
 }
