@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, Menu, LogOut } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
+import Image from "next/image";
 import { ICONS } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/lib/nav";
@@ -36,13 +37,16 @@ export function AppShell({
 
   const SidebarInner = (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center gap-2 border-b border-border px-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <GraduationCap className="h-5 w-5" />
-        </div>
+      <div className="flex h-16 items-center border-b border-border px-5">
         <div className="leading-tight">
-          <div className="text-sm font-bold">iSkillSpot</div>
-          <div className="text-[11px] capitalize text-muted-foreground">{roleLabel}</div>
+          <Image
+            src="/logo.png"
+            alt="iSkillSpot"
+            width={599}
+            height={177}
+            className="h-9 w-auto rounded-md"
+          />
+          <div className="mt-1 text-[11px] capitalize text-muted-foreground">{roleLabel}</div>
         </div>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
