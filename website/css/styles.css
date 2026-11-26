@@ -15,9 +15,9 @@ h1,h2,h3{font-family:var(--display)}
 /* ---------- Nav ---------- */
 nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(10,13,48,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
-.nav-logo img{height:100px;display:block}
+.nav-logo img{height:44px;display:block}
 .nav-links{display:flex;gap:28px;align-items:center}
-.nav-links a{font-family:var(--display);font-weight:500;font-size:.92rem;color:var(--soft);transition:color .2s}
+.nav-links a{font-family:var(--display);font-weight:800;font-size:1rem;color:var(--ink);transition:color .2s}
 .nav-links a:hover,.nav-links a:focus-visible{color:var(--gold)}
 .nav-links a.btn-gold{color:var(--navy-deep)}
 .btn{display:inline-block;font-family:var(--display);font-weight:600;border-radius:999px;transition:transform .2s,box-shadow .2s;cursor:pointer}
@@ -112,7 +112,7 @@ section{padding:64px 0}
 .btn-navy:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(10,13,48,.4)}
 
 footer{border-top:1px solid rgba(255,255,255,.08);padding:22px 0;text-align:center;color:var(--muted);font-size:.88rem}
-footer img{height:110px;opacity:.9;margin-bottom:12px}
+footer img{height:56px;opacity:.9;margin-bottom:12px}
 
 /* Reveal on scroll */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
