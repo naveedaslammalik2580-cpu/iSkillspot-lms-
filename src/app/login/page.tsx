@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/auth/password-input";
-import { GraduationCap } from "lucide-react";
+import Image from "next/image";
 
 const initial: ActionState = {};
 
@@ -27,10 +27,15 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-accent to-background p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <GraduationCap className="h-8 w-8" />
-          </div>
-          <h1 className="text-2xl font-bold">iSkillSpot</h1>
+          <Image
+            src="/logo.png"
+            alt="iSkillSpot"
+            width={599}
+            height={177}
+            className="mb-3 h-16 w-auto rounded-xl"
+            priority
+          />
+          <h1 className="sr-only">iSkillSpot</h1>
           <p className="text-sm text-muted-foreground">
             Learning Management System
           </p>
@@ -103,11 +108,6 @@ function LoginForm() {
           </form>
         </div>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          <Link href="/register" className="text-primary underline">
-            Register as a student
-          </Link>
-        </p>
       </div>
     </div>
   );
