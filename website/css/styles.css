@@ -181,3 +181,4 @@ footer img{height:56px;opacity:.9;margin-bottom:12px}
   .p-team-grid{grid-template-columns:repeat(2,1fr)}
   .p-gallery{grid-template-columns:1fr}
 }
+.hero-photo{width:100%;display:block;border-radius:20px;border:1px solid rgba(255,255,255,.09);margin-top:42px}
