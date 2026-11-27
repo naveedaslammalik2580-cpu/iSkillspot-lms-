@@ -7,7 +7,7 @@
 <meta name="description" content="Contact iSkillSpot, Shujabad — visit us near Ittefaq Rice Mill, call or WhatsApp 0319-6986032, Monday to Saturday 9 AM to 8 PM.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -29,31 +29,141 @@
   </div>
 </nav>
 
-<header class="ct-hero">
-  <div class="wrap ct-split">
-    <div class="reveal">
-      <div class="eyebrow">Contact</div>
-      <h1 class="sec-title">Let's <span class="p-gold">Connect</span></h1>
-      <p class="sec-lead">Questions about courses, fees or class timings? Call us, message us on WhatsApp, or visit the campus — we reply fast during opening hours.</p>
-      <div class="ct-actions">
+<section class="ct-poster-sec">
+  <div class="wrap">
+    <div class="cp-card reveal">
+
+      <div class="cp-head">
+        <h1 class="cp-title">Let's<br><span>Connect.</span></h1>
+        <p class="cp-tag">Your next chapter starts with a skill.</p>
+      </div>
+
+      <svg class="cp-svg" viewBox="0 0 1160 400" role="img" aria-label="Illustrated map showing the route from Ittefaq Rice Mill to iSkillSpot">
+        <defs>
+          <linearGradient id="cpRoute" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ffd76a"></stop>
+            <stop offset="1" stop-color="#ffb52e"></stop>
+          </linearGradient>
+          <filter id="cpGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="7" result="b"></feGaussianBlur>
+            <feMerge>
+              <feMergeNode in="b"></feMergeNode>
+              <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+          </filter>
+          <pattern id="cpRows" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(24)">
+            <line x1="0" y1="0" x2="0" y2="16" stroke="#2c367c" stroke-width="4"></line>
+          </pattern>
+        </defs>
+
+        <!-- fields -->
+        <g fill="#1d2668" stroke="#303c8a" stroke-width="2">
+          <rect x="90" y="96" width="250" height="104" rx="10"></rect>
+          <rect x="420" y="86" width="230" height="100" rx="10"></rect>
+          <rect x="700" y="96" width="250" height="104" rx="10"></rect>
+          <rect x="40" y="238" width="300" height="118" rx="10"></rect>
+          <rect x="368" y="252" width="250" height="104" rx="10"></rect>
+          <rect x="648" y="238" width="300" height="118" rx="10"></rect>
+        </g>
+        <g fill="url(#cpRows)" opacity="0.55">
+          <rect x="90" y="96" width="250" height="104" rx="10"></rect>
+          <rect x="420" y="86" width="230" height="100" rx="10"></rect>
+          <rect x="700" y="96" width="250" height="104" rx="10"></rect>
+          <rect x="40" y="238" width="300" height="118" rx="10"></rect>
+          <rect x="368" y="252" width="250" height="104" rx="10"></rect>
+          <rect x="648" y="238" width="300" height="118" rx="10"></rect>
+        </g>
+        <!-- trees -->
+        <g fill="#27337c" opacity="0.85">
+          <circle cx="392" cy="120" r="17"></circle>
+          <circle cx="688" cy="130" r="14"></circle>
+          <circle cx="352" cy="286" r="15"></circle>
+          <circle cx="640" cy="300" r="18"></circle>
+          <circle cx="986" cy="270" r="15"></circle>
+          <circle cx="150" cy="228" r="13"></circle>
+        </g>
+        <!-- buildings near Ittefaq Rice Mill -->
+        <g>
+          <rect x="196" y="262" width="58" height="34" rx="3" fill="#39406e"></rect>
+          <rect x="196" y="262" width="58" height="10" rx="3" fill="#4a5290"></rect>
+          <rect x="262" y="272" width="40" height="24" rx="3" fill="#333a66"></rect>
+        </g>
+        <!-- buildings near iSkillSpot -->
+        <g>
+          <rect x="800" y="150" width="64" height="38" rx="3" fill="#39406e"></rect>
+          <rect x="800" y="150" width="64" height="11" rx="3" fill="#4a5290"></rect>
+          <rect x="872" y="162" width="42" height="26" rx="3" fill="#333a66"></rect>
+        </g>
+
+        <!-- glowing route -->
+        <path d="M268,292 C430,344 560,206 700,216 C770,221 812,196 840,178" fill="none" stroke="url(#cpRoute)" stroke-width="5" stroke-linecap="round" filter="url(#cpGlow)"></path>
+        <circle cx="268" cy="292" r="14" fill="#ffd76a" opacity="0.35"></circle>
+        <circle cx="268" cy="292" r="6" fill="#ffd76a"></circle>
+        <circle cx="840" cy="178" r="14" fill="#ffd76a" opacity="0.35"></circle>
+        <circle cx="840" cy="178" r="6" fill="#ffd76a"></circle>
+
+        <!-- Ittefaq Rice Mill pin -->
+        <g transform="translate(268,292)">
+          <ellipse cx="0" cy="5" rx="24" ry="6" fill="rgba(0,0,0,0.35)"></ellipse>
+          <path d="M0,2 C-3,-12 -19,-19 -19,-34 A19,19 0 1,1 19,-34 C19,-19 3,-12 0,2 Z" fill="#ffbf3b"></path>
+          <circle cx="0" cy="-34" r="8" fill="#141a4e"></circle>
+        </g>
+        <g transform="translate(268,196)">
+          <rect x="-94" y="-25" width="188" height="42" rx="10" fill="#ffbf3b"></rect>
+          <path d="M-8,17 L8,17 L0,29 Z" fill="#ffbf3b"></path>
+          <text x="0" y="4" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="700" font-size="21" fill="#141a4e">Ittefaq Rice Mill</text>
+        </g>
+
+        <!-- iSkillSpot pin -->
+        <g transform="translate(840,178)">
+          <ellipse cx="0" cy="5" rx="24" ry="6" fill="rgba(0,0,0,0.35)"></ellipse>
+          <path d="M0,2 C-3,-12 -19,-19 -19,-34 A19,19 0 1,1 19,-34 C19,-19 3,-12 0,2 Z" fill="#ef4040"></path>
+          <circle cx="0" cy="-34" r="8" fill="#5f1010"></circle>
+        </g>
+        <g transform="translate(840,84)">
+          <rect x="-66" y="-25" width="132" height="42" rx="10" fill="#ffbf3b"></rect>
+          <path d="M-8,17 L8,17 L0,29 Z" fill="#ffbf3b"></path>
+          <text x="0" y="4" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="700" font-size="21" fill="#141a4e">iSkillSpot</text>
+        </g>
+      </svg>
+
+      <div class="cp-visit">
+        <span class="cp-rule"></span>
+        <h2>VISIT US</h2>
+        <span class="cp-rule"></span>
+      </div>
+      <p class="cp-addr">Near Ittefaq Rice Mill, Shujabad</p>
+
+      <div class="cp-grid">
+        <div class="cp-cell">
+          <span class="cp-lab">Call / WhatsApp</span>
+          <a href="tel:+923196986032">0319-6986032</a>
+        </div>
+        <div class="cp-cell">
+          <span class="cp-lab">Opening Hours</span>
+          <p>Monday – Saturday<br>9:00 AM – 8:00 PM</p>
+        </div>
+        <div class="cp-cell">
+          <span class="cp-lab">Website</span>
+          <a href="index.html">iskillspot.com</a>
+        </div>
+        <div class="cp-cell">
+          <span class="cp-lab">Facebook</span>
+          <a href="https://facebook.com/iSkillSpot" target="_blank" rel="noopener">facebook.com/iSkillSpot</a>
+        </div>
+      </div>
+
+      <div class="cp-actions">
         <a class="btn btn-gold" href="tel:+923196986032">Call now</a>
         <a class="btn btn-ghost" href="https://wa.me/923196986032" target="_blank" rel="noopener">WhatsApp us</a>
         <a class="btn btn-ghost" href="https://www.google.com/maps/dir/?api=1&amp;destination=Ittefaq+Rice+Mill,+Shujabad" target="_blank" rel="noopener">Get Directions</a>
       </div>
-      <div class="ct-lines">
-        <div class="ct-line"><span>Visit</span>Near Ittefaq Rice Mill, Shujabad</div>
-        <div class="ct-line"><span>Hours</span>Monday – Saturday · 9:00 AM – 8:00 PM</div>
-        <div class="ct-line"><span>Follow</span><a href="https://facebook.com/iSkillSpot" target="_blank" rel="noopener">facebook.com/iSkillSpot</a></div>
-      </div>
-    </div>
-    <div class="ct-poster reveal">
-      <div class="hero-media">
-        <img class="ct-poster-img" src="assets/connect-poster.jpg" alt="iSkillSpot Let's Connect poster — visit us near Ittefaq Rice Mill, Shujabad. Call or WhatsApp 0319-6986032. Opening hours Monday to Saturday, 9 AM to 8 PM.">
-      </div>
-      <a class="ct-save" href="assets/connect-poster.jpg" download="iskillspot-contact-poster.jpg">Save this poster — share it with anyone who asks about us</a>
+
+      <p class="cp-thanks">Thank you for exploring iSkillSpot.<br><span>Seekho • Kamao • Aagay Barho</span></p>
+
     </div>
   </div>
-</header>
+</section>
 
 <section class="ct-map-sec">
   <div class="wrap">
