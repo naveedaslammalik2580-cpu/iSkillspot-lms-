@@ -203,3 +203,33 @@ footer img{height:56px;opacity:.9;margin-bottom:12px}
   .p-gallery{grid-template-columns:1fr}
 }
 .hero-photo{width:100%;display:block;border-radius:20px;border:1px solid rgba(255,255,255,.09);margin-top:42px}
+
+/* ——— Contact page ——— */
+.ct-hero{padding:128px 0 70px;background:radial-gradient(ellipse 90% 70% at 50% 0%, var(--navy-glow) 0%, var(--navy-deep) 72%)}
+.ct-split{display:grid;grid-template-columns:1fr .82fr;gap:56px;align-items:center}
+.ct-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+.ct-lines{margin-top:36px;border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:grid;gap:14px}
+.ct-line{color:var(--soft);font-size:1rem}
+.ct-line span{display:inline-block;min-width:64px;font-family:var(--display);font-weight:600;font-size:.72rem;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.ct-line a{color:var(--ink);font-weight:600}
+.ct-poster .hero-media img{position:relative;z-index:1}
+.ct-poster-img{width:100%;border-radius:20px;border:1px solid rgba(255,255,255,.09);display:block}
+.ct-save{display:block;text-align:center;margin-top:16px;color:var(--gold);font-family:var(--display);font-weight:600;font-size:.92rem}
+.ct-map-sec{background:var(--navy)}
+.ct-map{margin-top:40px;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.09)}
+.ct-map iframe{width:100%;height:420px;border:0;display:block}
+.ct-form-wrap{max-width:680px;margin:40px auto 0}
+.ct-form-card{background:var(--navy-card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:32px 28px}
+.ct-form-card label{display:block;font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--ink);margin:18px 0 6px}
+.ct-form-card label:first-of-type{margin-top:0}
+.ct-form-card input,.ct-form-card select,.ct-form-card textarea{width:100%;box-sizing:border-box;background:var(--navy);border:1px solid rgba(255,255,255,.16);border-radius:10px;color:var(--ink);font-family:var(--body);font-size:1rem;padding:12px 14px}
+.ct-form-card input:focus,.ct-form-card select:focus,.ct-form-card textarea:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+.ct-form-card textarea{resize:vertical;min-height:110px}
+.ct-submit{margin-top:24px;width:100%;text-align:center;border:none;font-size:1rem}
+.ct-note{color:var(--muted);font-size:.9rem;margin-top:16px;line-height:1.6;text-align:center}
+.ct-faq-sec{background:var(--navy)}
+@media (max-width:900px){
+  .ct-split{grid-template-columns:1fr;gap:40px}
+  .ct-poster{max-width:440px;margin:0 auto;width:100%}
+  .ct-map iframe{height:320px}
+}
