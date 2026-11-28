@@ -48,7 +48,8 @@ header{min-height:auto;display:flex;align-items:center;position:relative;
 /* Hero — split layout: content left, photo right */
 .hero-split{display:grid;grid-template-columns:.96fr 1.04fr;gap:44px;align-items:start;text-align:left}
 .hero-media{position:relative}
-.hero-media::before{content:"";position:absolute;inset:0;transform:translate(18px,-18px);
+.hero-photo-frame{position:relative}
+.hero-photo-frame::before{content:"";position:absolute;inset:0;transform:translate(18px,-18px);
   border:1.5px solid rgba(255,191,59,.35);border-radius:20px}
 .hero-media .hero-photo{position:relative;z-index:1;width:100%}
 .hero-media-badges{margin-top:22px;text-align:center;position:relative;z-index:1}
