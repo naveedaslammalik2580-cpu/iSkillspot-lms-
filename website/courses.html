@@ -115,5 +115,68 @@
 </footer>
 
 <script src="js/main.js"></script>
+
+<script>
+// Course cards render from the LMS catalog (GET /api/courses) so this page
+// and the LMS can never show different courses. The static cards above stay
+// as the fallback when the LMS is unreachable or has no published courses.
+const LMS_BASE = "http://localhost:3000";
+function catalogLine(label, text) {
+  if (!text) return null;
+  const line = document.createElement("div");
+  line.className = "course-detail-line";
+  const span = document.createElement("span");
+  span.className = "course-label";
+  span.textContent = label;
+  line.append(span, text);
+  return line;
+}
+function detailCard(c) {
+  const card = document.createElement("div");
+  card.id = c.slug;
+  card.className = "course-detail-card reveal in";
+  const h = document.createElement("h2");
+  h.className = "sec-title";
+  h.textContent = c.name;
+  card.append(h);
+  if (c.tagline || c.duration) {
+    const sub = document.createElement("div");
+    sub.className = "course-sub";
+    sub.textContent = c.tagline ? c.tagline + " " : "";
+    if (c.tagline && c.duration) {
+      const b = document.createElement("span");
+      b.className = "bullet";
+      b.textContent = "\u2022";
+      sub.append(b, " " + c.duration);
+    } else if (c.duration) {
+      sub.textContent = c.duration;
+    }
+    card.append(sub);
+  }
+  const body = document.createElement("div");
+  body.className = "course-detail-body";
+  [catalogLine("What you'll master", c.mastery),
+   catalogLine("Outcome", c.outcome),
+   catalogLine("Who should join", c.audience)].forEach(l => l && body.append(l));
+  if (body.children.length) card.append(body);
+  const a = document.createElement("a");
+  a.className = "btn btn-gold";
+  a.href = "enroll.html";
+  a.textContent = "Enroll now";
+  card.append(a);
+  return card;
+}
+(async () => {
+  try {
+    const res = await fetch(LMS_BASE + "/api/courses");
+    if (!res.ok) return;
+    const data = await res.json();
+    const courses = (data.courses || []).filter(c => c && c.slug && c.name);
+    if (!courses.length) return;
+    const grid = document.querySelector(".course-details-grid");
+    if (grid) grid.replaceChildren(...courses.map(detailCard));
+  } catch { /* static fallback stays */ }
+})();
+</script>
 </body>
 </html>

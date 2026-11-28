@@ -18,6 +18,11 @@ export function CourseForm({
     name: string;
     description: string | null;
     duration: string | null;
+    tagline: string | null;
+    mastery: string | null;
+    outcome: string | null;
+    audience: string | null;
+    sortOrder: number;
     level: string;
     status: string;
   };
@@ -36,6 +41,11 @@ export function CourseForm({
       name: String(fd.get("name") || ""),
       description: String(fd.get("description") || "") || undefined,
       duration: String(fd.get("duration") || "") || undefined,
+      tagline: String(fd.get("tagline") || "") || undefined,
+      mastery: String(fd.get("mastery") || "") || undefined,
+      outcome: String(fd.get("outcome") || "") || undefined,
+      audience: String(fd.get("audience") || "") || undefined,
+      sortOrder: Number(fd.get("sortOrder") || 0),
       level: fd.get("level") as "BEGINNER" | "INTERMEDIATE" | "ADVANCED",
       status: fd.get("status") as "DRAFT" | "PUBLISHED" | "ARCHIVED",
     };
@@ -119,6 +129,73 @@ export function CourseForm({
               rows={4}
               maxLength={5000}
               defaultValue={course?.description ?? ""}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Website display</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Shown on the public website&rsquo;s Courses page and homepage course cards. Only
+            Published courses appear there — the website reads these fields directly, so the
+            site and the LMS always show the same courses.
+          </p>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="tagline">Tagline</Label>
+            <Input
+              id="tagline"
+              name="tagline"
+              maxLength={200}
+              defaultValue={course?.tagline ?? ""}
+              placeholder="Fiverr & Upwork"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="sortOrder">Display order</Label>
+            <Input
+              id="sortOrder"
+              name="sortOrder"
+              type="number"
+              min={0}
+              max={9999}
+              defaultValue={course?.sortOrder ?? 0}
+            />
+          </div>
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="mastery">What you&rsquo;ll master</Label>
+            <textarea
+              id="mastery"
+              name="mastery"
+              rows={3}
+              maxLength={2000}
+              defaultValue={course?.mastery ?? ""}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="outcome">Outcome</Label>
+            <textarea
+              id="outcome"
+              name="outcome"
+              rows={2}
+              maxLength={2000}
+              defaultValue={course?.outcome ?? ""}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="audience">Who should join</Label>
+            <textarea
+              id="audience"
+              name="audience"
+              rows={2}
+              maxLength={2000}
+              defaultValue={course?.audience ?? ""}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </div>

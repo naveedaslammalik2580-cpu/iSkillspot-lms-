@@ -95,6 +95,11 @@ export interface CourseDetail {
   name: string;
   description: string | null;
   duration: string | null;
+  tagline: string | null;
+  mastery: string | null;
+  outcome: string | null;
+  audience: string | null;
+  sortOrder: number;
   level: CourseLevel;
   status: PublishStatus;
   batches: CourseBatchRow[];
@@ -120,6 +125,11 @@ export async function getCourseById(id: string): Promise<CourseDetail | null> {
     name: course.title,
     description: course.description,
     duration: course.duration,
+    tagline: course.tagline,
+    mastery: course.mastery,
+    outcome: course.outcome,
+    audience: course.audience,
+    sortOrder: course.sortOrder,
     level: course.level,
     status: course.status,
     batches: course.batches.map((b) => ({

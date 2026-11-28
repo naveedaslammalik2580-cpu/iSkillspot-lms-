@@ -113,6 +113,11 @@ model Course {
   description  String?
   thumbnail    String?
   duration     String?
+  tagline      String?
+  mastery      String?
+  outcome      String?
+  audience     String?
+  sortOrder    Int           @default(0)
   level        CourseLevel   @default(BEGINNER)
   status       PublishStatus @default(DRAFT)
   createdAt    DateTime      @default(now())

@@ -144,5 +144,54 @@
 </footer>
 
 <script src="js/main.js"></script>
+
+<script>
+// Homepage course cards render from the same LMS catalog as the Courses
+// page (GET /api/courses). The static cards above stay as the fallback
+// when the LMS is unreachable or has no published courses.
+const LMS_BASE = "http://localhost:3000";
+function homeCard(c) {
+  const a = document.createElement("a");
+  a.className = "course reveal in";
+  a.href = "courses.html#" + c.slug;
+  const top = document.createElement("div");
+  top.className = "course-top";
+  const dot = document.createElement("span");
+  dot.className = "course-dot";
+  const h = document.createElement("h3");
+  h.textContent = c.name;
+  top.append(dot, h);
+  a.append(top);
+  if (c.tagline || c.duration) {
+    const sub = document.createElement("div");
+    sub.className = "course-sub";
+    sub.textContent = c.tagline ? c.tagline + " " : "";
+    if (c.tagline && c.duration) {
+      const b = document.createElement("span");
+      b.className = "bullet";
+      b.textContent = "\u2022";
+      sub.append(b, " " + c.duration);
+    } else if (c.duration) {
+      sub.textContent = c.duration;
+    }
+    a.append(sub);
+  }
+  return a;
+}
+(async () => {
+  try {
+    const res = await fetch(LMS_BASE + "/api/courses");
+    if (!res.ok) return;
+    const data = await res.json();
+    const courses = (data.courses || []).filter(c => c && c.slug && c.name);
+    if (!courses.length) return;
+    const grid = document.querySelector(".course-grid");
+    if (!grid) return;
+    grid.replaceChildren(...courses.map(homeCard));
+    const lead = document.querySelector("#courses .sec-lead");
+    if (lead) lead.textContent = courses.length + " career-focused courses. Every one is hands-on, project-based, and ends with a verified iSkillSpot certificate.";
+  } catch { /* static fallback stays */ }
+})();
+</script>
 </body>
 </html>

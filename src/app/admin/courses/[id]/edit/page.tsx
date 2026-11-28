@@ -24,6 +24,11 @@ export default async function EditCoursePage({
           name: course.name,
           description: course.description,
           duration: course.duration,
+          tagline: course.tagline,
+          mastery: course.mastery,
+          outcome: course.outcome,
+          audience: course.audience,
+          sortOrder: course.sortOrder,
           level: course.level,
           status: course.status,
         }}

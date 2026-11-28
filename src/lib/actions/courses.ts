@@ -21,6 +21,11 @@ const createCourseSchema = z.object({
   name: z.string().min(2, "Name is required").max(200),
   description: z.string().max(5000).optional(),
   duration: z.string().max(100).optional(),
+  tagline: z.string().max(200).optional(),
+  mastery: z.string().max(2000).optional(),
+  outcome: z.string().max(2000).optional(),
+  audience: z.string().max(2000).optional(),
+  sortOrder: z.number().int().min(0).max(9999).optional(),
   level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]).optional(),
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
 });
@@ -45,6 +50,11 @@ export async function createCourse(
         slug: d.code,
         description: d.description || null,
         duration: d.duration || null,
+        tagline: d.tagline || null,
+        mastery: d.mastery || null,
+        outcome: d.outcome || null,
+        audience: d.audience || null,
+        sortOrder: d.sortOrder ?? 0,
         level: d.level ?? "BEGINNER",
         status: d.status,
       },
@@ -74,6 +84,11 @@ const updateCourseSchema = z.object({
   name: z.string().min(2, "Name is required").max(200),
   description: z.string().max(5000).optional(),
   duration: z.string().max(100).optional(),
+  tagline: z.string().max(200).optional(),
+  mastery: z.string().max(2000).optional(),
+  outcome: z.string().max(2000).optional(),
+  audience: z.string().max(2000).optional(),
+  sortOrder: z.number().int().min(0).max(9999).optional(),
   level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
 });
@@ -94,6 +109,11 @@ export async function updateCourse(
 
   const nextDescription = d.description || null;
   const nextDuration = d.duration || null;
+  const nextTagline = d.tagline || null;
+  const nextMastery = d.mastery || null;
+  const nextOutcome = d.outcome || null;
+  const nextAudience = d.audience || null;
+  const nextSortOrder = d.sortOrder ?? 0;
 
   const changes: Record<string, { old: unknown; new: unknown }> = {};
   if (existing.title !== d.name) changes.name = { old: existing.title, new: d.name };
@@ -102,6 +122,12 @@ export async function updateCourse(
     changes.description = { old: existing.description, new: nextDescription };
   if (existing.duration !== nextDuration)
     changes.duration = { old: existing.duration, new: nextDuration };
+  if (existing.tagline !== nextTagline) changes.tagline = { old: existing.tagline, new: nextTagline };
+  if (existing.mastery !== nextMastery) changes.mastery = { old: existing.mastery, new: nextMastery };
+  if (existing.outcome !== nextOutcome) changes.outcome = { old: existing.outcome, new: nextOutcome };
+  if (existing.audience !== nextAudience) changes.audience = { old: existing.audience, new: nextAudience };
+  if (existing.sortOrder !== nextSortOrder)
+    changes.sortOrder = { old: existing.sortOrder, new: nextSortOrder };
   if (existing.level !== d.level) changes.level = { old: existing.level, new: d.level };
   if (existing.status !== d.status) changes.status = { old: existing.status, new: d.status };
 
@@ -113,6 +139,11 @@ export async function updateCourse(
         slug: d.code,
         description: nextDescription,
         duration: nextDuration,
+        tagline: nextTagline,
+        mastery: nextMastery,
+        outcome: nextOutcome,
+        audience: nextAudience,
+        sortOrder: nextSortOrder,
         level: d.level,
         status: d.status,
       },
