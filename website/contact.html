@@ -23,14 +23,15 @@
       <a href="index.html#why">Why us</a>
       <a href="index.html#stories">Success stories</a>
       <a href="profile.html">Profile</a>
-      <a href="contact.html">Contact</a>
+      <a href="contact.html" class="active">Contact</a>
       <a href="enroll.html" class="btn btn-gold">Enroll now</a>
     </div>
   </div>
 </nav>
 
-<section class="ct-poster-sec">
-  <div class="wrap">
+<section class="ct-split-sec">
+  <div class="wrap ct-split">
+    <div class="ct-col-card">
     <div class="cp-card reveal">
 
       <div class="cp-head">
@@ -38,94 +39,9 @@
         <p class="cp-tag">Your next chapter starts with a skill.</p>
       </div>
 
-      <svg class="cp-svg" viewBox="0 0 1160 400" role="img" aria-label="Illustrated map showing the route from Ittefaq Rice Mill to iSkillSpot">
-        <defs>
-          <linearGradient id="cpRoute" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#ffd76a"></stop>
-            <stop offset="1" stop-color="#ffb52e"></stop>
-          </linearGradient>
-          <filter id="cpGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="7" result="b"></feGaussianBlur>
-            <feMerge>
-              <feMergeNode in="b"></feMergeNode>
-              <feMergeNode in="SourceGraphic"></feMergeNode>
-            </feMerge>
-          </filter>
-          <pattern id="cpRows" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(24)">
-            <line x1="0" y1="0" x2="0" y2="16" stroke="#2c367c" stroke-width="4"></line>
-          </pattern>
-        </defs>
-
-        <!-- fields -->
-        <g fill="#1d2668" stroke="#303c8a" stroke-width="2">
-          <rect x="90" y="96" width="250" height="104" rx="10"></rect>
-          <rect x="420" y="86" width="230" height="100" rx="10"></rect>
-          <rect x="700" y="96" width="250" height="104" rx="10"></rect>
-          <rect x="40" y="238" width="300" height="118" rx="10"></rect>
-          <rect x="368" y="252" width="250" height="104" rx="10"></rect>
-          <rect x="648" y="238" width="300" height="118" rx="10"></rect>
-        </g>
-        <g fill="url(#cpRows)" opacity="0.55">
-          <rect x="90" y="96" width="250" height="104" rx="10"></rect>
-          <rect x="420" y="86" width="230" height="100" rx="10"></rect>
-          <rect x="700" y="96" width="250" height="104" rx="10"></rect>
-          <rect x="40" y="238" width="300" height="118" rx="10"></rect>
-          <rect x="368" y="252" width="250" height="104" rx="10"></rect>
-          <rect x="648" y="238" width="300" height="118" rx="10"></rect>
-        </g>
-        <!-- trees -->
-        <g fill="#27337c" opacity="0.85">
-          <circle cx="392" cy="120" r="17"></circle>
-          <circle cx="688" cy="130" r="14"></circle>
-          <circle cx="352" cy="286" r="15"></circle>
-          <circle cx="640" cy="300" r="18"></circle>
-          <circle cx="986" cy="270" r="15"></circle>
-          <circle cx="150" cy="228" r="13"></circle>
-        </g>
-        <!-- buildings near Ittefaq Rice Mill -->
-        <g>
-          <rect x="196" y="262" width="58" height="34" rx="3" fill="#39406e"></rect>
-          <rect x="196" y="262" width="58" height="10" rx="3" fill="#4a5290"></rect>
-          <rect x="262" y="272" width="40" height="24" rx="3" fill="#333a66"></rect>
-        </g>
-        <!-- buildings near iSkillSpot -->
-        <g>
-          <rect x="800" y="150" width="64" height="38" rx="3" fill="#39406e"></rect>
-          <rect x="800" y="150" width="64" height="11" rx="3" fill="#4a5290"></rect>
-          <rect x="872" y="162" width="42" height="26" rx="3" fill="#333a66"></rect>
-        </g>
-
-        <!-- glowing route -->
-        <path d="M268,292 C430,344 560,206 700,216 C770,221 812,196 840,178" fill="none" stroke="url(#cpRoute)" stroke-width="5" stroke-linecap="round" filter="url(#cpGlow)"></path>
-        <circle cx="268" cy="292" r="14" fill="#ffd76a" opacity="0.35"></circle>
-        <circle cx="268" cy="292" r="6" fill="#ffd76a"></circle>
-        <circle cx="840" cy="178" r="14" fill="#ffd76a" opacity="0.35"></circle>
-        <circle cx="840" cy="178" r="6" fill="#ffd76a"></circle>
-
-        <!-- Ittefaq Rice Mill pin -->
-        <g transform="translate(268,292)">
-          <ellipse cx="0" cy="5" rx="24" ry="6" fill="rgba(0,0,0,0.35)"></ellipse>
-          <path d="M0,2 C-3,-12 -19,-19 -19,-34 A19,19 0 1,1 19,-34 C19,-19 3,-12 0,2 Z" fill="#ffbf3b"></path>
-          <circle cx="0" cy="-34" r="8" fill="#141a4e"></circle>
-        </g>
-        <g transform="translate(268,196)">
-          <rect x="-94" y="-25" width="188" height="42" rx="10" fill="#ffbf3b"></rect>
-          <path d="M-8,17 L8,17 L0,29 Z" fill="#ffbf3b"></path>
-          <text x="0" y="4" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="700" font-size="21" fill="#141a4e">Ittefaq Rice Mill</text>
-        </g>
-
-        <!-- iSkillSpot pin -->
-        <g transform="translate(840,178)">
-          <ellipse cx="0" cy="5" rx="24" ry="6" fill="rgba(0,0,0,0.35)"></ellipse>
-          <path d="M0,2 C-3,-12 -19,-19 -19,-34 A19,19 0 1,1 19,-34 C19,-19 3,-12 0,2 Z" fill="#ef4040"></path>
-          <circle cx="0" cy="-34" r="8" fill="#5f1010"></circle>
-        </g>
-        <g transform="translate(840,84)">
-          <rect x="-66" y="-25" width="132" height="42" rx="10" fill="#ffbf3b"></rect>
-          <path d="M-8,17 L8,17 L0,29 Z" fill="#ffbf3b"></path>
-          <text x="0" y="4" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="700" font-size="21" fill="#141a4e">iSkillSpot</text>
-        </g>
-      </svg>
+      <div class="cp-mapwrap">
+        <iframe class="cp-map" src="https://www.google.com/maps?q=Ittefaq+Rice+Mill,+Shujabad,+Punjab,+Pakistan&z=15&output=embed" title="Map — iSkillSpot near Ittefaq Rice Mill, Shujabad" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
 
       <div class="cp-visit">
         <span class="cp-rule"></span>
@@ -162,24 +78,8 @@
       <p class="cp-thanks">Thank you for exploring iSkillSpot.<br><span>Seekho • Kamao • Aagay Barho</span></p>
 
     </div>
-  </div>
-</section>
-
-<section class="ct-map-sec">
-  <div class="wrap">
-    <div class="center">
-      <div class="eyebrow">Find us</div>
-      <h2 class="sec-title">We are easy to find</h2>
-      <p class="sec-lead">The campus is right by the Ittefaq Rice Mill in Shujabad. Open the map for turn-by-turn directions from wherever you are.</p>
     </div>
-    <div class="ct-map reveal">
-      <iframe title="Map — iSkillSpot, near Ittefaq Rice Mill, Shujabad" src="https://www.google.com/maps?q=Ittefaq+Rice+Mill,+Shujabad,+Punjab,+Pakistan&amp;z=15&amp;output=embed" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
+    <div class="ct-col-form">
     <div class="center">
       <div class="eyebrow">Message us</div>
       <h2 class="sec-title">Send a message on WhatsApp</h2>
@@ -208,49 +108,8 @@
         <textarea id="ctMsg" name="message" required placeholder="Write your question…"></textarea>
 
         <button type="submit" class="btn btn-gold ct-submit">Send on WhatsApp</button>
-        <p class="ct-note">No email, no waiting — your message lands directly on the institute's WhatsApp (0319-6986032).</p>
       </form>
     </div>
-  </div>
-</section>
-
-<section class="ct-faq-sec">
-  <div class="wrap">
-    <div class="center">
-      <div class="eyebrow">Good to know</div>
-      <h2 class="sec-title">Quick questions</h2>
-    </div>
-    <div class="why-grid" style="margin-top:44px">
-      <div class="why-item reveal">
-        <h3>How do I enroll?</h3>
-        <p>Fill the online enrollment form, pay the admission amount, and send the payment screenshot on WhatsApp. Your student portal access arrives by email after approval. <a class="p-link" href="enroll.html">Start enrollment →</a></p>
-      </div>
-      <div class="why-item reveal">
-        <h3>What are the course fees?</h3>
-        <p>Fees depend on the course, and installment options are available. Message us on WhatsApp and we will send the current fee for the course you want. <a class="p-link" href="https://wa.me/923196986032" target="_blank" rel="noopener">Ask on WhatsApp →</a></p>
-      </div>
-      <div class="why-item reveal">
-        <h3>Are online classes available for females?</h3>
-        <p>Yes — dedicated online classes for females are available, so you can learn from home with full instructor support. <a class="p-link" href="profile.html">See how it works →</a></p>
-      </div>
-      <div class="why-item reveal">
-        <h3>When does the next batch start?</h3>
-        <p>New batches start regularly through the year. WhatsApp us and we will tell you the next start date for your course. <a class="p-link" href="https://wa.me/923196986032" target="_blank" rel="noopener">Ask on WhatsApp →</a></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="p-connect reveal">
-      <h3>Ready to start learning?</h3>
-      <div class="p-facts">
-        <div>Call / WhatsApp<span><a href="tel:+923196986032">0319-6986032</a></span></div>
-        <div>Visit<span>Near Ittefaq Rice Mill, Shujabad</span></div>
-        <div>Hours<span>Mon – Sat · 9 AM – 8 PM</span></div>
-      </div>
-      <a class="btn btn-navy" href="enroll.html">Enroll now</a>
     </div>
   </div>
 </section>
