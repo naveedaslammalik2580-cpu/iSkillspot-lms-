@@ -13,16 +13,18 @@ exports.prepare = async function prepare(connection) {
     await db.$executeRawUnsafe('CREATE ROLE anon');
     await db.$executeRawUnsafe('CREATE ROLE authenticated');
     await db.$executeRawUnsafe('GRANT SELECT, UPDATE ON public."User" TO anon, authenticated');
+    // The third legacy account was a TEACHER in the pre-agency schema; that
+    // role and its profile table no longer exist, so an ADMIN account now
+    // covers the "unrelated legacy account survives" scenario.
     for(const [id,username,email,role,temporary] of [
       ['legacy-super','legacy.super','legacy.super@example.invalid','SUPER_ADMIN',true],
-      ['legacy-teacher','legacy.teacher','legacy.teacher@example.invalid','TEACHER',false],
+      ['legacy-admin','legacy.admin','legacy.admin@example.invalid','ADMIN',false],
       ['legacy-student','legacy.student','legacy.student@example.invalid','STUDENT',false],
     ]) {
       // Only columns present before the additive migration are used.
       await db.$executeRaw`INSERT INTO "User" (id,username,email,"passwordHash",role,status,"mustChangePassword","updatedAt")
         VALUES (${id},${username},${email},${hash},${role}::"Role",'ACTIVE',${temporary},CURRENT_TIMESTAMP)`;
     }
-    await db.teacher.create({data:{userId:'legacy-teacher',fullName:'Legacy Fixture Teacher'}});
     const student=await db.student.create({data:{userId:'legacy-student',studentId:'LEGACY-TEST-1',fullName:'Legacy Fixture Student'}});
     const course={id:'legacy-fixture-course'};
     await db.$executeRaw`INSERT INTO "Course" (id,title,slug,"updatedAt") VALUES (${course.id},'Legacy Fixture Course','legacy-fixture',CURRENT_TIMESTAMP)`;
@@ -33,7 +35,7 @@ exports.prepare = async function prepare(connection) {
     await db.certificate.create({data:{studentId:student.id,courseId:course.id,certificateNumber:'LEGACY-FIXTURE-CERT',verificationCode:'LEGACY-FIXTURE-VERIFY'}});
     return async function verify() {
       try {
-        assert.equal(await db.user.count(),3); assert.equal(await db.teacher.count(),1); assert.equal(await db.student.count(),1);
+        assert.equal(await db.user.count(),3); assert.equal(await db.student.count(),1);
         assert.equal(await db.fee.count(),1); assert.equal(await db.payment.count(),1); assert.equal(await db.certificate.count(),1);
         assert.equal(await db.enrollment.count(),1);
         const users=await db.user.findMany();

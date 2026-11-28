@@ -23,8 +23,8 @@ exports.prepare = async function (connection) {
     "lessonProgress",
     "assignment",
     "assignmentSubmission",
-    "attendance",
-    "grade",
+    // "attendance" and "grade" were in this snapshot before the agency-model
+    // cleanup (migration 20261119090000) dropped both modules entirely.
     "certificate",
     "notification",
   ];
@@ -170,24 +170,6 @@ exports.prepare = async function (connection) {
         status: "GRADED",
         score: 80,
         submissionText: "Existing work",
-      },
-    });
-    await db.attendance.create({
-      data: {
-        studentId,
-        batchId: batch.id,
-        date: new Date("2026-11-01"),
-        status: "PRESENT",
-      },
-    });
-    await db.grade.create({
-      data: {
-        studentId,
-        courseId: course.id,
-        type: "ASSIGNMENT",
-        title: "Existing grade",
-        score: 80,
-        percentage: 80,
       },
     });
     await db.certificate.create({

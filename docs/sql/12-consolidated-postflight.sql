@@ -19,13 +19,10 @@ DO $$ DECLARE role_name text; table_name text; BEGIN
 END $$;
 SELECT 'User' AS entity,count(*) FROM public."User"
 UNION ALL SELECT 'Student',count(*) FROM public."Student"
-UNION ALL SELECT 'Teacher',count(*) FROM public."Teacher"
 UNION ALL SELECT 'Enrollment',count(*) FROM public."Enrollment"
 UNION ALL SELECT 'Fee',count(*) FROM public."Fee"
 UNION ALL SELECT 'Payment',count(*) FROM public."Payment"
-UNION ALL SELECT 'Attendance',count(*) FROM public."Attendance"
 UNION ALL SELECT 'AssignmentSubmission',count(*) FROM public."AssignmentSubmission"
-UNION ALL SELECT 'Grade',count(*) FROM public."Grade"
 UNION ALL SELECT 'Certificate',count(*) FROM public."Certificate";
 SELECT count(*) AS preserved_legacy_reset_history FROM public."PasswordResetToken";
 COMMIT;

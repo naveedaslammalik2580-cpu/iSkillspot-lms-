@@ -23,7 +23,7 @@ function ensureConfigured(): boolean {
 
   if (!configured) {
     webpush.setVapidDetails(
-      process.env.VAPID_SUBJECT || "mailto:notifications@iskillspot.local",
+      process.env.VAPID_SUBJECT || "mailto:notifications@iskillspot.com",
       process.env.VAPID_PUBLIC_KEY as string,
       process.env.VAPID_PRIVATE_KEY as string
     );

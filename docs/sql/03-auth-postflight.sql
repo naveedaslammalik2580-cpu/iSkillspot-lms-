@@ -19,7 +19,6 @@ SELECT count(*) FILTER (WHERE "mustChangePassword" AND "passwordExpiresAt" IS NU
 FROM public."User";
 SELECT 'User' AS entity, count(*) FROM public."User"
 UNION ALL SELECT 'Student', count(*) FROM public."Student"
-UNION ALL SELECT 'Teacher', count(*) FROM public."Teacher"
 UNION ALL SELECT 'Fee', count(*) FROM public."Fee"
 UNION ALL SELECT 'Payment', count(*) FROM public."Payment"
 UNION ALL SELECT 'Certificate', count(*) FROM public."Certificate";

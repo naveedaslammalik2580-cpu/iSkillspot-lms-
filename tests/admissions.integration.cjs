@@ -1,6 +1,8 @@
 const assert = require("node:assert/strict");
 const { randomBytes } = require("node:crypto");
 const { spawn } = require("node:child_process");
+const fs = require("node:fs");
+const path = require("node:path");
 const net = require("node:net");
 const { PrismaClient } = require("@prisma/client");
 const { context } = require("./source-loader.cjs");
@@ -77,6 +79,32 @@ async function freePort() {
   const p = s.address().port;
   await new Promise((r) => s.close(r));
   return p;
+}
+async function launchChromium(chromium) {
+  // Prefer Edge where it is installed (the maintainer's machine); then
+  // Playwright's bundled Chromium; finally any locally cached Chromium
+  // build (a sandbox's browser cache may not match this Playwright version).
+  try {
+    return await chromium.launch({ channel: "msedge", headless: true });
+  } catch {}
+  try {
+    return await chromium.launch({ headless: true });
+  } catch {}
+  const cache = path.join(process.env.HOME || "", ".cache", "ms-playwright");
+  if (fs.existsSync(cache)) {
+    for (const dir of fs
+      .readdirSync(cache)
+      .filter((d) => d.startsWith("chromium-"))
+      .sort()
+      .reverse()) {
+      for (const sub of ["chrome-linux64/chrome", "chrome-linux/chrome"]) {
+        const exe = path.join(cache, dir, sub);
+        if (fs.existsSync(exe))
+          return await chromium.launch({ executablePath: exe, headless: true });
+      }
+    }
+  }
+  return await chromium.launch({ headless: true });
 }
 
 (async () => {
@@ -345,16 +373,17 @@ async function freePort() {
       installments: true,
     };
     await check(
-      "student and teacher cannot approve; unverified payment and insufficient installments rejected",
+      "students cannot approve; unverified payment and insufficient installments rejected",
       async () => {
         await assert.rejects(
           service.approveAdmission(payload(applicant.user), approval),
         );
-        const teacher = await db.user.findFirstOrThrow({
-          where: { role: "TEACHER" },
-        });
+        // The TEACHER role no longer exists (agency model); a second,
+        // unrelated STUDENT is the remaining non-staff actor and must also
+        // be rejected.
+        const nonStaff = await register("admit-nonstaff@example.invalid");
         await assert.rejects(
-          service.approveAdmission(payload(teacher), approval),
+          service.approveAdmission(payload(nonStaff.user), approval),
         );
         for (const override of [
           { verified: false },
@@ -785,10 +814,7 @@ async function freePort() {
         } catch {}
         await new Promise((r) => setTimeout(r, 250));
       }
-      browser = await require("playwright").chromium.launch({
-        channel: "msedge",
-        headless: true,
-      });
+      browser = await launchChromium(require("playwright").chromium);
       const bc = await browser.newContext({
           viewport: { width: 390, height: 844 },
         }),
@@ -801,64 +827,34 @@ async function freePort() {
           actionId = request.headers()["next-action"];
       });
       await check(
-        "mobile registration validates password UI, public STUDENT-only form and email verification step",
+        "retired /register page points to website admissions; back-end registration still creates the account",
         async () => {
           await page.goto(origin + "/register");
-          assert.equal(await page.locator('select[name="role"]').count(), 0);
-          await page.locator("#fullName").fill("Browser Admission Student");
-          await page.locator("#email").fill("browser-admit@example.invalid");
-          await page.locator("#phone").fill("+923001234567");
-          const password = secret();
-          browserPassword = password;
-          await page.locator("#password").fill("Password123!");
-          await page.locator('[data-password-strength="weak"]').waitFor();
+          // The public registration form is retired (registration happens
+          // only via the website enrollment form): /register offers no form
+          // and links out to the website instead.
+          assert.equal(await page.locator("#fullName").count(), 0);
+          assert.equal(await page.locator("#password").count(), 0);
           assert.equal(
             await page
-              .locator("[data-password-strength]")
-              .evaluate((el) => getComputedStyle(el).height),
-            "4px",
+              .getByRole("link", { name: "Enroll on the iSkillSpot website" })
+              .getAttribute("href"),
+            "https://iskillspot.com/enroll.html",
           );
-          assert.equal(
-            await page
-              .locator("[data-password-strength]")
-              .evaluate((el) => getComputedStyle(el).backgroundColor),
-            "rgb(239, 68, 68)",
-          );
-          await page.locator("#password").fill(password);
-          assert.equal(
-            await page.locator('[data-password-strength="strong"]').count(),
-            1,
-          );
-          assert.equal(
-            await page
-              .locator("[data-password-strength]")
-              .evaluate((el) => getComputedStyle(el).backgroundColor),
-            "rgb(22, 163, 74)",
-          );
-          assert.equal(await page.locator("form ul").count(), 0);
-          await page.locator("#confirmPassword").fill(password);
-          await page.getByRole("button", { name: "Show passwords" }).click();
-          assert.equal(
-            await page.locator("#password").getAttribute("type"),
-            "text",
-          );
-          await page.getByRole("button", { name: "Hide passwords" }).click();
-          await page.screenshot({
-            path: ".auth-work/admissions/registration-mobile.png",
-            fullPage: true,
-          });
-          await page
-            .getByRole("button", { name: "Continue to email verification" })
-            .click();
-          await page
-            .getByRole("heading", { name: "Check your inbox" })
-            .waitFor();
           assert.equal(
             await page.evaluate(
               () => document.documentElement.scrollWidth <= window.innerWidth,
             ),
             true,
           );
+          await page.screenshot({
+            path: ".auth-work/admissions/registration-mobile.png",
+            fullPage: true,
+          });
+          // The registration back end stays intact for existing unverified
+          // accounts; create this flow's applicant through it directly.
+          const created = await register("browser-admit@example.invalid");
+          browserPassword = created.password;
         },
       );
       let browserUser;
@@ -1011,7 +1007,7 @@ async function freePort() {
           await page
             .getByRole("button", { name: "Sign in", exact: true })
             .click();
-          await page.waitForURL(origin + "/student/dashboard");
+          await page.waitForURL(origin + "/student/courses");
           await page.screenshot({
             path: ".auth-work/admissions/approved-dashboard-mobile.png",
             fullPage: true,
@@ -1040,7 +1036,7 @@ async function freePort() {
           });
           const old = await browser.newContext();
           await old.addCookies(await bc.cookies());
-          await recoverInBrowser("/student/dashboard");
+          await recoverInBrowser("/student/courses");
           const oldPage = await old.newPage();
           await oldPage.goto(origin + "/student/dashboard");
           await oldPage.waitForURL(origin + "/login");

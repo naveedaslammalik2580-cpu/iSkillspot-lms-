@@ -20,7 +20,6 @@ SELECT to_regclass('public."AuthThrottle"') AS throttle_table,
 -- Record these counts. Compare after migration; no business records are deleted.
 SELECT 'User' AS entity, count(*) FROM public."User"
 UNION ALL SELECT 'Student', count(*) FROM public."Student"
-UNION ALL SELECT 'Teacher', count(*) FROM public."Teacher"
 UNION ALL SELECT 'Fee', count(*) FROM public."Fee"
 UNION ALL SELECT 'Payment', count(*) FROM public."Payment"
 UNION ALL SELECT 'Certificate', count(*) FROM public."Certificate";

@@ -31,7 +31,6 @@ export type Permission =
   | "payment.manage"
   // Output
   | "certificate.manage"
-  | "report.view"
   | "announcement.sendAll"
   | "announcement.sendBatch"
   // Student self-service
@@ -60,7 +59,6 @@ const SUPER_ADMIN: Permission[] = [
   "fee.manage",
   "payment.manage",
   "certificate.manage",
-  "report.view",
   "announcement.sendAll",
   "announcement.sendBatch",
 ];
@@ -82,7 +80,6 @@ const ADMIN: Permission[] = [
   "fee.manage",
   "payment.manage",
   "certificate.manage",
-  "report.view",
   "announcement.sendAll",
   "announcement.sendBatch",
   // NOTE: no settings.manage / admin.manage / audit.view — reserved for SUPER_ADMIN

@@ -54,7 +54,7 @@ export async function sendEmail(
           ...message,
           from,
           ...(idempotencyKey
-            ? { messageId: `<${idempotencyKey}@iskillspot.local>` }
+            ? { messageId: `<${idempotencyKey}@iskillspot.com>` }
             : {}),
         });
         if (!result.accepted?.length || result.rejected?.length)
