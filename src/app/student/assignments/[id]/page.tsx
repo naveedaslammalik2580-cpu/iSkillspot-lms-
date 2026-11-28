@@ -66,11 +66,9 @@ export default async function StudentAssignmentDetailPage({
         assignmentId={assignment.id}
         submissionId={assignment.submission?.id ?? null}
         status={assignment.submission?.status ?? null}
-        score={assignment.submission?.score ?? null}
         feedback={assignment.submission?.feedback ?? null}
         submissionText={assignment.submission?.submissionText ?? null}
         files={assignment.submission?.files ?? []}
-        maxScore={assignment.maxScore}
       />
     </>
   );

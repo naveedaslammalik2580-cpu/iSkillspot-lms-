@@ -25,8 +25,8 @@ self.addEventListener("push", (event) => {
   const title = typeof data.title === "string" && data.title ? data.title : "iSkillSpot LMS";
   const options = {
     body: typeof data.body === "string" ? data.body : "You have a new notification.",
-    icon: "/icons/icon-192.png",
-    badge: "/icons/icon-192.png",
+    icon: "/icon.png",
+    badge: "/icon.png",
     data: { url: typeof data.url === "string" && data.url.startsWith("/") ? data.url : "/" },
   };
   event.waitUntil(self.registration.showNotification(title, options));

@@ -17,20 +17,16 @@ export function SubmissionForm({
   assignmentId,
   submissionId,
   status,
-  score,
   feedback,
   submissionText,
   files,
-  maxScore,
 }: {
   assignmentId: string;
   submissionId: string | null;
   status: string | null; // null = not submitted yet
-  score: number | null;
   feedback: string | null;
   submissionText: string | null;
   files: SubmissionFile[];
-  maxScore: number;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -83,9 +79,6 @@ export function SubmissionForm({
       <Card>
         <CardHeader><CardTitle>Your submission</CardTitle></CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-2xl font-bold">
-            {score} / {maxScore}
-          </p>
           {feedback && <p className="text-sm text-muted-foreground">{feedback}</p>}
           {submissionText && (
             <p className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 p-3 text-sm">

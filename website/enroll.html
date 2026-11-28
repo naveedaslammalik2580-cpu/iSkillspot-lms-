@@ -53,7 +53,7 @@
   <div class="wrap">
     <div class="center reveal">
       <div class="eyebrow">Admissions</div>
-      <h2 class="sec-title">Enroll at iSkillSpot</h2>
+      <h1 class="sec-title">Enroll at iSkillSpot</h1>
       <p class="sec-lead" style="margin:0 auto">Fill the form below to create your student account and submit your application. Then pay the admission amount and send us the screenshot on WhatsApp — your portal access arrives by email once we approve it.</p>
     </div>
 
@@ -97,7 +97,7 @@
           <div id="payMethods"></div>
           <p class="pay-line" id="appInstructions" style="white-space:pre-wrap"></p>
           <a class="btn btn-gold wa-btn" id="waBtn" href="#" target="_blank" rel="noopener" style="display:none">Send payment screenshot on WhatsApp</a>
-          <p class="enroll-note">Pay the required admission payment using any method above, then send the payment screenshot to our WhatsApp number <strong id="waNumber"></strong>. Your admission stays pending until we verify the payment and approve it — after approval you will receive an email with the link to your student portal.</p>
+          <p class="enroll-note">Pay the required admission payment using any method above, then send the payment screenshot to our WhatsApp<strong id="waNumber"></strong>. Your admission stays pending until we verify the payment and approve it — after approval you will receive an email with the link to your student portal.</p>
         </div>
 
       </div>
@@ -163,9 +163,14 @@ async function loadCourses() {
       closedMsg.style.display = "block";
       return;
     }
-    courseSelect.innerHTML = courses
-      .map((c) => '<option value="' + c.id + '">' + c.name + "</option>")
-      .join("");
+    courseSelect.replaceChildren(
+      ...courses.map((c) => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.name;
+        return opt;
+      })
+    );
     updateFeeLine();
     form.style.display = "block";
   } catch (e) {
@@ -214,7 +219,7 @@ form.addEventListener("submit", async (event) => {
       }
     );
     document.getElementById("appInstructions").textContent = data.payment.instructions || "";
-    document.getElementById("waNumber").textContent = data.payment.whatsapp || "";
+    document.getElementById("waNumber").textContent = data.payment.whatsapp ? " (" + data.payment.whatsapp + ")" : "";
     if (data.payment.whatsappUrl) {
       const waBtn = document.getElementById("waBtn");
       waBtn.href = data.payment.whatsappUrl;

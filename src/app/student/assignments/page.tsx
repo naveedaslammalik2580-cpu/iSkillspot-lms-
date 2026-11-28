@@ -25,7 +25,6 @@ export default async function StudentAssignmentsPage() {
                   <th className="px-4 py-3 font-medium">Course</th>
                   <th className="px-4 py-3 font-medium">Due</th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Score</th>
                 </tr>
               </thead>
               <tbody>
@@ -42,9 +41,6 @@ export default async function StudentAssignmentsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge status={a.status === "NOT_SUBMITTED" ? "PENDING" : a.status} />
-                    </td>
-                    <td className="px-4 py-3">
-                      {a.score !== null ? `${a.score} / ${a.maxScore}` : "—"}
                     </td>
                   </tr>
                 ))}

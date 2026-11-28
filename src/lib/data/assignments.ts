@@ -230,7 +230,6 @@ export interface StudentAssignmentRow {
   dueDate: Date | null;
   maxScore: number;
   status: SubmissionStatus | "NOT_SUBMITTED";
-  score: number | null;
 }
 
 /** Across all the student's ACTIVE enrollments. Overdue + ungraded first, then dueDate ascending. */
@@ -246,7 +245,7 @@ export async function getAssignmentsForStudent(studentId: string): Promise<Stude
     where: { courseId: { in: courseIds } },
     include: {
       course: { select: { title: true } },
-      submissions: { where: { studentId }, select: { status: true, score: true } },
+      submissions: { where: { studentId }, select: { status: true } },
     },
   });
 
@@ -259,7 +258,6 @@ export async function getAssignmentsForStudent(studentId: string): Promise<Stude
       dueDate: a.dueDate,
       maxScore: a.maxScore,
       status: sub?.status ?? "NOT_SUBMITTED",
-      score: sub?.score ?? null,
     };
   });
 
