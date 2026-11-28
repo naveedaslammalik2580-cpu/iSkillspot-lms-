@@ -181,6 +181,18 @@ footer img{height:56px;opacity:.9;margin-bottom:12px}
 .p-subject{display:inline-block;background:var(--gold-dim);color:var(--gold);padding:4px 14px;border-radius:999px;font-size:.85rem;font-weight:600}
 .p-students-sec{background:var(--navy)}
 .stories-first{padding-top:96px}
+/* ——— Why us page ——— */
+.w-head{padding-top:96px}
+.w-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px}
+.w-stats{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:34px}
+.w-stat{background:var(--navy-card);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 26px;min-width:150px}
+.w-stat strong{display:block;font-family:var(--display);font-size:1.45rem;color:var(--gold)}
+.w-stat span{color:var(--muted);font-size:.82rem}
+.w-group{font-family:var(--display);font-size:1.15rem;color:var(--gold);margin:34px 0 4px}
+.w-doors{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.w-door{display:block;background:var(--navy-card);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 26px;text-decoration:none}
+.w-door h3{font-family:var(--display);color:var(--gold);font-size:1.15rem;margin-bottom:8px}
+.w-door p{color:var(--soft);font-size:.95rem}
 .p-faces{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:1120px;margin:22px auto 0}
 .p-face{flex:0 0 calc((100% - 80px)/9);aspect-ratio:1.117;background-image:url(../assets/profile/students.jpg);background-size:600% 900%;border-radius:14px;border:1px solid rgba(255,255,255,.09)}
 @media (max-width:560px){.p-face{flex-basis:calc((100% - 40px)/5)}}
