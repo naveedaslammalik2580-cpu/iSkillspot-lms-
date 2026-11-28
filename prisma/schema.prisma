@@ -641,7 +641,6 @@ enum PublishStatus {
 enum AnnouncementAudience {
   ALL
   STUDENTS
-  TEACHERS
   BATCH
   COURSE
 }

@@ -181,12 +181,11 @@ export async function studentUserIdsForCourse(courseId: string): Promise<string[
  * in src/lib/data/announcements.ts exactly. Agency model: announcements
  * reach STUDENTS only (ALL / STUDENTS, plus BATCH/COURSE via their
  * enrollments). Staff (admin) authors are not notified of their own
- * announcements. Legacy announcements with the TEACHERS audience resolve
- * to no recipients — there are no teacher accounts anymore.
+ * announcements.
  * Final ACTIVE-account filtering happens inside notifyUsers.
  */
 export async function resolveAnnouncementRecipients(announcement: {
-  audience: "ALL" | "STUDENTS" | "TEACHERS" | "BATCH" | "COURSE";
+  audience: "ALL" | "STUDENTS" | "BATCH" | "COURSE";
   targetBatchId: string | null;
   targetCourseId: string | null;
 }): Promise<{ studentUserIds: string[] }> {
@@ -221,7 +220,7 @@ export async function notifyAnnouncementPublished(announcement: {
   id: string;
   title: string;
   content: string;
-  audience: "ALL" | "STUDENTS" | "TEACHERS" | "BATCH" | "COURSE";
+  audience: "ALL" | "STUDENTS" | "BATCH" | "COURSE";
   targetBatchId: string | null;
   targetCourseId: string | null;
 }): Promise<NotifyResult> {

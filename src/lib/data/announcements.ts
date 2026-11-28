@@ -7,7 +7,7 @@ export interface CallerScope {
 }
 
 function audienceLabel(a: AnnouncementAudience): string {
-  return { ALL: "Everyone", STUDENTS: "All students", TEACHERS: "All teachers", BATCH: "One batch", COURSE: "One course" }[a];
+  return { ALL: "Everyone", STUDENTS: "All students", BATCH: "One batch", COURSE: "One course" }[a];
 }
 
 export interface AnnouncementListRow {

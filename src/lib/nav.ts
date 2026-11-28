@@ -19,7 +19,6 @@ export const ADMIN_NAV: NavItem[] = [
   { label: "Payments", href: "/admin/payments", icon: "CreditCard" },
   { label: "Announcements", href: "/admin/announcements", icon: "Megaphone" },
   { label: "Support", href: "/admin/support", icon: "LifeBuoy" },
-  { label: "Reports", href: "/admin/reports", icon: "BarChart3" },
   { label: "Audit Logs", href: "/admin/audit-logs", icon: "ScrollText" },
 ];
 

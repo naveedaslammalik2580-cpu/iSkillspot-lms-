@@ -299,11 +299,6 @@ describe("announcement audience resolution", () => {
     const studentsRes = await resolveAnnouncementRecipients({ audience: "STUDENTS", targetBatchId: null, targetCourseId: null });
     assert.ok(studentsRes.studentUserIds.includes(studentUser.id));
     assert.ok(studentsRes.studentUserIds.includes(outsider.id));
-
-    // Legacy TEACHERS audience: no teacher accounts exist in the agency
-    // model, so it resolves to nobody.
-    const teachersRes = await resolveAnnouncementRecipients({ audience: "TEACHERS", targetBatchId: null, targetCourseId: null });
-    assert.deepEqual(teachersRes.studentUserIds, []);
   });
 
   it("publishing twice (both publish paths) notifies exactly once, with role-correct links", async () => {
