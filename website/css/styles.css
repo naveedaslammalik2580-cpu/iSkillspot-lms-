@@ -117,11 +117,6 @@ section{padding:64px 0}
 .why-item p{color:var(--soft);font-size:.92rem}
 
 /* Stories */
-.stories-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px}
-.story{background:var(--navy-card);border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--gold);border-radius:14px;padding:28px 24px}
-.story p{color:var(--soft);font-size:.95rem;font-style:italic}
-.story .who{margin-top:18px;font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--gold);font-style:normal}
-.story .role{color:var(--muted);font-size:.8rem;font-family:var(--display)}
 
 /* Contact */
 .faq{background:radial-gradient(ellipse 80% 90% at 50% 100%, var(--navy-glow) 0%, var(--navy-deep) 75%)}
@@ -149,7 +144,6 @@ footer img{height:56px;opacity:.9;margin-bottom:12px}
 
 /* Mobile */
 @media (max-width:900px){
-  .stories-grid{grid-template-columns:1fr 1fr}
   .steps{grid-template-columns:1fr}
   .step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-26px;transform:translateX(-50%)}
   .contact-grid{grid-template-columns:1fr}
@@ -159,7 +153,7 @@ footer img{height:56px;opacity:.9;margin-bottom:12px}
     flex-direction:column;padding:20px;border-bottom:1px solid rgba(255,255,255,.1)}
   .nav-links.open{display:flex}
   .menu-btn{display:block}
-  .course-grid,.why-grid,.stories-grid,.course-details-grid{grid-template-columns:1fr}
+  .course-grid,.why-grid,.course-details-grid{grid-template-columns:1fr}
   section{padding:48px 0}
 }
 
