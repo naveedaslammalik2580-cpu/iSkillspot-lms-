@@ -181,7 +181,9 @@ footer img{height:56px;opacity:.9;margin-bottom:12px}
 .p-subject{display:inline-block;background:var(--gold-dim);color:var(--gold);padding:4px 14px;border-radius:999px;font-size:.85rem;font-weight:600}
 .p-students-sec{background:var(--navy)}
 .stories-first{padding-top:128px}
-.p-students-img{max-width:520px;width:100%;border-radius:20px;border:1px solid rgba(255,255,255,.09);margin-top:38px}
+.p-faces{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:1120px;margin:38px auto 0}
+.p-face{flex:0 0 calc((100% - 80px)/9);aspect-ratio:1.117;background-image:url(../assets/profile/students.jpg);background-size:600% 900%;border-radius:14px;border:1px solid rgba(255,255,255,.09)}
+@media (max-width:560px){.p-face{flex-basis:calc((100% - 40px)/5)}}
 .p-females{margin-top:22px;background:var(--gold-dim);border:1px solid var(--gold-soft);border-radius:18px;padding:26px;text-align:center}
 .p-females h3{font-family:var(--display);color:var(--gold);margin-bottom:6px}
 .p-females p{color:var(--soft)}
@@ -192,6 +194,7 @@ footer img{height:56px;opacity:.9;margin-bottom:12px}
   .p-founder-grid{grid-template-columns:1fr}
   .p-founder-grid>img{max-width:320px;margin:0 auto}
   .p-team-grid{grid-template-columns:repeat(2,1fr)}
+  .p-face{flex-basis:calc((100% - 50px)/6)}
   .p-gallery{grid-template-columns:1fr}
 }
 .hero-photo{width:100%;display:block;border-radius:20px;border:1px solid rgba(255,255,255,.09);margin-top:42px}
